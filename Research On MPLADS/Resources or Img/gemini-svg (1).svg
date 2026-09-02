@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 920" width="100%" height="100%" style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Soft Presentation Shadow -->
+    <filter id="ppt-shadow" x="-4%" y="-6%" width="108%" height="116%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.07" />
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0d9488"/>
+    </marker>
+    <marker id="arrow-peach" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#7c3aed"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284c7"/>
+    </marker>
+  </defs>
+
+  <!-- ==========================================
+       TIER 1: FRONTEND & FIELD APPLICATIONS (MINT)
+  ========================================== -->
+  <rect x="35" y="20" width="1530" height="170" rx="20" fill="none" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+  <rect x="45" y="28" width="1510" height="154" rx="16" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1.5"/>
+  
+  <path d="M 45 44 A 16 16 0 0 1 61 28 L 290 28 A 16 16 0 0 1 306 44 L 306 50 A 10 10 0 0 1 296 60 L 45 60 Z" fill="#0d9488"/>
+  <text x="65" y="49" fill="#ffffff" font-size="14" font-weight="700" letter-spacing="0.5">1. FRONTEND &amp; CLIENT TIERS</text>
+
+  <!-- Card 1: Web Portals -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="70" y="68" width="350" height="98" rx="12" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="85" y="81" width="38" height="38" rx="8" fill="#ccfbf1"/>
+    <text x="104" y="106" text-anchor="middle" font-size="19">💻</text>
+    <text x="133" y="96" fill="#0f172a" font-size="15" font-weight="700">Stakeholder Web Portals</text>
+    <text x="133" y="113" fill="#0d9488" font-size="12" font-weight="600">React 18 • TypeScript • Tailwind</text>
+    <text x="85" y="145" fill="#475569" font-size="12">Role Dashboards (MPs, Nodal Officers, Citizens)</text>
+  </g>
+
+  <!-- Card 2: Field Mobile App -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="440" y="68" width="350" height="98" rx="12" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="455" y="81" width="38" height="38" rx="8" fill="#ccfbf1"/>
+    <text x="474" y="106" text-anchor="middle" font-size="19">📱</text>
+    <text x="503" y="96" fill="#0f172a" font-size="15" font-weight="700">Field Inspection App</text>
+    <text x="503" y="113" fill="#0d9488" font-size="12" font-weight="600">React Native • Expo • TypeScript</text>
+    <text x="455" y="145" fill="#475569" font-size="12">Geo-Tagged Media Upload &amp; Push Alerts</text>
+  </g>
+
+  <!-- Card 3: Offline Sync -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="810" y="68" width="350" height="98" rx="12" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="825" y="81" width="38" height="38" rx="8" fill="#ccfbf1"/>
+    <text x="844" y="106" text-anchor="middle" font-size="19">⚡</text>
+    <text x="873" y="96" fill="#0f172a" font-size="15" font-weight="700">Offline-First Engine</text>
+    <text x="873" y="113" fill="#0d9488" font-size="12" font-weight="600">WatermelonDB • SQLite</text>
+    <text x="825" y="145" fill="#475569" font-size="12">Local Sync Queue • Automatic Reconciliation</text>
+  </g>
+
+  <!-- Card 4: Edge AI -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="1180" y="68" width="350" height="98" rx="12" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="1195" y="81" width="38" height="38" rx="8" fill="#ccfbf1"/>
+    <text x="1214" y="106" text-anchor="middle" font-size="19">🔍</text>
+    <text x="1243" y="96" fill="#0f172a" font-size="15" font-weight="700">On-Device Edge AI</text>
+    <text x="1243" y="113" fill="#0d9488" font-size="12" font-weight="600">TensorFlow Lite</text>
+    <text x="1195" y="145" fill="#475569" font-size="12">Offline Photo Validation &amp; Quality Checks</text>
+  </g>
+
+
+  <!-- CONNECTOR 1 -> 2 -->
+  <line x1="800" y1="182" x2="800" y2="216" stroke="#0d9488" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-teal)"/>
+  <rect x="715" y="189" width="170" height="22" rx="11" fill="#ffffff" stroke="#99f6e4" stroke-width="1"/>
+  <text x="800" y="204" text-anchor="middle" fill="#0f766e" font-size="10.5" font-weight="700">HTTPS • REST • WSS</text>
+
+
+  <!-- ==========================================
+       TIER 2: API GATEWAY & DATA INGESTION (PEACH)
+  ========================================== -->
+  <rect x="35" y="220" width="1530" height="170" rx="20" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+  <rect x="45" y="228" width="1510" height="154" rx="16" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+  
+  <path d="M 45 244 A 16 16 0 0 1 61 228 L 310 228 A 16 16 0 0 1 326 244 L 326 250 A 10 10 0 0 1 316 260 L 45 260 Z" fill="#ea580c"/>
+  <text x="65" y="249" fill="#ffffff" font-size="14" font-weight="700" letter-spacing="0.5">2. GATEWAY &amp; DATA INGESTION</text>
+
+  <!-- Card 1: API Gateway -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="70" y="268" width="350" height="98" rx="12" fill="#ffffff" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="85" y="281" width="38" height="38" rx="8" fill="#ffedd5"/>
+    <text x="104" y="306" text-anchor="middle" font-size="19">🛡️</text>
+    <text x="133" y="296" fill="#0f172a" font-size="15" font-weight="700">API Gateway &amp; Auth</text>
+    <text x="133" y="313" fill="#ea580c" font-size="12" font-weight="600">FastAPI • Cloudflare CDN</text>
+    <text x="85" y="345" fill="#475569" font-size="12">OAuth2 / JWT Security • RBAC Policy Engine</text>
+  </g>
+
+  <!-- Card 2: Gov Integrations -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="440" y="268" width="350" height="98" rx="12" fill="#ffffff" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="455" y="281" width="38" height="38" rx="8" fill="#ffedd5"/>
+    <text x="474" y="306" text-anchor="middle" font-size="19">🏛️</text>
+    <text x="503" y="296" fill="#0f172a" font-size="15" font-weight="700">Gov Interop APIs</text>
+    <text x="503" y="313" fill="#ea580c" font-size="12" font-weight="600">National Platform Integrations</text>
+    <text x="455" y="345" fill="#475569" font-size="12">PM GatiShakti • eGramSwaraj • DigiLocker</text>
+  </g>
+
+  <!-- Card 3: Ingestion Pipeline -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="810" y="268" width="350" height="98" rx="12" fill="#ffffff" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="825" y="281" width="38" height="38" rx="8" fill="#ffedd5"/>
+    <text x="844" y="306" text-anchor="middle" font-size="19">⚙️</text>
+    <text x="873" y="296" fill="#0f172a" font-size="15" font-weight="700">ETL Pipeline Engine</text>
+    <text x="873" y="313" fill="#ea580c" font-size="12" font-weight="600">Apache Airflow • Prefect</text>
+    <text x="825" y="345" fill="#475569" font-size="12">Automated Batch Ingestion &amp; Sanitization</text>
+  </g>
+
+  <!-- Card 4: Data Validation -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="1180" y="268" width="350" height="98" rx="12" fill="#ffffff" stroke="#fed7aa" stroke-width="1.5"/>
+    <rect x="1195" y="281" width="38" height="38" rx="8" fill="#ffedd5"/>
+    <text x="1214" y="306" text-anchor="middle" font-size="19">📐</text>
+    <text x="1243" y="296" fill="#0f172a" font-size="15" font-weight="700">Spatial Validation</text>
+    <text x="1243" y="313" fill="#ea580c" font-size="12" font-weight="600">GeoPandas • Great Expectations</text>
+    <text x="1195" y="345" fill="#475569" font-size="12">Geo-Coordinate &amp; Schema Integrity Checks</text>
+  </g>
+
+
+  <!-- CONNECTOR 2 -> 3 -->
+  <line x1="800" y1="382" x2="800" y2="416" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-peach)"/>
+  <rect x="715" y="389" width="170" height="22" rx="11" fill="#ffffff" stroke="#fed7aa" stroke-width="1"/>
+  <text x="800" y="404" text-anchor="middle" fill="#c2410c" font-size="10.5" font-weight="700">gRPC • Internal API</text>
+
+
+  <!-- ==========================================
+       TIER 3: CORE SERVICES & AI/ML LAYER (LAVENDER)
+  ========================================== -->
+  <rect x="35" y="420" width="1530" height="170" rx="20" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+  <rect x="45" y="428" width="1510" height="154" rx="16" fill="#faf5ff" stroke="#ddd6fe" stroke-width="1.5"/>
+  
+  <path d="M 45 444 A 16 16 0 0 1 61 428 L 330 428 A 16 16 0 0 1 346 444 L 346 450 A 10 10 0 0 1 336 460 L 45 460 Z" fill="#7c3aed"/>
+  <text x="65" y="449" fill="#ffffff" font-size="14" font-weight="700" letter-spacing="0.5">3. CORE SERVICES &amp; AI / ML ENGINE</text>
+
+  <!-- Card 1: Microservices -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="70" y="468" width="350" height="98" rx="12" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.5"/>
+    <rect x="85" y="481" width="38" height="38" rx="8" fill="#ede9fe"/>
+    <text x="104" y="506" text-anchor="middle" font-size="19">📦</text>
+    <text x="133" y="496" fill="#0f172a" font-size="15" font-weight="700">Backend Microservices</text>
+    <text x="133" y="513" fill="#7c3aed" font-size="12" font-weight="600">FastAPI • Node.js</text>
+    <text x="85" y="545" fill="#475569" font-size="12">Project Management • Inspections • Reporting</text>
+  </g>
+
+  <!-- Card 2: Risk & Anomaly AI -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="440" y="468" width="350" height="98" rx="12" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.5"/>
+    <rect x="455" y="481" width="38" height="38" rx="8" fill="#ede9fe"/>
+    <text x="474" y="506" text-anchor="middle" font-size="19">🧠</text>
+    <text x="503" y="496" fill="#0f172a" font-size="15" font-weight="700">Predictive AI Core</text>
+    <text x="503" y="513" fill="#7c3aed" font-size="12" font-weight="600">PyTorch • Scikit-Learn</text>
+    <text x="455" y="545" fill="#475569" font-size="12">Risk Scoring • Fund Delay &amp; Anomaly Detection</text>
+  </g>
+
+  <!-- Card 3: Spatial & Duplicate AI -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="810" y="468" width="350" height="98" rx="12" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.5"/>
+    <rect x="825" y="481" width="38" height="38" rx="8" fill="#ede9fe"/>
+    <text x="844" y="506" text-anchor="middle" font-size="19">📍</text>
+    <text x="873" y="496" fill="#0f172a" font-size="15" font-weight="700">Spatial &amp; Document AI</text>
+    <text x="873" y="513" fill="#7c3aed" font-size="12" font-weight="600">Computer Vision • NLP</text>
+    <text x="825" y="545" fill="#475569" font-size="12">Duplicate Work Detection • OCR Verification</text>
+  </g>
+
+  <!-- Card 4: Model Serving & XAI -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="1180" y="468" width="350" height="98" rx="12" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.5"/>
+    <rect x="1195" y="481" width="38" height="38" rx="8" fill="#ede9fe"/>
+    <text x="1214" y="506" text-anchor="middle" font-size="19">🎯</text>
+    <text x="1243" y="496" fill="#0f172a" font-size="15" font-weight="700">Model Serving &amp; XAI</text>
+    <text x="1243" y="513" fill="#7c3aed" font-size="12" font-weight="600">MLflow • BentoML • SHAP</text>
+    <text x="1195" y="545" fill="#475569" font-size="12">Explainable AI • Model Registry &amp; Versioning</text>
+  </g>
+
+
+  <!-- CONNECTOR 3 -> 4 -->
+  <line x1="800" y1="582" x2="800" y2="616" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-purple)"/>
+  <rect x="715" y="589" width="170" height="22" rx="11" fill="#ffffff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="800" y="604" text-anchor="middle" fill="#6d28d9" font-size="10.5" font-weight="700">SQL • Stream • Object Sync</text>
+
+
+  <!-- ==========================================
+       TIER 4: DATABASES & STORAGE PLATFORM (SKY BLUE)
+  ========================================== -->
+  <rect x="35" y="620" width="1530" height="170" rx="20" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+  <rect x="45" y="628" width="1510" height="154" rx="16" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5"/>
+  
+  <path d="M 45 644 A 16 16 0 0 1 61 628 L 320 628 A 16 16 0 0 1 336 644 L 336 650 A 10 10 0 0 1 326 660 L 45 660 Z" fill="#0284c7"/>
+  <text x="65" y="649" fill="#ffffff" font-size="14" font-weight="700" letter-spacing="0.5">4. DATA PLATFORM &amp; STORAGE</text>
+
+  <!-- Card 1: Relational / Spatial DB -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="70" y="668" width="350" height="98" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+    <rect x="85" y="681" width="38" height="38" rx="8" fill="#e0f2fe"/>
+    <text x="104" y="706" text-anchor="middle" font-size="19">🗄️</text>
+    <text x="133" y="696" fill="#0f172a" font-size="15" font-weight="700">Primary Database</text>
+    <text x="133" y="713" fill="#0284c7" font-size="12" font-weight="600">PostgreSQL 16 + PostGIS</text>
+    <text x="85" y="745" fill="#475569" font-size="12">Transactional Records &amp; Geo-Spatial Queries</text>
+  </g>
+
+  <!-- Card 2: Analytics OLAP DB -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="440" y="668" width="350" height="98" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+    <rect x="455" y="681" width="38" height="38" rx="8" fill="#e0f2fe"/>
+    <text x="474" y="706" text-anchor="middle" font-size="19">⚡</text>
+    <text x="503" y="696" fill="#0f172a" font-size="15" font-weight="700">National Analytics DB</text>
+    <text x="503" y="713" fill="#0284c7" font-size="12" font-weight="600">ClickHouse OLAP</text>
+    <text x="455" y="745" fill="#475569" font-size="12">Real-Time Aggregations &amp; Fast KPI Queries</text>
+  </g>
+
+  <!-- Card 3: Storage & Feast -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="810" y="668" width="350" height="98" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+    <rect x="825" y="681" width="38" height="38" rx="8" fill="#e0f2fe"/>
+    <text x="844" y="706" text-anchor="middle" font-size="19">🪣</text>
+    <text x="873" y="696" fill="#0f172a" font-size="15" font-weight="700">Storage &amp; Feature Store</text>
+    <text x="873" y="713" fill="#0284c7" font-size="12" font-weight="600">AWS S3 / MinIO • Feast</text>
+    <text x="825" y="745" fill="#475569" font-size="12">Inspection Photos • ML Feature Registry</text>
+  </g>
+
+  <!-- Card 4: Streaming & Reports -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="1180" y="668" width="350" height="98" rx="12" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+    <rect x="1195" y="681" width="38" height="38" rx="8" fill="#e0f2fe"/>
+    <text x="1214" y="706" text-anchor="middle" font-size="19">📊</text>
+    <text x="1243" y="696" fill="#0f172a" font-size="15" font-weight="700">Events &amp; BI Analytics</text>
+    <text x="1243" y="713" fill="#0284c7" font-size="12" font-weight="600">RabbitMQ • Apache Superset</text>
+    <text x="1195" y="745" fill="#475569" font-size="12">Message Queuing • Metabase Executive BI</text>
+  </g>
+
+
+  <!-- ==========================================
+       FOOTER: INFRASTRUCTURE & MLOPS (SLATE MINIMAL)
+  ========================================== -->
+  <g filter="url(#ppt-shadow)">
+    <rect x="45" y="815" width="1510" height="75" rx="14" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="70" y="857" fill="#0f172a" font-size="13" font-weight="800" letter-spacing="0.5">DEPLOYMENT &amp; INFRASTRUCTURE</text>
+
+    <!-- Badges Row -->
+    <g transform="translate(340, 832)">
+      <!-- Badge 1 -->
+      <rect x="0" y="0" width="220" height="42" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="15" y="26" fill="#1e293b" font-size="12" font-weight="700">☁️ MeghRaj / NIC Cloud</text>
+
+      <!-- Badge 2 -->
+      <rect x="235" y="0" width="220" height="42" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="250" y="26" fill="#1e293b" font-size="12" font-weight="700">🐳 Docker &amp; Kubernetes</text>
+
+      <!-- Badge 3 -->
+      <rect x="470" y="0" width="220" height="42" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="485" y="26" fill="#1e293b" font-size="12" font-weight="700">🔄 GitHub Actions CI/CD</text>
+
+      <!-- Badge 4 -->
+      <rect x="705" y="0" width="220" height="42" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="720" y="26" fill="#1e293b" font-size="12" font-weight="700">📈 Prometheus + Grafana</text>
+
+      <!-- Badge 5 -->
+      <rect x="940" y="0" width="210" height="42" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="955" y="26" fill="#1e293b" font-size="12" font-weight="700">📦 DVC Model Versioning</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,543 @@
+mp_id,mp_name,state,constituency,constituency_type,party,house,tenure_start,by_election_flag,annual_allocation_inr
+MP0001,MP Representative 001,Haryana,Constituency 001,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0002,MP Representative 002,Manipur,Constituency 002,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0003,MP Representative 003,Sikkim,Constituency 003,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0004,MP Representative 004,Andaman and Nicobar Islands,Constituency 004,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0005,MP Representative 005,Andhra Pradesh,Constituency 005,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0006,MP Representative 006,Haryana,Constituency 006,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0007,MP Representative 007,Manipur,Constituency 007,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0008,MP Representative 008,Sikkim,Constituency 008,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0009,MP Representative 009,Andaman and Nicobar Islands,Constituency 009,General,YSRCP,Lok Sabha,2024-06-01,0,122500000
+MP0010,MP Representative 010,Andhra Pradesh,Constituency 010,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0011,MP Representative 011,Haryana,Constituency 011,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0012,MP Representative 012,Manipur,Constituency 012,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0013,MP Representative 013,Sikkim,Constituency 013,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0014,MP Representative 014,Andaman and Nicobar Islands,Constituency 014,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0015,MP Representative 015,Andhra Pradesh,Constituency 015,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0016,MP Representative 016,Haryana,Constituency 016,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0017,MP Representative 017,Manipur,Constituency 017,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0018,MP Representative 018,Sikkim,Constituency 018,ST,SP,Lok Sabha,2024-06-01,0,122500000
+MP0019,MP Representative 019,Andaman and Nicobar Islands,Constituency 019,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0020,MP Representative 020,Andhra Pradesh,Constituency 020,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0021,MP Representative 021,Haryana,Constituency 021,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0022,MP Representative 022,Manipur,Constituency 022,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0023,MP Representative 023,Sikkim,Constituency 023,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0024,MP Representative 024,Andaman and Nicobar Islands,Constituency 024,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0025,MP Representative 025,Andhra Pradesh,Constituency 025,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0026,MP Representative 026,Haryana,Constituency 026,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0027,MP Representative 027,Manipur,Constituency 027,General,TMC,Lok Sabha,2024-06-01,0,165000000
+MP0028,MP Representative 028,Sikkim,Constituency 028,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0029,MP Representative 029,Andaman and Nicobar Islands,Constituency 029,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0030,MP Representative 030,Andhra Pradesh,Constituency 030,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0031,MP Representative 031,Haryana,Constituency 031,General,JD(U),Lok Sabha,2024-06-01,1,147000000
+MP0032,MP Representative 032,Manipur,Constituency 032,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0033,MP Representative 033,Sikkim,Constituency 033,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0034,MP Representative 034,Andaman and Nicobar Islands,Constituency 034,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0035,MP Representative 035,Andhra Pradesh,Constituency 035,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0036,MP Representative 036,Haryana,Constituency 036,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0037,MP Representative 037,Manipur,Constituency 037,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0038,MP Representative 038,Sikkim,Constituency 038,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0039,MP Representative 039,Andaman and Nicobar Islands,Constituency 039,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0040,MP Representative 040,Andhra Pradesh,Constituency 040,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0041,MP Representative 041,Haryana,Constituency 041,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0042,MP Representative 042,Manipur,Constituency 042,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0043,MP Representative 043,Sikkim,Constituency 043,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0044,MP Representative 044,Andaman and Nicobar Islands,Constituency 044,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0045,MP Representative 045,Andhra Pradesh,Constituency 045,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0046,MP Representative 046,Haryana,Constituency 046,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0047,MP Representative 047,Manipur,Constituency 047,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0048,MP Representative 048,Sikkim,Constituency 048,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0049,MP Representative 049,Andaman and Nicobar Islands,Constituency 049,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0050,MP Representative 050,Andhra Pradesh,Constituency 050,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0051,MP Representative 051,Haryana,Constituency 051,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0052,MP Representative 052,Manipur,Constituency 052,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0053,MP Representative 053,Sikkim,Constituency 053,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0054,MP Representative 054,Andaman and Nicobar Islands,Constituency 054,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0055,MP Representative 055,Andhra Pradesh,Constituency 055,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0056,MP Representative 056,Haryana,Constituency 056,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0057,MP Representative 057,Manipur,Constituency 057,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0058,MP Representative 058,Sikkim,Constituency 058,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0059,MP Representative 059,Andaman and Nicobar Islands,Constituency 059,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0060,MP Representative 060,Andhra Pradesh,Constituency 060,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0061,MP Representative 061,Haryana,Constituency 061,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0062,MP Representative 062,Manipur,Constituency 062,General,AAP,Lok Sabha,2024-06-01,1,147000000
+MP0063,MP Representative 063,Sikkim,Constituency 063,General,TMC,Lok Sabha,2024-06-01,0,122500000
+MP0064,MP Representative 064,Andaman and Nicobar Islands,Constituency 064,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0065,MP Representative 065,Andhra Pradesh,Constituency 065,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0066,MP Representative 066,Haryana,Constituency 066,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0067,MP Representative 067,Manipur,Constituency 067,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0068,MP Representative 068,Sikkim,Constituency 068,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0069,MP Representative 069,Andaman and Nicobar Islands,Constituency 069,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0070,MP Representative 070,Andhra Pradesh,Constituency 070,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0071,MP Representative 071,Haryana,Constituency 071,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0072,MP Representative 072,Manipur,Constituency 072,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0073,MP Representative 073,Sikkim,Constituency 073,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0074,MP Representative 074,Andaman and Nicobar Islands,Constituency 074,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0075,MP Representative 075,Andhra Pradesh,Constituency 075,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0076,MP Representative 076,Haryana,Constituency 076,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0077,MP Representative 077,Manipur,Constituency 077,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0078,MP Representative 078,Sikkim,Constituency 078,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0079,MP Representative 079,Andaman and Nicobar Islands,Constituency 079,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0080,MP Representative 080,Andhra Pradesh,Constituency 080,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0081,MP Representative 081,Haryana,Constituency 081,General,YSRCP,Lok Sabha,2024-06-01,0,245000000
+MP0082,MP Representative 082,Manipur,Constituency 082,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0083,MP Representative 083,Sikkim,Constituency 083,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0084,MP Representative 084,Andaman and Nicobar Islands,Constituency 084,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0085,MP Representative 085,Andhra Pradesh,Constituency 085,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0086,MP Representative 086,Haryana,Constituency 086,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0087,MP Representative 087,Manipur,Constituency 087,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0088,MP Representative 088,Sikkim,Constituency 088,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0089,MP Representative 089,Andaman and Nicobar Islands,Constituency 089,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0090,MP Representative 090,Andhra Pradesh,Constituency 090,ST,SP,Rajya Sabha,2022-06-01,0,122500000
+MP0091,MP Representative 091,Haryana,Constituency 091,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0092,MP Representative 092,Manipur,Constituency 092,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0093,MP Representative 093,Sikkim,Constituency 093,General,YSRCP,Lok Sabha,2024-06-01,1,147000000
+MP0094,MP Representative 094,Andaman and Nicobar Islands,Constituency 094,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0095,MP Representative 095,Andhra Pradesh,Constituency 095,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0096,MP Representative 096,Haryana,Constituency 096,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0097,MP Representative 097,Manipur,Constituency 097,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0098,MP Representative 098,Sikkim,Constituency 098,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0099,MP Representative 099,Andaman and Nicobar Islands,Constituency 099,General,TMC,Lok Sabha,2024-06-01,0,122500000
+MP0100,MP Representative 100,Andhra Pradesh,Constituency 100,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0101,MP Representative 101,Haryana,Constituency 101,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0102,MP Representative 102,Manipur,Constituency 102,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0103,MP Representative 103,Sikkim,Constituency 103,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0104,MP Representative 104,Andaman and Nicobar Islands,Constituency 104,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0105,MP Representative 105,Andhra Pradesh,Constituency 105,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0106,MP Representative 106,Haryana,Constituency 106,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0107,MP Representative 107,Manipur,Constituency 107,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0108,MP Representative 108,Sikkim,Constituency 108,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0109,MP Representative 109,Andaman and Nicobar Islands,Constituency 109,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0110,MP Representative 110,Andhra Pradesh,Constituency 110,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0111,MP Representative 111,Haryana,Constituency 111,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0112,MP Representative 112,Manipur,Constituency 112,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0113,MP Representative 113,Sikkim,Constituency 113,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0114,MP Representative 114,Andaman and Nicobar Islands,Constituency 114,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0115,MP Representative 115,Andhra Pradesh,Constituency 115,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0116,MP Representative 116,Haryana,Constituency 116,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0117,MP Representative 117,Manipur,Constituency 117,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0118,MP Representative 118,Sikkim,Constituency 118,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0119,MP Representative 119,Andaman and Nicobar Islands,Constituency 119,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0120,MP Representative 120,Andhra Pradesh,Constituency 120,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0121,MP Representative 121,Haryana,Constituency 121,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0122,MP Representative 122,Manipur,Constituency 122,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0123,MP Representative 123,Sikkim,Constituency 123,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0124,MP Representative 124,Andaman and Nicobar Islands,Constituency 124,General,BJD,Lok Sabha,2024-06-01,1,147000000
+MP0125,MP Representative 125,Andhra Pradesh,Constituency 125,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0126,MP Representative 126,Haryana,Constituency 126,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0127,MP Representative 127,Manipur,Constituency 127,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0128,MP Representative 128,Sikkim,Constituency 128,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0129,MP Representative 129,Andaman and Nicobar Islands,Constituency 129,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0130,MP Representative 130,Andhra Pradesh,Constituency 130,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0131,MP Representative 131,Haryana,Constituency 131,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0132,MP Representative 132,Manipur,Constituency 132,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0133,MP Representative 133,Sikkim,Constituency 133,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0134,MP Representative 134,Andaman and Nicobar Islands,Constituency 134,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0135,MP Representative 135,Andhra Pradesh,Constituency 135,General,TMC,Rajya Sabha,2022-06-01,0,122500000
+MP0136,MP Representative 136,Haryana,Constituency 136,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0137,MP Representative 137,Manipur,Constituency 137,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0138,MP Representative 138,Sikkim,Constituency 138,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0139,MP Representative 139,Andaman and Nicobar Islands,Constituency 139,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0140,MP Representative 140,Andhra Pradesh,Constituency 140,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0141,MP Representative 141,Haryana,Constituency 141,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0142,MP Representative 142,Manipur,Constituency 142,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0143,MP Representative 143,Sikkim,Constituency 143,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0144,MP Representative 144,Andaman and Nicobar Islands,Constituency 144,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0145,MP Representative 145,Andhra Pradesh,Constituency 145,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0146,MP Representative 146,Haryana,Constituency 146,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0147,MP Representative 147,Manipur,Constituency 147,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0148,MP Representative 148,Sikkim,Constituency 148,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0149,MP Representative 149,Andaman and Nicobar Islands,Constituency 149,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0150,MP Representative 150,Andhra Pradesh,Constituency 150,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0151,MP Representative 151,Haryana,Constituency 151,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0152,MP Representative 152,Manipur,Constituency 152,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0153,MP Representative 153,Sikkim,Constituency 153,General,YSRCP,Lok Sabha,2024-06-01,0,245000000
+MP0154,MP Representative 154,Andaman and Nicobar Islands,Constituency 154,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0155,MP Representative 155,Andhra Pradesh,Constituency 155,General,Other,Rajya Sabha,2022-06-01,1,147000000
+MP0156,MP Representative 156,Haryana,Constituency 156,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0157,MP Representative 157,Manipur,Constituency 157,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0158,MP Representative 158,Sikkim,Constituency 158,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0159,MP Representative 159,Andaman and Nicobar Islands,Constituency 159,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0160,MP Representative 160,Andhra Pradesh,Constituency 160,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0161,MP Representative 161,Haryana,Constituency 161,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0162,MP Representative 162,Manipur,Constituency 162,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0163,MP Representative 163,Sikkim,Constituency 163,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0164,MP Representative 164,Andaman and Nicobar Islands,Constituency 164,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0165,MP Representative 165,Andhra Pradesh,Constituency 165,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0166,MP Representative 166,Haryana,Constituency 166,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0167,MP Representative 167,Manipur,Constituency 167,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0168,MP Representative 168,Sikkim,Constituency 168,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0169,MP Representative 169,Andaman and Nicobar Islands,Constituency 169,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0170,MP Representative 170,Andhra Pradesh,Constituency 170,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0171,MP Representative 171,Haryana,Constituency 171,General,TMC,Lok Sabha,2024-06-01,0,245000000
+MP0172,MP Representative 172,Manipur,Constituency 172,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0173,MP Representative 173,Sikkim,Constituency 173,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0174,MP Representative 174,Andaman and Nicobar Islands,Constituency 174,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0175,MP Representative 175,Andhra Pradesh,Constituency 175,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0176,MP Representative 176,Haryana,Constituency 176,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0177,MP Representative 177,Manipur,Constituency 177,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0178,MP Representative 178,Sikkim,Constituency 178,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0179,MP Representative 179,Andaman and Nicobar Islands,Constituency 179,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0180,MP Representative 180,Andhra Pradesh,Constituency 180,ST,BJP,Rajya Sabha,2022-06-01,0,165000000
+MP0181,MP Representative 181,Haryana,Constituency 181,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0182,MP Representative 182,Manipur,Constituency 182,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0183,MP Representative 183,Sikkim,Constituency 183,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0184,MP Representative 184,Andaman and Nicobar Islands,Constituency 184,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0185,MP Representative 185,Andhra Pradesh,Constituency 185,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0186,MP Representative 186,Haryana,Constituency 186,ST,SP,Lok Sabha,2024-06-01,1,147000000
+MP0187,MP Representative 187,Manipur,Constituency 187,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0188,MP Representative 188,Sikkim,Constituency 188,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0189,MP Representative 189,Andaman and Nicobar Islands,Constituency 189,General,YSRCP,Lok Sabha,2024-06-01,0,122500000
+MP0190,MP Representative 190,Andhra Pradesh,Constituency 190,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0191,MP Representative 191,Haryana,Constituency 191,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0192,MP Representative 192,Manipur,Constituency 192,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0193,MP Representative 193,Sikkim,Constituency 193,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0194,MP Representative 194,Andaman and Nicobar Islands,Constituency 194,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0195,MP Representative 195,Andhra Pradesh,Constituency 195,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0196,MP Representative 196,Haryana,Constituency 196,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0197,MP Representative 197,Manipur,Constituency 197,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0198,MP Representative 198,Sikkim,Constituency 198,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0199,MP Representative 199,Andaman and Nicobar Islands,Constituency 199,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0200,MP Representative 200,Andhra Pradesh,Constituency 200,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0201,MP Representative 201,Haryana,Constituency 201,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0202,MP Representative 202,Manipur,Constituency 202,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0203,MP Representative 203,Sikkim,Constituency 203,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0204,MP Representative 204,Andaman and Nicobar Islands,Constituency 204,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0205,MP Representative 205,Andhra Pradesh,Constituency 205,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0206,MP Representative 206,Haryana,Constituency 206,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0207,MP Representative 207,Manipur,Constituency 207,General,TMC,Lok Sabha,2024-06-01,0,245000000
+MP0208,MP Representative 208,Sikkim,Constituency 208,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0209,MP Representative 209,Andaman and Nicobar Islands,Constituency 209,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0210,MP Representative 210,Andhra Pradesh,Constituency 210,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0211,MP Representative 211,Haryana,Constituency 211,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0212,MP Representative 212,Manipur,Constituency 212,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0213,MP Representative 213,Sikkim,Constituency 213,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0214,MP Representative 214,Andaman and Nicobar Islands,Constituency 214,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0215,MP Representative 215,Andhra Pradesh,Constituency 215,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0216,MP Representative 216,Haryana,Constituency 216,ST,BJP,Lok Sabha,2024-06-01,0,165000000
+MP0217,MP Representative 217,Manipur,Constituency 217,General,INC,Lok Sabha,2024-06-01,1,147000000
+MP0218,MP Representative 218,Sikkim,Constituency 218,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0219,MP Representative 219,Andaman and Nicobar Islands,Constituency 219,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0220,MP Representative 220,Andhra Pradesh,Constituency 220,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0221,MP Representative 221,Haryana,Constituency 221,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0222,MP Representative 222,Manipur,Constituency 222,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0223,MP Representative 223,Sikkim,Constituency 223,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0224,MP Representative 224,Andaman and Nicobar Islands,Constituency 224,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0225,MP Representative 225,Andhra Pradesh,Constituency 225,General,YSRCP,Rajya Sabha,2022-06-01,0,165000000
+MP0226,MP Representative 226,Haryana,Constituency 226,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0227,MP Representative 227,Manipur,Constituency 227,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0228,MP Representative 228,Sikkim,Constituency 228,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0229,MP Representative 229,Andaman and Nicobar Islands,Constituency 229,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0230,MP Representative 230,Andhra Pradesh,Constituency 230,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0231,MP Representative 231,Haryana,Constituency 231,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0232,MP Representative 232,Manipur,Constituency 232,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0233,MP Representative 233,Sikkim,Constituency 233,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0234,MP Representative 234,Andaman and Nicobar Islands,Constituency 234,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0235,MP Representative 235,Andhra Pradesh,Constituency 235,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0236,MP Representative 236,Haryana,Constituency 236,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0237,MP Representative 237,Manipur,Constituency 237,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0238,MP Representative 238,Sikkim,Constituency 238,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0239,MP Representative 239,Andaman and Nicobar Islands,Constituency 239,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0240,MP Representative 240,Andhra Pradesh,Constituency 240,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0241,MP Representative 241,Haryana,Constituency 241,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0242,MP Representative 242,Manipur,Constituency 242,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0243,MP Representative 243,Sikkim,Constituency 243,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0244,MP Representative 244,Andaman and Nicobar Islands,Constituency 244,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0245,MP Representative 245,Andhra Pradesh,Constituency 245,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0246,MP Representative 246,Haryana,Constituency 246,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0247,MP Representative 247,Manipur,Constituency 247,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0248,MP Representative 248,Sikkim,Constituency 248,General,RJD,Lok Sabha,2024-06-01,1,147000000
+MP0249,MP Representative 249,Andaman and Nicobar Islands,Constituency 249,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0250,MP Representative 250,Andhra Pradesh,Constituency 250,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0251,MP Representative 251,Haryana,Constituency 251,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0252,MP Representative 252,Manipur,Constituency 252,ST,BJP,Lok Sabha,2024-06-01,0,165000000
+MP0253,MP Representative 253,Sikkim,Constituency 253,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0254,MP Representative 254,Andaman and Nicobar Islands,Constituency 254,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0255,MP Representative 255,Andhra Pradesh,Constituency 255,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0256,MP Representative 256,Haryana,Constituency 256,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0257,MP Representative 257,Manipur,Constituency 257,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0258,MP Representative 258,Sikkim,Constituency 258,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0259,MP Representative 259,Andaman and Nicobar Islands,Constituency 259,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0260,MP Representative 260,Andhra Pradesh,Constituency 260,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0261,MP Representative 261,Haryana,Constituency 261,General,YSRCP,Lok Sabha,2024-06-01,0,122500000
+MP0262,MP Representative 262,Manipur,Constituency 262,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0263,MP Representative 263,Sikkim,Constituency 263,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0264,MP Representative 264,Andaman and Nicobar Islands,Constituency 264,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0265,MP Representative 265,Andhra Pradesh,Constituency 265,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0266,MP Representative 266,Haryana,Constituency 266,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0267,MP Representative 267,Manipur,Constituency 267,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0268,MP Representative 268,Sikkim,Constituency 268,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0269,MP Representative 269,Andaman and Nicobar Islands,Constituency 269,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0270,MP Representative 270,Andhra Pradesh,Constituency 270,ST,SP,Rajya Sabha,2022-06-01,0,122500000
+MP0271,MP Representative 271,Haryana,Constituency 271,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0272,MP Representative 272,Manipur,Constituency 272,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0273,MP Representative 273,Sikkim,Constituency 273,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0274,MP Representative 274,Andaman and Nicobar Islands,Constituency 274,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0275,MP Representative 275,Andhra Pradesh,Constituency 275,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0276,MP Representative 276,Haryana,Constituency 276,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0277,MP Representative 277,Manipur,Constituency 277,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0278,MP Representative 278,Sikkim,Constituency 278,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0279,MP Representative 279,Andaman and Nicobar Islands,Constituency 279,General,TMC,Lok Sabha,2024-06-01,1,245000000
+MP0280,MP Representative 280,Andhra Pradesh,Constituency 280,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0281,MP Representative 281,Haryana,Constituency 281,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0282,MP Representative 282,Manipur,Constituency 282,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0283,MP Representative 283,Sikkim,Constituency 283,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0284,MP Representative 284,Andaman and Nicobar Islands,Constituency 284,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0285,MP Representative 285,Andhra Pradesh,Constituency 285,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0286,MP Representative 286,Haryana,Constituency 286,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0287,MP Representative 287,Manipur,Constituency 287,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0288,MP Representative 288,Sikkim,Constituency 288,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0289,MP Representative 289,Andaman and Nicobar Islands,Constituency 289,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0290,MP Representative 290,Andhra Pradesh,Constituency 290,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0291,MP Representative 291,Haryana,Constituency 291,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0292,MP Representative 292,Manipur,Constituency 292,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0293,MP Representative 293,Sikkim,Constituency 293,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0294,MP Representative 294,Andaman and Nicobar Islands,Constituency 294,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0295,MP Representative 295,Andhra Pradesh,Constituency 295,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0296,MP Representative 296,Haryana,Constituency 296,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0297,MP Representative 297,Manipur,Constituency 297,General,YSRCP,Lok Sabha,2024-06-01,0,165000000
+MP0298,MP Representative 298,Sikkim,Constituency 298,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0299,MP Representative 299,Andaman and Nicobar Islands,Constituency 299,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0300,MP Representative 300,Andhra Pradesh,Constituency 300,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0301,MP Representative 301,Haryana,Constituency 301,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0302,MP Representative 302,Manipur,Constituency 302,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0303,MP Representative 303,Sikkim,Constituency 303,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0304,MP Representative 304,Andaman and Nicobar Islands,Constituency 304,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0305,MP Representative 305,Andhra Pradesh,Constituency 305,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0306,MP Representative 306,Haryana,Constituency 306,ST,SP,Lok Sabha,2024-06-01,0,165000000
+MP0307,MP Representative 307,Manipur,Constituency 307,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0308,MP Representative 308,Sikkim,Constituency 308,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0309,MP Representative 309,Andaman and Nicobar Islands,Constituency 309,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0310,MP Representative 310,Andhra Pradesh,Constituency 310,General,TDP,Rajya Sabha,2022-06-01,1,147000000
+MP0311,MP Representative 311,Haryana,Constituency 311,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0312,MP Representative 312,Manipur,Constituency 312,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0313,MP Representative 313,Sikkim,Constituency 313,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0314,MP Representative 314,Andaman and Nicobar Islands,Constituency 314,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0315,MP Representative 315,Andhra Pradesh,Constituency 315,General,TMC,Rajya Sabha,2022-06-01,0,165000000
+MP0316,MP Representative 316,Haryana,Constituency 316,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0317,MP Representative 317,Manipur,Constituency 317,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0318,MP Representative 318,Sikkim,Constituency 318,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0319,MP Representative 319,Andaman and Nicobar Islands,Constituency 319,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0320,MP Representative 320,Andhra Pradesh,Constituency 320,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0321,MP Representative 321,Haryana,Constituency 321,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0322,MP Representative 322,Manipur,Constituency 322,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0323,MP Representative 323,Sikkim,Constituency 323,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0324,MP Representative 324,Andaman and Nicobar Islands,Constituency 324,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0325,MP Representative 325,Andhra Pradesh,Constituency 325,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0326,MP Representative 326,Haryana,Constituency 326,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0327,MP Representative 327,Manipur,Constituency 327,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0328,MP Representative 328,Sikkim,Constituency 328,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0329,MP Representative 329,Andaman and Nicobar Islands,Constituency 329,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0330,MP Representative 330,Andhra Pradesh,Constituency 330,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0331,MP Representative 331,Haryana,Constituency 331,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0332,MP Representative 332,Manipur,Constituency 332,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0333,MP Representative 333,Sikkim,Constituency 333,General,YSRCP,Lok Sabha,2024-06-01,0,245000000
+MP0334,MP Representative 334,Andaman and Nicobar Islands,Constituency 334,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0335,MP Representative 335,Andhra Pradesh,Constituency 335,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0336,MP Representative 336,Haryana,Constituency 336,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0337,MP Representative 337,Manipur,Constituency 337,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0338,MP Representative 338,Sikkim,Constituency 338,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0339,MP Representative 339,Andaman and Nicobar Islands,Constituency 339,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0340,MP Representative 340,Andhra Pradesh,Constituency 340,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0341,MP Representative 341,Haryana,Constituency 341,General,DMK,Lok Sabha,2024-06-01,1,147000000
+MP0342,MP Representative 342,Manipur,Constituency 342,ST,SP,Lok Sabha,2024-06-01,0,122500000
+MP0343,MP Representative 343,Sikkim,Constituency 343,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0344,MP Representative 344,Andaman and Nicobar Islands,Constituency 344,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0345,MP Representative 345,Andhra Pradesh,Constituency 345,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0346,MP Representative 346,Haryana,Constituency 346,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0347,MP Representative 347,Manipur,Constituency 347,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0348,MP Representative 348,Sikkim,Constituency 348,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0349,MP Representative 349,Andaman and Nicobar Islands,Constituency 349,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0350,MP Representative 350,Andhra Pradesh,Constituency 350,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0351,MP Representative 351,Haryana,Constituency 351,General,TMC,Lok Sabha,2024-06-01,0,245000000
+MP0352,MP Representative 352,Manipur,Constituency 352,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0353,MP Representative 353,Sikkim,Constituency 353,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0354,MP Representative 354,Andaman and Nicobar Islands,Constituency 354,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0355,MP Representative 355,Andhra Pradesh,Constituency 355,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0356,MP Representative 356,Haryana,Constituency 356,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0357,MP Representative 357,Manipur,Constituency 357,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0358,MP Representative 358,Sikkim,Constituency 358,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0359,MP Representative 359,Andaman and Nicobar Islands,Constituency 359,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0360,MP Representative 360,Andhra Pradesh,Constituency 360,ST,BJP,Rajya Sabha,2022-06-01,0,122500000
+MP0361,MP Representative 361,Haryana,Constituency 361,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0362,MP Representative 362,Manipur,Constituency 362,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0363,MP Representative 363,Sikkim,Constituency 363,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0364,MP Representative 364,Andaman and Nicobar Islands,Constituency 364,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0365,MP Representative 365,Andhra Pradesh,Constituency 365,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0366,MP Representative 366,Haryana,Constituency 366,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0367,MP Representative 367,Manipur,Constituency 367,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0368,MP Representative 368,Sikkim,Constituency 368,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0369,MP Representative 369,Andaman and Nicobar Islands,Constituency 369,General,YSRCP,Lok Sabha,2024-06-01,0,165000000
+MP0370,MP Representative 370,Andhra Pradesh,Constituency 370,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0371,MP Representative 371,Haryana,Constituency 371,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0372,MP Representative 372,Manipur,Constituency 372,ST,BJP,Lok Sabha,2024-06-01,1,147000000
+MP0373,MP Representative 373,Sikkim,Constituency 373,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0374,MP Representative 374,Andaman and Nicobar Islands,Constituency 374,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0375,MP Representative 375,Andhra Pradesh,Constituency 375,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0376,MP Representative 376,Haryana,Constituency 376,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0377,MP Representative 377,Manipur,Constituency 377,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0378,MP Representative 378,Sikkim,Constituency 378,ST,SP,Lok Sabha,2024-06-01,0,165000000
+MP0379,MP Representative 379,Andaman and Nicobar Islands,Constituency 379,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0380,MP Representative 380,Andhra Pradesh,Constituency 380,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0381,MP Representative 381,Haryana,Constituency 381,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0382,MP Representative 382,Manipur,Constituency 382,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0383,MP Representative 383,Sikkim,Constituency 383,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0384,MP Representative 384,Andaman and Nicobar Islands,Constituency 384,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0385,MP Representative 385,Andhra Pradesh,Constituency 385,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0386,MP Representative 386,Haryana,Constituency 386,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0387,MP Representative 387,Manipur,Constituency 387,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0388,MP Representative 388,Sikkim,Constituency 388,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0389,MP Representative 389,Andaman and Nicobar Islands,Constituency 389,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0390,MP Representative 390,Andhra Pradesh,Constituency 390,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0391,MP Representative 391,Haryana,Constituency 391,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0392,MP Representative 392,Manipur,Constituency 392,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0393,MP Representative 393,Sikkim,Constituency 393,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0394,MP Representative 394,Andaman and Nicobar Islands,Constituency 394,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0395,MP Representative 395,Andhra Pradesh,Constituency 395,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0396,MP Representative 396,Haryana,Constituency 396,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0397,MP Representative 397,Manipur,Constituency 397,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0398,MP Representative 398,Sikkim,Constituency 398,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0399,MP Representative 399,Andaman and Nicobar Islands,Constituency 399,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0400,MP Representative 400,Andhra Pradesh,Constituency 400,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0401,MP Representative 401,Haryana,Constituency 401,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0402,MP Representative 402,Manipur,Constituency 402,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0403,MP Representative 403,Sikkim,Constituency 403,General,JD(U),Lok Sabha,2024-06-01,1,147000000
+MP0404,MP Representative 404,Andaman and Nicobar Islands,Constituency 404,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0405,MP Representative 405,Andhra Pradesh,Constituency 405,General,YSRCP,Rajya Sabha,2022-06-01,0,122500000
+MP0406,MP Representative 406,Haryana,Constituency 406,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0407,MP Representative 407,Manipur,Constituency 407,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0408,MP Representative 408,Sikkim,Constituency 408,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0409,MP Representative 409,Andaman and Nicobar Islands,Constituency 409,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0410,MP Representative 410,Andhra Pradesh,Constituency 410,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0411,MP Representative 411,Haryana,Constituency 411,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0412,MP Representative 412,Manipur,Constituency 412,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0413,MP Representative 413,Sikkim,Constituency 413,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0414,MP Representative 414,Andaman and Nicobar Islands,Constituency 414,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0415,MP Representative 415,Andhra Pradesh,Constituency 415,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0416,MP Representative 416,Haryana,Constituency 416,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0417,MP Representative 417,Manipur,Constituency 417,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0418,MP Representative 418,Sikkim,Constituency 418,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0419,MP Representative 419,Andaman and Nicobar Islands,Constituency 419,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0420,MP Representative 420,Andhra Pradesh,Constituency 420,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0421,MP Representative 421,Haryana,Constituency 421,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0422,MP Representative 422,Manipur,Constituency 422,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0423,MP Representative 423,Sikkim,Constituency 423,General,TMC,Lok Sabha,2024-06-01,0,165000000
+MP0424,MP Representative 424,Andaman and Nicobar Islands,Constituency 424,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0425,MP Representative 425,Andhra Pradesh,Constituency 425,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0426,MP Representative 426,Haryana,Constituency 426,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0427,MP Representative 427,Manipur,Constituency 427,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0428,MP Representative 428,Sikkim,Constituency 428,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0429,MP Representative 429,Andaman and Nicobar Islands,Constituency 429,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0430,MP Representative 430,Andhra Pradesh,Constituency 430,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0431,MP Representative 431,Haryana,Constituency 431,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0432,MP Representative 432,Manipur,Constituency 432,ST,BJP,Lok Sabha,2024-06-01,0,122500000
+MP0433,MP Representative 433,Sikkim,Constituency 433,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0434,MP Representative 434,Andaman and Nicobar Islands,Constituency 434,General,AAP,Lok Sabha,2024-06-01,1,147000000
+MP0435,MP Representative 435,Andhra Pradesh,Constituency 435,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0436,MP Representative 436,Haryana,Constituency 436,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0437,MP Representative 437,Manipur,Constituency 437,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0438,MP Representative 438,Sikkim,Constituency 438,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0439,MP Representative 439,Andaman and Nicobar Islands,Constituency 439,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0440,MP Representative 440,Andhra Pradesh,Constituency 440,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0441,MP Representative 441,Haryana,Constituency 441,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0442,MP Representative 442,Manipur,Constituency 442,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0443,MP Representative 443,Sikkim,Constituency 443,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0444,MP Representative 444,Andaman and Nicobar Islands,Constituency 444,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0445,MP Representative 445,Andhra Pradesh,Constituency 445,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0446,MP Representative 446,Haryana,Constituency 446,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0447,MP Representative 447,Manipur,Constituency 447,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0448,MP Representative 448,Sikkim,Constituency 448,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0449,MP Representative 449,Andaman and Nicobar Islands,Constituency 449,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0450,MP Representative 450,Andhra Pradesh,Constituency 450,ST,SP,Rajya Sabha,2022-06-01,0,122500000
+MP0451,MP Representative 451,Haryana,Constituency 451,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0452,MP Representative 452,Manipur,Constituency 452,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0453,MP Representative 453,Sikkim,Constituency 453,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0454,MP Representative 454,Andaman and Nicobar Islands,Constituency 454,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0455,MP Representative 455,Andhra Pradesh,Constituency 455,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0456,MP Representative 456,Haryana,Constituency 456,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0457,MP Representative 457,Manipur,Constituency 457,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0458,MP Representative 458,Sikkim,Constituency 458,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0459,MP Representative 459,Andaman and Nicobar Islands,Constituency 459,General,TMC,Lok Sabha,2024-06-01,0,245000000
+MP0460,MP Representative 460,Andhra Pradesh,Constituency 460,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0461,MP Representative 461,Haryana,Constituency 461,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0462,MP Representative 462,Manipur,Constituency 462,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0463,MP Representative 463,Sikkim,Constituency 463,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0464,MP Representative 464,Andaman and Nicobar Islands,Constituency 464,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0465,MP Representative 465,Andhra Pradesh,Constituency 465,General,YSRCP,Rajya Sabha,2022-06-01,1,147000000
+MP0466,MP Representative 466,Haryana,Constituency 466,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0467,MP Representative 467,Manipur,Constituency 467,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0468,MP Representative 468,Sikkim,Constituency 468,ST,BJP,Lok Sabha,2024-06-01,0,165000000
+MP0469,MP Representative 469,Andaman and Nicobar Islands,Constituency 469,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0470,MP Representative 470,Andhra Pradesh,Constituency 470,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0471,MP Representative 471,Haryana,Constituency 471,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0472,MP Representative 472,Manipur,Constituency 472,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0473,MP Representative 473,Sikkim,Constituency 473,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0474,MP Representative 474,Andaman and Nicobar Islands,Constituency 474,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0475,MP Representative 475,Andhra Pradesh,Constituency 475,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0476,MP Representative 476,Haryana,Constituency 476,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0477,MP Representative 477,Manipur,Constituency 477,General,YSRCP,Lok Sabha,2024-06-01,0,245000000
+MP0478,MP Representative 478,Sikkim,Constituency 478,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0479,MP Representative 479,Andaman and Nicobar Islands,Constituency 479,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0480,MP Representative 480,Andhra Pradesh,Constituency 480,ST,BJP,Rajya Sabha,2022-06-01,0,147000000
+MP0481,MP Representative 481,Haryana,Constituency 481,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0482,MP Representative 482,Manipur,Constituency 482,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0483,MP Representative 483,Sikkim,Constituency 483,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0484,MP Representative 484,Andaman and Nicobar Islands,Constituency 484,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0485,MP Representative 485,Andhra Pradesh,Constituency 485,General,DMK,Rajya Sabha,2022-06-01,0,147000000
+MP0486,MP Representative 486,Haryana,Constituency 486,ST,SP,Lok Sabha,2024-06-01,0,165000000
+MP0487,MP Representative 487,Manipur,Constituency 487,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0488,MP Representative 488,Sikkim,Constituency 488,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0489,MP Representative 489,Andaman and Nicobar Islands,Constituency 489,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0490,MP Representative 490,Andhra Pradesh,Constituency 490,General,TDP,Rajya Sabha,2022-06-01,0,147000000
+MP0491,MP Representative 491,Haryana,Constituency 491,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0492,MP Representative 492,Manipur,Constituency 492,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0493,MP Representative 493,Sikkim,Constituency 493,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0494,MP Representative 494,Andaman and Nicobar Islands,Constituency 494,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0495,MP Representative 495,Andhra Pradesh,Constituency 495,General,TMC,Rajya Sabha,2022-06-01,0,147000000
+MP0496,MP Representative 496,Haryana,Constituency 496,General,BJD,Lok Sabha,2024-06-01,1,147000000
+MP0497,MP Representative 497,Manipur,Constituency 497,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0498,MP Representative 498,Sikkim,Constituency 498,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0499,MP Representative 499,Andaman and Nicobar Islands,Constituency 499,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0500,MP Representative 500,Andhra Pradesh,Constituency 500,General,RJD,Rajya Sabha,2022-06-01,0,147000000
+MP0501,MP Representative 501,Haryana,Constituency 501,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0502,MP Representative 502,Manipur,Constituency 502,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0503,MP Representative 503,Sikkim,Constituency 503,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0504,MP Representative 504,Andaman and Nicobar Islands,Constituency 504,ST,BJP,Lok Sabha,2024-06-01,0,165000000
+MP0505,MP Representative 505,Andhra Pradesh,Constituency 505,General,INC,Rajya Sabha,2022-06-01,0,147000000
+MP0506,MP Representative 506,Haryana,Constituency 506,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0507,MP Representative 507,Manipur,Constituency 507,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0508,MP Representative 508,Sikkim,Constituency 508,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0509,MP Representative 509,Andaman and Nicobar Islands,Constituency 509,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0510,MP Representative 510,Andhra Pradesh,Constituency 510,ST,SP,Rajya Sabha,2022-06-01,0,147000000
+MP0511,MP Representative 511,Haryana,Constituency 511,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0512,MP Representative 512,Manipur,Constituency 512,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0513,MP Representative 513,Sikkim,Constituency 513,General,YSRCP,Lok Sabha,2024-06-01,0,165000000
+MP0514,MP Representative 514,Andaman and Nicobar Islands,Constituency 514,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0515,MP Representative 515,Andhra Pradesh,Constituency 515,General,Other,Rajya Sabha,2022-06-01,0,147000000
+MP0516,MP Representative 516,Haryana,Constituency 516,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0517,MP Representative 517,Manipur,Constituency 517,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0518,MP Representative 518,Sikkim,Constituency 518,General,AAP,Lok Sabha,2024-06-01,0,147000000
+MP0519,MP Representative 519,Andaman and Nicobar Islands,Constituency 519,General,TMC,Lok Sabha,2024-06-01,0,147000000
+MP0520,MP Representative 520,Andhra Pradesh,Constituency 520,General,BJD,Rajya Sabha,2022-06-01,0,147000000
+MP0521,MP Representative 521,Haryana,Constituency 521,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0522,MP Representative 522,Manipur,Constituency 522,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0523,MP Representative 523,Sikkim,Constituency 523,General,JD(U),Lok Sabha,2024-06-01,0,147000000
+MP0524,MP Representative 524,Andaman and Nicobar Islands,Constituency 524,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0525,MP Representative 525,Andhra Pradesh,Constituency 525,General,YSRCP,Rajya Sabha,2022-06-01,0,147000000
+MP0526,MP Representative 526,Haryana,Constituency 526,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0527,MP Representative 527,Manipur,Constituency 527,General,Other,Lok Sabha,2024-06-01,1,147000000
+MP0528,MP Representative 528,Sikkim,Constituency 528,ST,BJP,Lok Sabha,2024-06-01,0,147000000
+MP0529,MP Representative 529,Andaman and Nicobar Islands,Constituency 529,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0530,MP Representative 530,Andhra Pradesh,Constituency 530,General,AAP,Rajya Sabha,2022-06-01,0,147000000
+MP0531,MP Representative 531,Haryana,Constituency 531,General,TMC,Lok Sabha,2024-06-01,0,165000000
+MP0532,MP Representative 532,Manipur,Constituency 532,General,BJD,Lok Sabha,2024-06-01,0,147000000
+MP0533,MP Representative 533,Sikkim,Constituency 533,General,DMK,Lok Sabha,2024-06-01,0,147000000
+MP0534,MP Representative 534,Andaman and Nicobar Islands,Constituency 534,ST,SP,Lok Sabha,2024-06-01,0,147000000
+MP0535,MP Representative 535,Andhra Pradesh,Constituency 535,General,JD(U),Rajya Sabha,2022-06-01,0,147000000
+MP0536,MP Representative 536,Haryana,Constituency 536,General,RJD,Lok Sabha,2024-06-01,0,147000000
+MP0537,MP Representative 537,Manipur,Constituency 537,General,YSRCP,Lok Sabha,2024-06-01,0,147000000
+MP0538,MP Representative 538,Sikkim,Constituency 538,General,TDP,Lok Sabha,2024-06-01,0,147000000
+MP0539,MP Representative 539,Andaman and Nicobar Islands,Constituency 539,General,Other,Lok Sabha,2024-06-01,0,147000000
+MP0540,MP Representative 540,Andhra Pradesh,Constituency 540,ST,BJP,Rajya Sabha,2022-06-01,0,122500000
+MP0541,MP Representative 541,Haryana,Constituency 541,General,INC,Lok Sabha,2024-06-01,0,147000000
+MP0542,MP Representative 542,Manipur,Constituency 542,General,AAP,Lok Sabha,2024-06-01,0,147000000

@@ -1,0 +1,325 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1480" width="100%" height="100%" style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Soft Drop Shadow -->
+    <filter id="card-shadow" x="-6%" y="-6%" width="112%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.06" />
+    </filter>
+
+    <!-- Arrow Markers -->
+    <marker id="arrow-mint" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0d9488"/>
+    </marker>
+    <marker id="arrow-peach" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-lavender" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#7c3aed"/>
+    </marker>
+    <marker id="arrow-sky" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- ==========================================
+       TIER 1: FRONTEND & CLIENT (MINT THEME)
+  ========================================== -->
+  <!-- Outer Offset Dashed Border -->
+  <rect x="25" y="30" width="1190" height="270" rx="24" fill="none" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.65"/>
+  <!-- Inner Filled Layer Container -->
+  <rect x="35" y="40" width="1170" height="250" rx="20" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1.5"/>
+  
+  <!-- Pill Tab Header -->
+  <path d="M 35 60 A 20 20 0 0 1 55 40 L 260 40 A 20 20 0 0 1 280 60 L 280 68 A 12 12 0 0 1 268 80 L 35 80 Z" fill="#0d9488"/>
+  <text x="55" y="66" fill="#ffffff" font-size="15" font-weight="700" letter-spacing="0.3">Frontend &amp; Client Tier</text>
+
+  <!-- Component: Stakeholder Portal -->
+  <g filter="url(#card-shadow)">
+    <rect x="55" y="100" width="245" height="160" rx="14" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="70" y="115" width="36" height="36" rx="8" fill="#ccfbf1"/>
+    <text x="88" y="138" text-anchor="middle" font-size="18">👥</text>
+    <text x="116" y="130" fill="#0f172a" font-size="14" font-weight="700">Stakeholder Portals</text>
+    <text x="116" y="146" fill="#0d9488" font-size="11" font-weight="600">Role-Based Access</text>
+    <text x="70" y="175" fill="#475569" font-size="11.5">• MPs (Overview &amp; Tracking)</text>
+    <text x="70" y="195" fill="#475569" font-size="11.5">• State &amp; District Authorities</text>
+    <text x="70" y="215" fill="#475569" font-size="11.5">• Citizens &amp; Ministry Dashboards</text>
+  </g>
+
+  <!-- Component: Web Dashboard -->
+  <g filter="url(#card-shadow)">
+    <rect x="335" y="100" width="250" height="160" rx="14" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="350" y="115" width="36" height="36" rx="8" fill="#ccfbf1"/>
+    <text x="368" y="138" text-anchor="middle" font-size="18">💻</text>
+    <text x="396" y="130" fill="#0f172a" font-size="14" font-weight="700">Web Dashboard</text>
+    <text x="396" y="146" fill="#0d9488" font-size="11" font-weight="600">React 18 + Vite (TS)</text>
+    <text x="350" y="175" fill="#475569" font-size="11.5">• Tailwind CSS (UI Styling)</text>
+    <text x="350" y="195" fill="#475569" font-size="11.5">• Leaflet (Geospatial Mapping)</text>
+    <text x="350" y="215" fill="#475569" font-size="11.5">• Recharts (Analytics Vis)</text>
+  </g>
+
+  <!-- Component: Mobile App -->
+  <g filter="url(#card-shadow)">
+    <rect x="620" y="100" width="250" height="160" rx="14" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="635" y="115" width="36" height="36" rx="8" fill="#ccfbf1"/>
+    <text x="653" y="138" text-anchor="middle" font-size="18">📱</text>
+    <text x="681" y="130" fill="#0f172a" font-size="14" font-weight="700">Field Mobile App</text>
+    <text x="681" y="146" fill="#0d9488" font-size="11" font-weight="600">React Native (Expo)</text>
+    <text x="635" y="175" fill="#475569" font-size="11.5">• TypeScript Core</text>
+    <text x="635" y="195" fill="#475569" font-size="11.5">• FCM Push Notifications</text>
+    <text x="635" y="215" fill="#475569" font-size="11.5">• In-App Inspection Camera</text>
+  </g>
+
+  <!-- Component: Offline & Edge -->
+  <g filter="url(#card-shadow)">
+    <rect x="905" y="100" width="275" height="160" rx="14" fill="#ffffff" stroke="#ccfbf1" stroke-width="1.5"/>
+    <rect x="920" y="115" width="36" height="36" rx="8" fill="#ccfbf1"/>
+    <text x="938" y="138" text-anchor="middle" font-size="18">⚡</text>
+    <text x="966" y="130" fill="#0f172a" font-size="14" font-weight="700">Offline-First Engine</text>
+    <text x="966" y="146" fill="#0d9488" font-size="11" font-weight="600">WatermelonDB / SQLite</text>
+    <text x="920" y="175" fill="#475569" font-size="11.5">• Local Queue &amp; Auto-Reconcile</text>
+    <text x="920" y="195" fill="#475569" font-size="11.5">• TF Lite (On-Device Inference)</text>
+    <text x="920" y="215" fill="#475569" font-size="11.5">• Offline Geo-Map Tiles</text>
+  </g>
+
+  <!-- Horizontal In-Tier Arrows -->
+  <line x1="300" y1="180" x2="330" y2="180" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-mint)"/>
+  <line x1="585" y1="180" x2="615" y2="180" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-mint)"/>
+  <line x1="870" y1="180" x2="900" y2="180" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-mint)"/>
+
+
+  <!-- ==========================================
+       INTER-TIER CONNECTOR & ANNOTATIONS (1 -> 2)
+  ========================================== -->
+  <line x1="460" y1="290" x2="460" y2="390" stroke="#0d9488" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-mint)"/>
+  <line x1="745" y1="290" x2="745" y2="390" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-peach)"/>
+
+  <!-- Callout Pill 1 -->
+  <g filter="url(#card-shadow)">
+    <rect x="150" y="325" width="220" height="34" rx="17" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="260" y="346" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">HTTPS / RESTful &amp; WebSocket</text>
+  </g>
+  <!-- Callout Pill 2 -->
+  <g filter="url(#card-shadow)">
+    <rect x="850" y="325" width="250" height="34" rx="17" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="975" y="346" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">Sync Engine (Conflict-Free Queue)</text>
+  </g>
+
+
+  <!-- ==========================================
+       TIER 2: API GATEWAY & DATA INGESTION (PEACH THEME)
+  ========================================== -->
+  <rect x="25" y="380" width="1190" height="240" rx="24" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.65"/>
+  <rect x="35" y="390" width="1170" height="220" rx="20" fill="#fff7ed" stroke="#fed7aa" stroke-width="1.5"/>
+  
+  <path d="M 35 410 A 20 20 0 0 1 55 390 L 300 390 A 20 20 0 0 1 320 410 L 320 418 A 12 12 0 0 1 308 430 L 35 430 Z" fill="#ea580c"/>
+  <text x="55" y="416" fill="#ffffff" font-size="15" font-weight="700" letter-spacing="0.3">API Gateway &amp; Ingestion Layer</text>
+
+  <!-- Component: API Gateway -->
+  <g filter="url(#card-shadow)">
+    <rect x="55" y="445" width="340" height="140" rx="14" fill="#ffffff" stroke="#ffedd5" stroke-width="1.5"/>
+    <rect x="70" y="460" width="36" height="36" rx="8" fill="#ffedd5"/>
+    <text x="88" y="483" text-anchor="middle" font-size="18">🛡️</text>
+    <text x="116" y="475" fill="#0f172a" font-size="14" font-weight="700">API Gateway &amp; Security</text>
+    <text x="116" y="491" fill="#ea580c" font-size="11" font-weight="600">FastAPI 0.11+ / Cloudflare CDN</text>
+    <text x="70" y="525" fill="#475569" font-size="11.5">• OAuth2 / JWT Authentication</text>
+    <text x="70" y="545" fill="#475569" font-size="11.5">• Role-Based Access Control (RBAC)</text>
+    <text x="70" y="565" fill="#475569" font-size="11.5">• NGINX Rate Limiting &amp; Edge Caching</text>
+  </g>
+
+  <!-- Component: External Data Sources -->
+  <g filter="url(#card-shadow)">
+    <rect x="445" y="445" width="340" height="140" rx="14" fill="#ffffff" stroke="#ffedd5" stroke-width="1.5"/>
+    <rect x="460" y="460" width="36" height="36" rx="8" fill="#ffedd5"/>
+    <text x="478" y="483" text-anchor="middle" font-size="18">🌐</text>
+    <text x="506" y="475" fill="#0f172a" font-size="14" font-weight="700">External Gov Sources</text>
+    <text x="506" y="491" fill="#ea580c" font-size="11" font-weight="600">Government Interoperability APIs</text>
+    <text x="460" y="525" fill="#475569" font-size="11.5">• PM GatiShakti (Infra Master Plan)</text>
+    <text x="460" y="545" fill="#475569" font-size="11.5">• eGramSwaraj (Panchayat Finance)</text>
+    <text x="460" y="565" fill="#475569" font-size="11.5">• DigiLocker Document Verification</text>
+  </g>
+
+  <!-- Component: Data Ingestion Pipeline -->
+  <g filter="url(#card-shadow)">
+    <rect x="835" y="445" width="345" height="140" rx="14" fill="#ffffff" stroke="#ffedd5" stroke-width="1.5"/>
+    <rect x="850" y="460" width="36" height="36" rx="8" fill="#ffedd5"/>
+    <text x="868" y="483" text-anchor="middle" font-size="18">⚙️</text>
+    <text x="896" y="475" fill="#0f172a" font-size="14" font-weight="700">Data Ingestion Pipeline</text>
+    <text x="896" y="491" fill="#ea580c" font-size="11" font-weight="600">Airflow / Prefect Workflow</text>
+    <text x="850" y="525" fill="#475569" font-size="11.5">• Great Expectations (Data Validation)</text>
+    <text x="850" y="545" fill="#475569" font-size="11.5">• GeoPandas (Spatial Transformation)</text>
+    <text x="850" y="565" fill="#475569" font-size="11.5">• Automated ETL &amp; Geocoding Tasks</text>
+  </g>
+
+  <line x1="395" y1="515" x2="440" y2="515" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-peach)"/>
+  <line x1="785" y1="515" x2="830" y2="515" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-peach)"/>
+
+
+  <!-- ==========================================
+       INTER-TIER CONNECTOR & ANNOTATIONS (2 -> 3)
+  ========================================== -->
+  <line x1="225" y1="610" x2="225" y2="690" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow-peach)"/>
+  <line x1="1005" y1="610" x2="1005" y2="690" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-lavender)"/>
+
+  <g filter="url(#card-shadow)">
+    <rect x="495" y="625" width="250" height="34" rx="17" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="620" y="646" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">gRPC &amp; Async Event Dispatch</text>
+  </g>
+
+
+  <!-- ==========================================
+       TIER 3: CORE SERVICES & AI/ML LAYER (LAVENDER THEME)
+  ========================================== -->
+  <rect x="25" y="680" width="1190" height="260" rx="24" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.65"/>
+  <rect x="35" y="690" width="1170" height="240" rx="20" fill="#faf5ff" stroke="#ddd6fe" stroke-width="1.5"/>
+  
+  <path d="M 35 710 A 20 20 0 0 1 55 690 L 320 690 A 20 20 0 0 1 340 710 L 340 718 A 12 12 0 0 1 328 730 L 35 730 Z" fill="#7c3aed"/>
+  <text x="55" y="716" fill="#ffffff" font-size="15" font-weight="700" letter-spacing="0.3">Backend Services &amp; AI/ML Layer</text>
+
+  <!-- Component: Microservices Hub -->
+  <g filter="url(#card-shadow)">
+    <rect x="55" y="745" width="340" height="160" rx="14" fill="#ffffff" stroke="#ede9fe" stroke-width="1.5"/>
+    <rect x="70" y="760" width="36" height="36" rx="8" fill="#ede9fe"/>
+    <text x="88" y="783" text-anchor="middle" font-size="18">📦</text>
+    <text x="116" y="775" fill="#0f172a" font-size="14" font-weight="700">Microservices Hub</text>
+    <text x="116" y="791" fill="#7c3aed" font-size="11" font-weight="600">FastAPI / Node / Express</text>
+    <text x="70" y="822" fill="#475569" font-size="11.5">• Project &amp; Inspection Service</text>
+    <text x="70" y="842" fill="#475569" font-size="11.5">• Auth &amp; Role Governance Service</text>
+    <text x="70" y="862" fill="#475569" font-size="11.5">• Alert &amp; Multi-Channel Notifications</text>
+    <text x="70" y="882" fill="#475569" font-size="11.5">• Automated Reporting Service</text>
+  </g>
+
+  <!-- Component: AI / ML Core Engine -->
+  <g filter="url(#card-shadow)">
+    <rect x="445" y="745" width="350" height="160" rx="14" fill="#ffffff" stroke="#ede9fe" stroke-width="1.5"/>
+    <rect x="460" y="760" width="36" height="36" rx="8" fill="#ede9fe"/>
+    <text x="478" y="783" text-anchor="middle" font-size="18">🧠</text>
+    <text x="506" y="775" fill="#0f172a" font-size="14" font-weight="700">AI / ML Intelligence Core</text>
+    <text x="506" y="791" fill="#7c3aed" font-size="11" font-weight="600">PyTorch &amp; Scikit-Learn</text>
+    <text x="460" y="822" fill="#475569" font-size="11.5">• Risk Scoring &amp; Fund Utilization AI</text>
+    <text x="460" y="842" fill="#475569" font-size="11.5">• Anomaly &amp; Fraud Detection Engine</text>
+    <text x="460" y="862" fill="#475569" font-size="11.5">• Duplicate Work Detection (Spatial Geo)</text>
+    <text x="460" y="882" fill="#475569" font-size="11.5">• NLP Document Parsing &amp; Extraction</text>
+  </g>
+
+  <!-- Component: Model Serving & XAI -->
+  <g filter="url(#card-shadow)">
+    <rect x="845" y="745" width="335" height="160" rx="14" fill="#ffffff" stroke="#ede9fe" stroke-width="1.5"/>
+    <rect x="860" y="760" width="36" height="36" rx="8" fill="#ede9fe"/>
+    <text x="878" y="783" text-anchor="middle" font-size="18">🎯</text>
+    <text x="906" y="775" fill="#0f172a" font-size="14" font-weight="700">Serving &amp; Explainability</text>
+    <text x="906" y="791" fill="#7c3aed" font-size="11" font-weight="600">MLflow / BentoML / SHAP</text>
+    <text x="860" y="822" fill="#475569" font-size="11.5">• SHAP Feature Attribution</text>
+    <text x="860" y="842" fill="#475569" font-size="11.5">• Human-in-the-Loop Review Queue</text>
+    <text x="860" y="862" fill="#475569" font-size="11.5">• MLflow Central Model Registry</text>
+    <text x="860" y="882" fill="#475569" font-size="11.5">• High-Concurrency REST Inference</text>
+  </g>
+
+  <line x1="395" y1="825" x2="440" y2="825" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-lavender)"/>
+  <line x1="795" y1="825" x2="840" y2="825" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-lavender)"/>
+
+
+  <!-- ==========================================
+       INTER-TIER CONNECTOR & ANNOTATIONS (3 -> 4)
+  ========================================== -->
+  <line x1="225" y1="930" x2="225" y2="1020" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow-lavender)"/>
+  <line x1="620" y1="930" x2="620" y2="1020" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-sky)"/>
+  <line x1="1015" y1="930" x2="1015" y2="1020" stroke="#0284c7" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-sky)"/>
+
+  <g filter="url(#card-shadow)">
+    <rect x="330" y="955" width="230" height="34" rx="17" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="445" y="976" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">Feature Store &amp; Media Sync</text>
+  </g>
+  <g filter="url(#card-shadow)">
+    <rect x="730" y="955" width="220" height="34" rx="17" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="840" y="976" text-anchor="middle" fill="#475569" font-size="11" font-weight="600">Event Stream / Pub-Sub</text>
+  </g>
+
+
+  <!-- ==========================================
+       TIER 4: DATABASES, STORAGE & STREAMING (SKY BLUE THEME)
+  ========================================== -->
+  <rect x="25" y="1010" width="1190" height="250" rx="24" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.65"/>
+  <rect x="35" y="1020" width="1170" height="230" rx="20" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1.5"/>
+  
+  <path d="M 35 1040 A 20 20 0 0 1 55 1020 L 310 1020 A 20 20 0 0 1 330 1040 L 330 1048 A 12 12 0 0 1 318 1060 L 35 1060 Z" fill="#0284c7"/>
+  <text x="55" y="1046" fill="#ffffff" font-size="15" font-weight="700" letter-spacing="0.3">Databases, Storage &amp; Streaming</text>
+
+  <!-- Component: Relational & OLAP DBs -->
+  <g filter="url(#card-shadow)">
+    <rect x="55" y="1075" width="340" height="150" rx="14" fill="#ffffff" stroke="#e0f2fe" stroke-width="1.5"/>
+    <rect x="70" y="1090" width="36" height="36" rx="8" fill="#e0f2fe"/>
+    <text x="88" y="1113" text-anchor="middle" font-size="18">🗄️</text>
+    <text x="116" y="1105" fill="#0f172a" font-size="14" font-weight="700">Primary Databases</text>
+    <text x="116" y="1121" fill="#0284c7" font-size="11" font-weight="600">PostgreSQL + PostGIS / ClickHouse</text>
+    <text x="70" y="1152" fill="#475569" font-size="11.5">• PostgreSQL 16 (Transactional Engine)</text>
+    <text x="70" y="1172" fill="#475569" font-size="11.5">• PostGIS (Geospatial Coordinates)</text>
+    <text x="70" y="1192" fill="#475569" font-size="11.5">• ClickHouse (OLAP National Queries)</text>
+  </g>
+
+  <!-- Component: Storage & Feature Store -->
+  <g filter="url(#card-shadow)">
+    <rect x="445" y="1075" width="345" height="150" rx="14" fill="#ffffff" stroke="#e0f2fe" stroke-width="1.5"/>
+    <rect x="460" y="1090" width="36" height="36" rx="8" fill="#e0f2fe"/>
+    <text x="478" y="1113" text-anchor="middle" font-size="18">🪣</text>
+    <text x="506" y="1105" fill="#0f172a" font-size="14" font-weight="700">Storage &amp; Features</text>
+    <text x="506" y="1121" fill="#0284c7" font-size="11" font-weight="600">S3 / MinIO / Feast</text>
+    <text x="460" y="1152" fill="#475569" font-size="11.5">• AWS S3 / MinIO (Object Storage)</text>
+    <text x="460" y="1172" fill="#475569" font-size="11.5">• Geo-tagged Inspection Photos</text>
+    <text x="460" y="1192" fill="#475569" font-size="11.5">• Feast (Central ML Feature Store)</text>
+  </g>
+
+  <!-- Component: Streaming & BI -->
+  <g filter="url(#card-shadow)">
+    <rect x="840" y="1075" width="340" height="150" rx="14" fill="#ffffff" stroke="#e0f2fe" stroke-width="1.5"/>
+    <rect x="855" y="1090" width="36" height="36" rx="8" fill="#e0f2fe"/>
+    <text x="873" y="1113" text-anchor="middle" font-size="18">📊</text>
+    <text x="901" y="1105" fill="#0f172a" font-size="14" font-weight="700">Events &amp; Analytics BI</text>
+    <text x="901" y="1121" fill="#0284c7" font-size="11" font-weight="600">RabbitMQ / Metabase / Superset</text>
+    <text x="855" y="1152" fill="#475569" font-size="11.5">• RabbitMQ / Kafka Message Broker</text>
+    <text x="855" y="1172" fill="#475569" font-size="11.5">• Metabase (Executive Dashboards)</text>
+    <text x="855" y="1192" fill="#475569" font-size="11.5">• Apache Superset (Deep Analytics)</text>
+  </g>
+
+  <line x1="395" y1="1150" x2="440" y2="1150" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-sky)"/>
+  <line x1="790" y1="1150" x2="835" y2="1150" stroke="#0284c7" stroke-width="2" marker-end="url(#arrow-sky)"/>
+
+
+  <!-- ==========================================
+       FOOTER: DEPLOYMENT & MLOPS INFRASTRUCTURE
+  ========================================== -->
+  <g filter="url(#card-shadow)">
+    <rect x="35" y="1290" width="1170" height="135" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    
+    <text x="60" y="1325" fill="#0f172a" font-size="13" font-weight="700">DEPLOYMENT &amp; MLOPS INFRASTRUCTURE</text>
+    
+    <!-- Badges Row -->
+    <g transform="translate(60, 1345)">
+      <!-- Cloud -->
+      <rect x="0" y="0" width="205" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="15" y="24" fill="#0f172a" font-size="12" font-weight="700">☁️ MeghRaj / NIC Cloud</text>
+      <text x="15" y="40" fill="#64748b" font-size="10.5">Gov Prod + Cloudflare Edge</text>
+      
+      <!-- Container -->
+      <rect x="225" y="0" width="205" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="240" y="24" fill="#0f172a" font-size="12" font-weight="700">🐳 Docker &amp; Kubernetes</text>
+      <text x="240" y="40" fill="#64748b" font-size="10.5">Production Orchestration</text>
+      
+      <!-- CI/CD -->
+      <rect x="450" y="0" width="205" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="465" y="24" fill="#0f172a" font-size="12" font-weight="700">🔄 GitHub Actions</text>
+      <text x="465" y="40" fill="#64748b" font-size="10.5">Automated CI/CD Pipelines</text>
+      
+      <!-- Monitoring -->
+      <rect x="675" y="0" width="205" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="690" y="24" fill="#0f172a" font-size="12" font-weight="700">📈 Prometheus + Grafana</text>
+      <text x="690" y="40" fill="#64748b" font-size="10.5">Real-time Telemetry &amp; Alerts</text>
+      
+      <!-- Versioning -->
+      <rect x="900" y="0" width="210" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="915" y="24" fill="#0f172a" font-size="12" font-weight="700">📦 DVC &amp; MLflow</text>
+      <text x="915" y="40" fill="#64748b" font-size="10.5">Dataset &amp; Model Versioning</text>
+    </g>
+  </g>
+</svg>
