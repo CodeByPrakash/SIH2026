@@ -1,1 +1,3 @@
 .venv
+build_notebook.py
+generate_dataset.py

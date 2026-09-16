@@ -1,0 +1,543 @@
+rank,mp_id,mp_name,state,constituency,party,total_works,anomalous_works,anomaly_rate_pct,avg_cost_overrun_pct,avg_delay_days,inspection_rate_pct,utilization_pct,risk_score,risk_tier
+1,1,Bishnu Pada Ray,Andaman And Nicobar Islands,ANDAMAN AND NICOBAR ISLANDS,TDP,38,26,68.42,8.46,59.7,55.26,46.24,100,Moderate Risk
+2,2,Ambica G Lakshminarayana Valmiki,Andhra Pradesh,ANANTAPUR,INC,17,15,88.24,27.62,83.4,70.59,49.22,100,Moderate Risk
+3,3,Appalanaidu Kalisetti,Andhra Pradesh,VIZIANAGARAM,BJP,15,8,53.33,6.3,67.9,66.67,66.03,100,Clean / Exemplary
+4,4,B K Parthasarathi,Andhra Pradesh,HINDUPUR,INC,17,11,64.71,9.41,75.7,70.59,69.03,100,Clean / Exemplary
+5,5,Balashowry Vallabbhaneni,Andhra Pradesh,MACHILIPATNAM,BJP,24,15,62.5,0.85,89.2,66.67,54.41,100,Moderate Risk
+6,6,Bastipati Nagaraju Panchalingala,Andhra Pradesh,KURNOOL,BJP,27,17,62.96,6.99,86.4,74.07,42.76,100,Moderate Risk
+7,7,Bhupathiraju Srinivasa Varma,Andhra Pradesh,NARASAPURAM,SHS,15,13,86.67,13.09,73.0,86.67,69.07,100,Clean / Exemplary
+8,8,C.M.Ramesh,Andhra Pradesh,ANAKAPALLE,BJP,23,12,52.17,9.72,45.0,73.91,38.67,100,High Risk
+9,9,Daggubati Purandeshwari,Andhra Pradesh,RAJAHMUNDRY,RJD,17,13,76.47,10.96,88.1,70.59,86.47,100,Clean / Exemplary
+10,10,Daggumalla Prasada Rao,Andhra Pradesh,CHITTOOR,TMC,30,21,70.0,17.71,60.8,83.33,52.14,100,Moderate Risk
+11,11,Dr Byreddy Shabari,Andhra Pradesh,NANDYAL,BJP,24,14,58.33,8.27,69.9,79.17,36.93,100,High Risk
+12,12,Dr Chandra Sekhar Pemmasani,Andhra Pradesh,GUNTUR,BJP,48,33,68.75,11.39,78.0,60.42,62.68,100,Moderate Risk
+13,13,Gm Harish Balayogi,Andhra Pradesh,AMALAPURAM(SC),BJP,29,20,68.97,13.34,65.5,51.72,34.55,100,High Risk
+14,14,Gumma Thanuja Rani,Andhra Pradesh,ARAKU(ST),JDU,29,18,62.07,6.03,47.9,79.31,64.74,100,Moderate Risk
+15,15,Kinjarapu Ram Mohan Naidu,Andhra Pradesh,SRIKAKULAM,BJP,36,30,83.33,15.02,104.1,66.67,47.05,100,Moderate Risk
+16,16,Krishna Prasad Tenneti,Andhra Pradesh,BAPATLA,INC,9,8,88.89,16.71,111.7,55.56,40.76,100,Moderate Risk
+17,17,Lavu Sri Krishna Devarayalu,Andhra Pradesh,NARASARAOPET,INC,6,2,33.33,1.55,6.2,66.67,50.71,100,Moderate Risk
+18,18,Maddila Gurumoorthy,Andhra Pradesh,TIRUPATI(SC),SP,6,2,33.33,3.25,66.8,66.67,44.31,100,Moderate Risk
+19,19,Magunta Sreenivasulu Reddy,Andhra Pradesh,ONGOLE,BSP,23,16,69.57,15.56,103.7,69.57,43.58,100,Moderate Risk
+20,20,Midhun Reddy,Andhra Pradesh,RAJAMPET,AAP,35,25,71.43,10.05,67.2,48.57,25.9,100,High Risk
+21,21,Prabhakar Reddy Vemireddy,Andhra Pradesh,NELLORE(SC),BJD,46,27,58.7,8.75,28.3,65.22,72.93,100,Clean / Exemplary
+22,22,Putta Mahesh Kumar,Andhra Pradesh,ELURU,TMC,18,14,77.78,20.94,35.6,77.78,41.44,100,Moderate Risk
+23,23,Sivanath Kesineni,Andhra Pradesh,VIJAYAWADA,BJP,10,6,60.0,19.78,41.3,60.0,28.44,100,High Risk
+24,24,Sribharat Mathukumli,Andhra Pradesh,VISAKHAPATNAM,BJP,22,13,59.09,5.87,53.1,72.73,42.09,100,Moderate Risk
+25,25,Tangella Uday Srinivas,Andhra Pradesh,KAKINADA,BJP,56,31,55.36,5.83,67.0,67.86,45.3,100,Moderate Risk
+26,26,Y S Avinash Reddy,Andhra Pradesh,KADAPA,BJP,38,21,55.26,8.9,88.5,73.68,51.24,100,Moderate Risk
+27,27,Kiren Rijiju,Arunachal Pradesh,ARUNACHAL WEST,AAP,21,15,71.43,15.36,47.2,76.19,35.45,100,High Risk
+28,28,Shri Tapir Gao,Arunachal Pradesh,ARUNACHAL EAST,YSR Congress,33,20,60.61,3.18,66.5,69.7,83.53,100,Clean / Exemplary
+29,29,Amarsing Tisso,Assam,DIPHU (ST),BJP,33,24,72.73,10.95,86.8,66.67,81.0,100,Clean / Exemplary
+30,30,Bijuli Kalita Medhi,Assam,GUWAHATI,TMC,14,8,57.14,9.27,33.0,71.43,54.48,100,Moderate Risk
+31,31,Dilip Saikia,Assam,DARRANG-UDALGURI,INC,39,27,69.23,11.52,66.1,53.85,28.93,100,High Risk
+32,32,Gaurav Gogoi,Assam,JORHAT,BJP,47,26,55.32,8.16,53.6,72.34,36.18,100,High Risk
+33,33,Joyanta Basumatary,Assam,KOKRAJHAR (ST),INC,40,26,65.0,12.23,70.2,55.0,44.55,100,Moderate Risk
+34,34,Kamakhya Prasad Tasa,Assam,KAZIRANGA,BJD,27,16,59.26,5.75,60.9,62.96,81.5,100,Clean / Exemplary
+35,35,Kripanath Mallah,Assam,KARIMGANJ (SC),BJP,31,19,61.29,12.46,66.5,70.97,63.84,100,Moderate Risk
+36,36,Parimal Suklabaidya,Assam,SILCHAR,BJP,35,20,57.14,6.24,75.8,62.86,57.7,100,Moderate Risk
+37,37,Phani Bhusan Choudhury,Assam,BARPETA,DMK,15,11,73.33,13.45,65.0,80.0,52.56,100,Moderate Risk
+38,38,Pradan Baruah,Assam,LAKHIMPUR,TMC,11,5,45.45,9.13,76.3,81.82,57.8,100,Moderate Risk
+39,39,Pradyut Bordoloi,Assam,NOWGONG,INC,28,15,53.57,9.26,49.5,82.14,85.59,100,Clean / Exemplary
+40,40,Rakibul Hussain,Assam,DHUBRI,BJP,47,34,72.34,16.36,63.7,76.6,74.35,100,Clean / Exemplary
+41,41,Ranjit Dutta,Assam,SONITPUR,Others,30,16,53.33,5.23,32.3,70.0,41.39,100,Moderate Risk
+42,42,Shri Sarbananda Sonowal (18Ls),Assam,DIBRUGARH,BJP,24,17,70.83,11.52,34.3,45.83,20.54,100,High Risk
+43,43,Abhay Kumar Sinha,Bihar,AURANGABAD_BR,SHS,17,11,64.71,18.18,59.6,64.71,21.44,100,High Risk
+44,44,Ajay Kumar Mandal,Bihar,BHAGALPUR,BJP,41,23,56.1,3.47,62.3,56.1,74.06,100,Clean / Exemplary
+45,45,Alok Kumar Suman,Bihar,GOPALGANJ (SC),INC,43,33,76.74,14.6,54.3,60.47,22.2,100,High Risk
+46,46,Arun Bharti,Bihar,JAMUI(SC),INC,29,20,68.97,10.28,80.8,65.52,32.32,100,High Risk
+47,47,Ashok Kumar Yadav,Bihar,MADHUBANI,BJD,48,37,77.08,18.55,70.3,60.42,55.11,100,Moderate Risk
+48,48,Chirag Paswan,Bihar,HAJIPUR(SC),BJP,29,16,55.17,4.19,49.1,75.86,48.24,100,Moderate Risk
+49,49,Devesh Chandra Thakur,Bihar,SITAMARHI,YSR Congress,45,25,55.56,9.77,88.4,55.56,31.57,100,High Risk
+50,50,Dileshwar Kamait,Bihar,SUPAUL,DMK,27,18,66.67,16.55,63.0,81.48,33.48,100,High Risk
+51,51,Dinesh Chandra Yadav,Bihar,MADHEPURA,YSR Congress,9,6,66.67,23.24,31.9,66.67,44.24,100,Moderate Risk
+52,52,Dr Mohammad Jawed,Bihar,KISHANGANJ,INC,14,9,64.29,13.84,111.4,71.43,51.3,100,Moderate Risk
+53,53,Giridhari Yadav,Bihar,BANKA,SHS,29,22,75.86,13.65,90.1,62.07,70.56,100,Clean / Exemplary
+54,54,Giriraj Singh,Bihar,BEGUSARAI,JDU,7,4,57.14,4.22,82.0,85.71,34.35,100,High Risk
+55,55,Jitan Ram Manjhi,Bihar,GAYA (SC),BJP,14,6,42.86,-1.37,20.4,57.14,22.59,100,High Risk
+56,56,Kaushalendra Kumar,Bihar,NALANDA,Independent,11,8,72.73,4.89,127.2,36.36,81.01,100,Clean / Exemplary
+57,57,Lovely Anand,Bihar,SHEOHAR,BJP,46,25,54.35,13.5,66.5,71.74,34.01,100,High Risk
+58,58,Manoj Kumar,Bihar,SASARAM(SC),BJP,20,13,65.0,11.83,94.8,60.0,34.41,100,High Risk
+59,59,Misha Bharti,Bihar,PATALIPUTRA,BJD,45,30,66.67,8.82,64.4,71.11,87.89,100,Clean / Exemplary
+60,60,Mr Gopal Jee Thakur,Bihar,DARBHANGA,INC,43,30,69.77,13.67,76.1,55.81,23.37,100,High Risk
+61,61,Nityanand Rai,Bihar,UJJARPUR,BJP,23,15,65.22,17.07,55.8,91.3,49.66,100,Moderate Risk
+62,62,Pradeep Kumar Singh,Bihar,ARARIA,SHS,35,18,51.43,10.13,41.7,77.14,72.87,100,Clean / Exemplary
+63,63,Radha Mohan Singh,Bihar,PURVI CHAMPARAN,BJP,45,24,53.33,2.55,51.4,82.22,57.47,100,Moderate Risk
+64,64,Raj Bhushan Choudhary,Bihar,MUZAFFARPUR,TMC,26,12,46.15,4.53,49.8,80.77,22.69,100,High Risk
+65,65,Raja Ram Singh,Bihar,KARAKAT,TMC,8,6,75.0,4.63,67.0,87.5,30.51,100,High Risk
+66,66,Rajesh Ranjan Alias Pappu Yadav,Bihar,PURNEA,BJP,7,5,71.43,5.88,81.0,71.43,66.22,100,Clean / Exemplary
+67,67,Rajesh Verma,Bihar,KHAGARIA,BSP,28,16,57.14,14.41,62.3,75.0,87.75,100,Clean / Exemplary
+68,68,Rajiv Pratap Rudy,Bihar,SARAN,Independent,20,13,65.0,3.16,80.4,60.0,57.12,100,Moderate Risk
+69,69,Rajiv Ranjan (Lalan) Singh,Bihar,MUNGER,DMK,32,20,62.5,11.45,53.8,75.0,88.6,100,Clean / Exemplary
+70,70,Ramprit Mandal,Bihar,JHANJHARPUR,BSP,37,29,78.38,12.66,98.8,59.46,58.8,100,Moderate Risk
+71,71,Ravi Shankar Prasad,Bihar,PATNA SAHIB,TMC,15,7,46.67,-0.89,79.3,73.33,26.51,100,High Risk
+72,72,Sanjay Jaiswal,Bihar,PASCHIM CHAMPARAN,Others,28,22,78.57,11.09,109.6,71.43,38.21,100,High Risk
+73,73,Shambhavi,Bihar,SAMASTIPUR(SC),BJP,44,27,61.36,12.97,53.9,68.18,29.85,100,High Risk
+74,74,Shri Janardan Singh Sigriwal,Bihar,MAHARAJGANJ_BR,BJP,14,9,64.29,13.68,65.2,78.57,61.53,100,Moderate Risk
+75,75,Smt Veena Devi,Bihar,VAISHALI,BSP,19,14,73.68,7.6,83.1,57.89,58.76,100,Moderate Risk
+76,76,Sudama Prasad,Bihar,ARRAH,DMK,31,16,51.61,2.54,76.8,64.52,38.92,100,High Risk
+77,77,Sudhakar Singh,Bihar,BUXAR,YSR Congress,22,12,54.55,6.43,33.0,81.82,54.82,100,Moderate Risk
+78,78,Sunil Kumar,Bihar,VALMIKI NAGAR,TDP,29,17,58.62,5.11,96.0,79.31,54.46,100,Moderate Risk
+79,79,Surendra Prasad Yadav,Bihar,JAHANABAD,DMK,13,9,69.23,7.79,55.1,69.23,63.1,100,Moderate Risk
+80,80,Tariq Anwar,Bihar,KATIHAR,SHS,7,4,57.14,6.35,44.3,85.71,66.1,100,Clean / Exemplary
+81,81,Vijaylakshmi Devi,Bihar,SIWAN,BSP,12,8,66.67,10.56,84.0,91.67,40.86,100,Moderate Risk
+82,82,Vivek Thakur,Bihar,NAWADA,INC,18,10,55.56,5.51,81.6,77.78,21.35,100,High Risk
+83,83,Manish Tewari,Chandigarh,CHANDIGARH,BJP,23,11,47.83,6.01,25.7,78.26,32.08,100,High Risk
+84,84,Bhojraj Nag,Chhattisgarh,KANKER(ST),BJP,11,7,63.64,5.12,28.4,45.45,61.66,100,Moderate Risk
+85,85,Brijmohan Agrawal,Chhattisgarh,RAIPUR,DMK,29,15,51.72,9.17,98.5,72.41,69.72,100,Clean / Exemplary
+86,86,Chintamani Maharaj,Chhattisgarh,SARGUJA(ST),DMK,42,25,59.52,17.75,37.2,64.29,56.41,100,Moderate Risk
+87,87,Jyotsna Charandas Mahant,Chhattisgarh,KORBA,BJP,37,23,62.16,2.63,75.6,59.46,41.85,100,Moderate Risk
+88,88,Kamlesh Jangde,Chhattisgarh,JANJGIR CHAMPA(SC),JDU,8,5,62.5,2.33,79.8,75.0,60.11,100,Moderate Risk
+89,89,Mahesh Kashyap,Chhattisgarh,BASTAR(ST),AAP,10,5,50.0,11.17,16.6,70.0,65.52,100,Clean / Exemplary
+90,90,Radhe Shyam Rathiya,Chhattisgarh,RAIGARH(ST),BJP,18,14,77.78,8.82,104.2,50.0,48.18,100,Moderate Risk
+91,91,Roop Kumari Choudhary,Chhattisgarh,MAHASAMUND,SHS,24,13,54.17,15.8,28.9,75.0,34.73,100,High Risk
+92,92,Santosh Pandey,Chhattisgarh,RAJNANDGAON,BJP,37,22,59.46,7.94,44.6,67.57,52.08,100,Moderate Risk
+93,93,Tokhan Sahu,Chhattisgarh,BILASPUR,INC,18,15,83.33,5.28,82.4,72.22,48.36,100,Moderate Risk
+94,94,Vijay Baghel,Chhattisgarh,DURG,AAP,29,18,62.07,2.33,65.8,58.62,87.49,100,Clean / Exemplary
+95,95,Bansuri Swaraj,Delhi,NEW DELHI,TMC,44,28,63.64,13.14,52.5,72.73,45.53,100,Moderate Risk
+96,96,Harsh Malhotra,Delhi,EAST DELHI,BJP,49,32,65.31,11.97,73.6,75.51,45.33,100,Moderate Risk
+97,97,Kamaljeet Sehrawat,Delhi,WEST DELHI,AAP,39,26,66.67,8.77,69.8,66.67,69.59,100,Clean / Exemplary
+98,98,Manoj Tiwari,Delhi,NORTH EAST DELHI,BJP,43,29,67.44,8.52,59.7,74.42,21.32,100,High Risk
+99,99,Praveen Khandelwal,Delhi,CHANDINI CHOWK,INC,21,11,52.38,3.94,57.0,61.9,36.99,100,High Risk
+100,100,Ramvir Singh Bidhuri,Delhi,SOUTH DELHI,INC,11,7,63.64,9.51,20.8,72.73,38.1,100,High Risk
+101,101,Yogendra Chandoliya,Delhi,NORTH WEST DELHI(SC),BJP,34,25,73.53,17.78,74.2,58.82,50.85,100,Moderate Risk
+102,102,Captain Viriato Fernandes,Goa,SOUTH GOA,INC,40,31,77.5,3.91,74.8,62.5,68.87,100,Clean / Exemplary
+103,103,Shripad Yesso Naik,Goa,NORTH GOA,BJP,42,35,83.33,17.03,58.0,57.14,72.58,100,Clean / Exemplary
+104,104,Bharatbhai Manubhai Sutariya,Gujarat,AMRELI,INC,53,32,60.38,9.86,61.3,66.04,85.15,100,Clean / Exemplary
+105,105,Bharatsinhji Shankarji Dabhi,Gujarat,PATAN,TMC,19,12,63.16,7.11,38.7,73.68,27.22,100,High Risk
+106,106,C R Patil,Gujarat,NAVSARI,BJP,46,29,63.04,6.99,54.1,71.74,66.05,100,Clean / Exemplary
+107,107,Chandubhai Chhaganbhai Shihora,Gujarat,SURENDRANAGAR,BJP,39,22,56.41,10.84,66.3,76.92,52.81,100,Moderate Risk
+108,108,Devusinh Jesingbhai Chauhan,Gujarat,KHEDA,INC,37,24,64.86,12.35,46.6,64.86,32.92,100,High Risk
+109,109,Dhaval Laxmanbhai Patel,Gujarat,VALSAD(ST),BJD,27,20,74.07,11.04,86.4,74.07,82.34,100,Clean / Exemplary
+110,110,Dineshbhai Makwana,Gujarat,AHMEDABAD WEST(SC),BJP,20,13,65.0,14.16,72.8,65.0,36.11,100,High Risk
+111,111,Dr. Hemang Joshi,Gujarat,VADODARA,NCP,17,8,47.06,10.77,59.5,88.24,78.93,100,Clean / Exemplary
+112,112,Dr. Mansukh Mandaviya,Gujarat,PORBANDAR,YSR Congress,12,9,75.0,4.61,62.2,75.0,28.18,100,High Risk
+113,113,Geniben Nagaji Thakor,Gujarat,BANASKANTHA,BJP,15,9,60.0,2.29,65.8,86.67,32.5,100,High Risk
+114,114,Haribhai Patel,Gujarat,MAHESANA,JDU,37,20,54.05,6.74,41.0,78.38,20.77,100,High Risk
+115,115,Hasmukh Bhai Soma Bhai Patel,Gujarat,AHMEDABAD EAST,BJP,17,11,64.71,9.62,39.9,64.71,25.8,100,High Risk
+116,116,Jashubhai Bhilubhai Rathva,Gujarat,CHHOTA UDAIPUR(ST),RJD,46,24,52.17,4.45,65.1,84.78,68.82,100,Clean / Exemplary
+117,117,Jaswantsinh Sumanbhai Bhabhor,Gujarat,DAHOD(ST),SHS,48,25,52.08,6.76,53.8,68.75,53.19,100,Moderate Risk
+118,118,Mansukhbhai Dhanjibhai Vasava,Gujarat,BHARUCH,CPI(M),52,35,67.31,7.62,45.7,69.23,87.56,100,Clean / Exemplary
+119,119,Mitesh Rameshbhai Bakabhai Patel,Gujarat,ANAND,SHS,32,23,71.88,12.54,82.6,65.62,32.4,100,High Risk
+120,120,Mukeshkumar Chandrakaant Dalal,Gujarat,SURAT,AAP,21,16,76.19,8.22,65.4,80.95,45.65,100,Moderate Risk
+121,121,Nimuben Jayantibhai Bambhaniya,Gujarat,BHAVNAGAR,NCP,16,13,81.25,20.72,100.1,50.0,86.6,100,Clean / Exemplary
+122,122,Parshottambhai Rupala,Gujarat,RAJKOT,BJP,34,23,67.65,10.47,56.3,73.53,60.49,100,Moderate Risk
+123,123,Prabhubhai Nagarbhai Vasava,Gujarat,BARDOLI(ST),BJP,36,23,63.89,17.61,57.1,66.67,36.42,100,High Risk
+124,124,Rajeshbhai Naranbhai Chudasama,Gujarat,JUNAGADH,YSR Congress,35,22,62.86,12.16,30.8,74.29,34.4,100,High Risk
+125,125,Rajpalsinh Mahendrasinh Jadav,Gujarat,PANCHMAHAL,BJP,34,22,64.71,7.59,53.6,61.76,36.85,100,High Risk
+126,126,Shobhanaben Mahendrasinh Baraiya,Gujarat,SABARKANTHA,SP,12,5,41.67,-3.53,36.4,83.33,43.46,100,Moderate Risk
+127,127,Shri Amit Shah,Gujarat,GANDHINAGAR,BJD,38,26,68.42,11.7,53.4,63.16,78.59,100,Clean / Exemplary
+128,128,Smt Poonamben Hematbhai Maadam,Gujarat,JAMNAGAR,INC,34,20,58.82,11.48,57.7,64.71,43.84,100,Moderate Risk
+129,129,Vinod Chavda,Gujarat,KACHCHH(SC),TMC,30,17,56.67,9.05,45.1,53.33,45.2,100,Moderate Risk
+130,130,Deepender Singh Hooda,Haryana,ROHTAK,BJP,13,8,61.54,7.63,101.2,76.92,31.83,100,High Risk
+131,131,Jai Parkash,Haryana,HISAR,SHS,29,20,68.97,10.47,80.2,58.62,66.11,100,Clean / Exemplary
+132,132,Krishan Pal Gurjar,Haryana,FARIDABAD,BJP,32,20,62.5,7.89,78.2,78.12,75.76,100,Clean / Exemplary
+133,133,Manohar Lal,Haryana,KARNAL,NCP,46,27,58.7,9.17,60.7,65.22,53.22,100,Moderate Risk
+134,134,Naveen Jindal,Haryana,KURUKSHETRA,AAP,28,18,64.29,7.13,98.1,75.0,28.53,100,High Risk
+135,135,Rao Inderjit Singh,Haryana,GURGAON,YSR Congress,21,12,57.14,9.03,69.2,66.67,70.54,100,Clean / Exemplary
+136,136,Satpal Brahamchari,Haryana,SONEPAT,BJP,40,22,55.0,6.63,45.2,75.0,72.97,100,Clean / Exemplary
+137,137,Selja,Haryana,SIRSA(SC),BJP,32,18,56.25,8.54,47.2,75.0,74.29,100,Clean / Exemplary
+138,138,Shri  Dharambir Singh,Haryana,BHIWANI MAHENDRAGARH,INC,29,20,68.97,8.36,66.2,65.52,65.58,100,Clean / Exemplary
+139,139,Varun Chaudhry,Haryana,AMBALA (SC),BJP,12,6,50.0,17.69,47.2,75.0,17.04,100,High Risk
+140,140,Anurag Singh Thakur,Himachal Pradesh,HAMIRPUR_HP,SP,49,31,63.27,6.59,53.4,71.43,39.49,100,High Risk
+141,141,Kangana Ranaut,Himachal Pradesh,MANDI,TMC,11,5,45.45,13.54,49.6,63.64,77.26,100,Clean / Exemplary
+142,142,Rajeev Bhardwaj,Himachal Pradesh,KANGRA,INC,14,6,42.86,-1.7,69.4,71.43,53.7,100,Moderate Risk
+143,143,Suresh Kumar Kashyap,Himachal Pradesh,SHIMLA (SC),INC,34,22,64.71,11.06,49.8,50.0,32.5,100,High Risk
+144,144,Abdul Rashid Sheikh,Jammu And Kashmir,BARAMULLAH,TDP,39,24,61.54,8.51,78.6,69.23,36.24,100,High Risk
+145,145,Aga Syed Ruhullah Mehdi,Jammu And Kashmir,SRINAGAR,SHS,16,8,50.0,14.5,21.9,75.0,47.21,100,Moderate Risk
+146,146,Jitendra Singh,Jammu And Kashmir,UDHAMPUR,INC,51,33,64.71,10.67,75.7,76.47,57.76,100,Moderate Risk
+147,147,Mian Altaf Ahmad,Jammu And Kashmir,ANANTNAG,TMC,17,12,70.59,8.69,24.1,58.82,51.83,100,Moderate Risk
+148,148,Shri Jugal Kishore Sharma,Jammu And Kashmir,JAMMU,SHS,15,8,53.33,12.18,22.9,73.33,56.5,100,Moderate Risk
+149,149,Annpurna Devi,Jharkhand,KODARMA,JDU,22,16,72.73,12.97,76.9,59.09,33.72,100,High Risk
+150,150,Bidyut Baran Mahato,Jharkhand,JAMSHEDPUR,INC,16,11,68.75,15.82,70.9,81.25,74.4,100,Clean / Exemplary
+151,151,Dulu Mahato,Jharkhand,DHANBAD,DMK,19,11,57.89,17.25,58.9,63.16,69.51,100,Clean / Exemplary
+152,152,Joba Majhi,Jharkhand,SINGHBHUM(ST),AITC,36,23,63.89,8.92,71.6,69.44,81.23,100,Clean / Exemplary
+153,153,Kali Charan Munda,Jharkhand,KHUNTI(ST),TDP,35,25,71.43,4.38,93.0,60.0,82.21,100,Clean / Exemplary
+154,154,Kali Charan Singh,Jharkhand,CHATRA,INC,15,14,93.33,15.86,89.5,60.0,58.56,100,Moderate Risk
+155,155,Manish Jaiswal,Jharkhand,HAZARIBAGH,BJP,20,11,55.0,5.22,43.0,90.0,42.76,100,Moderate Risk
+156,156,Nalin Soren,Jharkhand,DUMKA(ST),CPI(M),26,14,53.85,8.44,47.2,65.38,62.52,100,Moderate Risk
+157,157,Nishikant Dubey,Jharkhand,GODDA,INC,33,19,57.58,5.36,71.4,75.76,34.84,100,High Risk
+158,158,Sanjay Seth,Jharkhand,RANCHI,BJP,20,15,75.0,4.39,94.0,80.0,43.98,100,Moderate Risk
+159,159,Shri Chandra Prakash Choudhary,Jharkhand,GIRIDIH,BJP,45,28,62.22,11.3,56.0,71.11,72.78,100,Clean / Exemplary
+160,160,Sukhdeo Bhagat,Jharkhand,LOHARDAGA(ST),NCP,28,18,64.29,11.1,74.5,60.71,64.8,100,Moderate Risk
+161,161,Vijay Kumar Hansdak,Jharkhand,RAJMAHAL(ST),BSP,36,21,58.33,15.9,45.1,72.22,56.66,100,Moderate Risk
+162,162,Vishnu Dayal Ram,Jharkhand,PALAMU(SC),SP,43,34,79.07,5.92,93.2,55.81,55.79,100,Moderate Risk
+163,163,Basavaraj Bommai,Karnataka,HAVERI,BJP,7,4,57.14,2.49,59.4,85.71,27.05,100,High Risk
+164,164,Captain Brijesh Chowta,Karnataka,DAKSHINA KANNADA,BJP,46,29,63.04,11.23,88.2,65.22,44.73,100,Moderate Risk
+165,165,Dr C N Manjunath,Karnataka,BANGALORE RURAL,INC,37,22,59.46,5.03,55.6,75.68,88.77,100,Clean / Exemplary
+166,166,Dr. Prabha Mallikarjun,Karnataka,DAVANAGERE,DMK,33,20,60.61,12.39,54.8,63.64,75.58,100,Clean / Exemplary
+167,167,Dr.K.Sudhakar,Karnataka,CHIKBALLAPUR,TMC,19,14,73.68,11.34,68.6,78.95,30.73,100,High Risk
+168,168,E. Tukaram,Karnataka,BELLARY(ST),INC,20,13,65.0,17.6,60.7,60.0,76.2,100,Clean / Exemplary
+169,169,G. Kumar Naik,Karnataka,RAICHUR(ST),Others,33,22,66.67,3.16,63.8,72.73,49.02,100,Moderate Risk
+170,170,Govind Makthappa Karjol,Karnataka,CHITRADURGA(SC),AITC,18,11,61.11,5.8,98.3,61.11,50.53,100,Moderate Risk
+171,171,H.D. Kumaraswamy,Karnataka,MANDYA,RJD,34,21,61.76,8.02,66.6,50.0,39.06,100,High Risk
+172,172,Jagadish Shettar,Karnataka,BELGAUM,BJP,15,7,46.67,2.5,48.9,73.33,75.96,100,Clean / Exemplary
+173,173,K. Rajashekar Basavaraj Hitnal,Karnataka,KOPPAL,BJP,20,13,65.0,14.03,74.5,60.0,32.36,100,High Risk
+174,174,Kota Srinivas Poojary,Karnataka,UDUPI CHIKMAGALUR,BSP,40,17,42.5,5.8,56.2,75.0,80.8,100,Clean / Exemplary
+175,175,M. Mallesh Babu,Karnataka,KOLAR(SC),NCP,42,26,61.9,8.06,78.7,64.29,64.84,100,Moderate Risk
+176,176,P C Mohan,Karnataka,BANGALORE CENTRAL,YSR Congress,53,26,49.06,6.29,49.6,62.26,39.28,100,High Risk
+177,177,Parvatagouda Chandanagouda Gaddigoudar,Karnataka,BAGALKOT,NCP,34,21,61.76,10.58,71.7,70.59,50.76,100,Moderate Risk
+178,178,Pralhad Venkatesh Joshi,Karnataka,DHARWAD,RJD,41,24,58.54,4.81,76.3,80.49,62.04,100,Moderate Risk
+179,179,Priyanka Satish Jarkiholi,Karnataka,CHIKKODI,BSP,10,8,80.0,23.62,86.2,60.0,30.64,100,High Risk
+180,180,Radhakrishna,Karnataka,GULBARGA(SC),TMC,37,24,64.86,9.59,53.6,72.97,76.11,100,Clean / Exemplary
+181,181,Ramesh Chandappa Jigajinagi,Karnataka,BIJAPUR(SC),BJP,38,27,71.05,6.13,78.3,60.53,29.66,100,High Risk
+182,182,Sagar Eshwar Khandre,Karnataka,BIDAR,BJP,23,16,69.57,10.61,97.1,73.91,65.99,100,Clean / Exemplary
+183,183,Shobha Karandlaje,Karnataka,BANGALORE NORTH,INC,49,34,69.39,8.26,89.4,57.14,77.51,100,Clean / Exemplary
+184,184,Shreyas. M. Patel,Karnataka,HASSAN,INC,37,20,54.05,11.44,55.0,72.97,36.79,100,High Risk
+185,185,Shri B Y Raghavendra,Karnataka,SHIMOGA,TDP,25,14,56.0,20.61,80.2,88.0,51.29,100,Moderate Risk
+186,186,Shri Ls Tejasvi Surya,Karnataka,BANGALORE SOUTH,AAP,22,11,50.0,1.07,25.6,77.27,64.19,100,Moderate Risk
+187,187,Sunil Bose,Karnataka,CHAMARAJANAGAR(SC),TDP,25,20,80.0,6.12,93.7,60.0,88.67,100,Clean / Exemplary
+188,188,V. Somanna,Karnataka,TUMKUR,SP,7,6,85.71,17.05,86.0,42.86,64.07,100,Moderate Risk
+189,189,Vishweshwar Hegde Kageri,Karnataka,UTTARA KANNADA,BJP,20,14,70.0,5.99,65.0,60.0,38.73,100,High Risk
+190,190,Yaduveer Krishnadatta Chamaraja Wadiyar,Karnataka,MYSORE,INC,31,21,67.74,12.38,62.5,77.42,56.33,100,Moderate Risk
+191,191,Adv Adoor Prakash,Kerala,ATTINGAL,BJP,40,27,67.5,11.47,75.8,70.0,76.59,100,Clean / Exemplary
+192,192,Adv Dean Kuriakose,Kerala,IDUKKI,BJP,15,10,66.67,-0.45,65.9,66.67,28.54,100,High Risk
+193,193,Adv K Francis George,Kerala,KOTTAYAM,AITC,28,22,78.57,17.86,56.5,67.86,54.09,100,Moderate Risk
+194,194,Anto Antony,Kerala,PATHANAMTHITTA,BJP,34,24,70.59,8.55,68.0,64.71,64.94,100,Moderate Risk
+195,195,Dr Shashi Tharoor,Kerala,THIRUVANANTHAPURAM,Independent,40,28,70.0,14.06,66.1,70.0,85.07,100,Clean / Exemplary
+196,196,Dr. M.P Abdussamad Samadani,Kerala,PONNANI,DMK,28,22,78.57,17.45,109.4,57.14,65.98,100,Clean / Exemplary
+197,197,E.T. Mohammed Basheer,Kerala,MALAPPURAM,INC,24,13,54.17,7.45,63.8,75.0,66.79,100,Clean / Exemplary
+198,198,K Radhakrishnan,Kerala,ALATHUR(SC),INC,39,25,64.1,13.97,45.2,76.92,75.04,100,Clean / Exemplary
+199,199,K. C Venugopal,Kerala,ALAPPUZHA,YSR Congress,23,16,69.57,7.38,63.8,52.17,85.99,100,Clean / Exemplary
+200,200,Priyanka Gandhi Vadra,Kerala,WAYANAD,BJP,37,28,75.68,7.85,57.5,62.16,27.4,100,High Risk
+201,201,Shafi Parambil,Kerala,VADAKARA,JDU,48,31,64.58,6.7,86.2,66.67,42.17,100,Moderate Risk
+202,202,Shri Benny Behanan,Kerala,CHALAKUDY,INC,31,21,67.74,11.88,64.9,77.42,69.07,100,Clean / Exemplary
+203,203,Shri Hibi Eden,Kerala,ERNAKULAM,JDU,36,22,61.11,10.5,53.5,69.44,59.73,100,Moderate Risk
+204,204,Shri Kumbakudi Sudhakaran,Kerala,KANNUR,JDU,31,20,64.52,12.71,50.2,80.65,74.17,100,Clean / Exemplary
+205,205,Shri M K Raghavan,Kerala,KOZHIKODE,TMC,35,19,54.29,10.7,33.6,68.57,27.3,100,High Risk
+206,206,Shri Nk Premachandran,Kerala,KOLLAM,TMC,17,14,82.35,10.56,85.4,76.47,40.18,100,Moderate Risk
+207,207,Shri Rajmohan Unnithan,Kerala,KASARAGOD,BJP,8,8,100.0,14.36,177.9,50.0,54.43,100,Moderate Risk
+208,208,Shri Suresh Kodikunnil,Kerala,MAVELIKKARA(SC),INC,20,16,80.0,14.12,68.6,70.0,35.26,100,High Risk
+209,209,Suresh Gopi,Kerala,THRISSUR,INC,51,39,76.47,12.17,74.7,68.63,27.65,100,High Risk
+210,210,Vellalath Kochukrishnan Nair Sreekandan,Kerala,PALAKKAD,INC,28,15,53.57,7.79,34.4,85.71,61.56,100,Moderate Risk
+211,211,Mohamed Haneefa,Ladakh,LADAKH,TDP,11,9,81.82,-1.25,111.7,81.82,49.89,100,Moderate Risk
+212,212,Muhammed Hamdullah Sayeed,Lakshadweep,LAKSHADWEEP(ST),BSP,23,14,60.87,21.37,60.7,65.22,56.7,100,Moderate Risk
+213,213,Alok Sharma,Madhya Pradesh,BHOPAL,SP,14,8,57.14,4.75,83.3,64.29,37.45,100,High Risk
+214,214,Anita Nagarsingh Chouhan,Madhya Pradesh,RATLAM(ST),RJD,20,15,75.0,13.98,75.4,80.0,43.87,100,Moderate Risk
+215,215,Ashish Dubey,Madhya Pradesh,JABALPUR,AAP,17,12,70.59,21.25,41.2,82.35,71.85,100,Clean / Exemplary
+216,216,Bharat Singh Kushwah,Madhya Pradesh,GWALIOR,INC,24,10,41.67,-0.2,37.4,75.0,69.62,100,Clean / Exemplary
+217,217,Bharti Pardhi,Madhya Pradesh,BALAGHAT,BJP,15,10,66.67,10.63,62.7,80.0,65.82,100,Clean / Exemplary
+218,218,Bunty Vivek Sahu,Madhya Pradesh,CHHINDWARA,TMC,29,14,48.28,11.91,41.0,65.52,64.06,100,Moderate Risk
+219,219,Darshan Singh Choudhary,Madhya Pradesh,HOSHANGABAD,BJP,11,6,54.55,2.23,88.7,81.82,53.18,100,Moderate Risk
+220,220,Dr. Lata Wankhede,Madhya Pradesh,SAGAR,SP,19,16,84.21,17.82,94.6,42.11,52.39,100,Moderate Risk
+221,221,Dr. Rajesh Mishra,Madhya Pradesh,SIDHI,SP,38,23,60.53,5.16,78.8,81.58,18.0,100,High Risk
+222,222,Durga Das Uikey,Madhya Pradesh,BETUL(ST),BJP,58,36,62.07,12.35,41.9,74.14,69.39,100,Clean / Exemplary
+223,223,Faggan Singh Kulaste,Madhya Pradesh,MANDLA(ST),BJP,12,7,58.33,6.71,26.5,75.0,30.52,100,High Risk
+224,224,Gajendra Singh Patel,Madhya Pradesh,KHARGONE(ST),TMC,10,4,40.0,3.28,47.0,70.0,33.35,100,High Risk
+225,225,Ganesh Singh,Madhya Pradesh,SATNA,BJD,14,6,42.86,2.74,17.0,92.86,30.93,100,High Risk
+226,226,Gyaneshwar Patil,Madhya Pradesh,KHANDWA,Others,16,10,62.5,7.15,80.4,87.5,35.57,100,High Risk
+227,227,Janardan Mishra,Madhya Pradesh,REWA,DMK,15,8,53.33,2.78,60.6,80.0,84.77,100,Clean / Exemplary
+228,228,Jyotiraditya M. Scindia,Madhya Pradesh,GUNA,BJP,16,10,62.5,15.94,52.4,75.0,71.63,100,Clean / Exemplary
+229,229,Mahendra Singh Solanky,Madhya Pradesh,DEWAS(SC),BJP,54,37,68.52,10.71,55.8,64.81,58.88,100,Moderate Risk
+230,230,Rahul Singh Lodhi,Madhya Pradesh,DAMOH,INC,29,19,65.52,9.05,105.8,68.97,42.62,100,Moderate Risk
+231,231,Rodmal Nagar,Madhya Pradesh,RAJGARH,INC,38,26,68.42,19.29,53.3,71.05,85.32,100,Clean / Exemplary
+232,232,Savitri Thakur,Madhya Pradesh,DHAR(ST),TMC,42,34,80.95,10.14,96.8,69.05,21.9,100,High Risk
+233,233,Shankar Lalwani,Madhya Pradesh,INDORE,YSR Congress,50,36,72.0,9.56,72.3,72.0,30.65,100,High Risk
+234,234,Shivmangal Singh Tomar,Madhya Pradesh,MORENA,SP,50,23,46.0,7.32,59.3,76.0,82.32,100,Clean / Exemplary
+235,235,Shivraj Singh Chouhan,Madhya Pradesh,VIDISHA,SP,27,16,59.26,3.9,32.9,62.96,77.33,100,Clean / Exemplary
+236,236,Shri Anil Firojiya,Madhya Pradesh,UJJAIN(SC),BJP,26,17,65.38,5.07,96.1,69.23,41.37,100,Moderate Risk
+237,237,Shri Sudheer Gupta,Madhya Pradesh,MANDSOUR,TMC,50,33,66.0,11.32,58.6,76.0,50.3,100,Moderate Risk
+238,238,Smt Himadri Singh,Madhya Pradesh,SHAHDOL (ST),BJP,34,27,79.41,10.04,98.8,61.76,43.84,100,Moderate Risk
+239,239,Smt Sandhya Ray,Madhya Pradesh,BHIND(SC),SP,20,15,75.0,17.64,99.4,55.0,31.2,100,High Risk
+240,240,Virendra Kumar,Madhya Pradesh,TIKAMGARH(SC),TDP,28,19,67.86,14.54,86.2,67.86,49.16,100,Moderate Risk
+241,241,Vishnu Dutt Sharma,Madhya Pradesh,KHAJURAHO,BJP,24,15,62.5,7.13,93.1,66.67,40.12,100,Moderate Risk
+242,242,Aashtikar Patil Nagesh Bapurao,Maharashtra,HINGOLI,SP,18,10,55.56,5.74,47.8,55.56,36.24,100,High Risk
+243,243,Adv Gowaal Kagada Padavi,Maharashtra,NANDURBAR(ST),TMC,19,8,42.11,7.74,30.4,68.42,56.5,100,Moderate Risk
+244,244,Amar Sharadrao Kale,Maharashtra,WARDHA,RJD,40,25,62.5,7.19,74.1,60.0,40.28,100,Moderate Risk
+245,245,Amol Ramsing Kolhe,Maharashtra,SHIRUR,TDP,29,21,72.41,8.66,78.9,72.41,49.9,100,Moderate Risk
+246,246,Anil Yeshwant Desai,Maharashtra,MUMBAI SOUTH CENTRAL,INC,10,6,60.0,6.68,56.5,90.0,32.21,100,High Risk
+247,247,Anup Sanjay Dhotre,Maharashtra,AKOLA,BJD,18,15,83.33,18.63,93.9,77.78,20.64,100,High Risk
+248,248,Arvind Ganpat Sawant,Maharashtra,MUMBAI SOUTH,AAP,10,2,20.0,-2.31,10.0,80.0,58.98,100,Moderate Risk
+249,249,Bachhav Shobha Dinesh,Maharashtra,DHULE,BJP,21,14,66.67,7.36,80.7,71.43,68.72,100,Clean / Exemplary
+250,250,Bajrang Manohar Sonwane,Maharashtra,BEED,BJP,10,6,60.0,14.51,59.9,80.0,44.24,100,Moderate Risk
+251,251,Balwant Baswant Wankhade,Maharashtra,AMRAVATI(SC),BJD,14,6,42.86,-0.7,67.4,78.57,40.09,100,Moderate Risk
+252,252,Balya Mama Suresh Gopinath Mhatre,Maharashtra,BHIWANDI,DMK,24,13,54.17,5.44,93.0,62.5,64.97,100,Moderate Risk
+253,253,Bhaskar Murlidhar Bhagare,Maharashtra,DINDORI(ST),CPI(M),28,20,71.43,4.99,77.2,67.86,42.35,100,Moderate Risk
+254,254,Bhausaheb Rajaram Wakchaure,Maharashtra,SHIRDI(SC),INC,40,30,75.0,10.15,81.8,67.5,51.39,100,Moderate Risk
+255,255,Bhumare Sandipanrao Asaram,Maharashtra,AURANGABAD_MH,YSR Congress,10,7,70.0,15.52,67.1,40.0,30.01,100,High Risk
+256,256,Chhatrapati Shahu Shahaji,Maharashtra,KOLHAPUR,BJP,43,33,76.74,9.15,85.5,72.09,86.78,100,Clean / Exemplary
+257,257,Dhairyasheel Sambhajirao Mane,Maharashtra,HATKANANGLE,SP,18,9,50.0,3.57,43.6,77.78,45.82,100,Moderate Risk
+258,258,Dhanorkar Pratibha Suresh Alias Balubhau,Maharashtra,CHANDRAPUR,TMC,16,10,62.5,10.52,52.0,43.75,69.93,100,Clean / Exemplary
+259,259,Dr Kalge Shivaji Bandappa,Maharashtra,LATUR(SC),DMK,28,13,46.43,9.55,57.7,85.71,62.74,100,Moderate Risk
+260,260,Dr. Hemant Vishnu Savara,Maharashtra,PALGHAR(ST),BJD,26,17,65.38,8.09,69.9,80.77,31.5,100,High Risk
+261,261,Dr. Kirsan Namdeo,Maharashtra,GADCHIROLI-CHIMUR(ST),NCP,30,14,46.67,8.99,31.9,73.33,81.4,100,Clean / Exemplary
+262,262,Dr. Prashant Yadaorao Padole,Maharashtra,BHANDARA-GONDIYA,TDP,27,18,66.67,6.22,64.8,81.48,52.8,100,Moderate Risk
+263,263,Gaikwad Varsha Eknath,Maharashtra,MUMBAI NORTH-CENTRAL,BJP,12,6,50.0,13.42,37.2,58.33,24.7,100,High Risk
+264,264,Kalyan Vaijinathrao Kale,Maharashtra,JALNA,BJD,15,9,60.0,9.58,39.5,86.67,77.73,100,Clean / Exemplary
+265,265,Mohite Patil Dhairyasheel Rajsinh,Maharashtra,MADHA,BJP,59,37,62.71,6.86,55.7,61.02,36.82,100,High Risk
+266,266,Murlidhar Mohol,Maharashtra,PUNE,BJP,26,18,69.23,7.28,90.4,65.38,56.34,100,Moderate Risk
+267,267,Narayan Tatu Rane,Maharashtra,RATNAGIRI-SINDHUDURG,INC,24,14,58.33,10.44,55.0,66.67,24.22,100,High Risk
+268,268,Naresh Ganpat Mhaske,Maharashtra,THANE,SP,30,20,66.67,13.34,58.9,73.33,41.79,100,Moderate Risk
+269,269,Nilesh Dnyandev Lanke,Maharashtra,AHMEDNAGAR,DMK,31,17,54.84,4.57,74.4,83.87,53.85,100,Moderate Risk
+270,270,Nitin Jairam Gadkari,Maharashtra,NAGPUR,BSP,43,28,65.12,11.4,99.8,58.14,44.14,100,Moderate Risk
+271,271,Omprakash Bhupalsinh Alias Pawan Rajenimbalkar,Maharashtra,OSMANABAD,BJD,26,19,73.08,7.77,85.6,73.08,27.87,100,High Risk
+272,272,Piyush Vedprakash Goyal,Maharashtra,MUMBAI NORTH,DMK,19,13,68.42,19.74,51.7,73.68,68.3,100,Clean / Exemplary
+273,273,Praniti Sushilkumar Shinde,Maharashtra,SOLAPUR(SC),AITC,35,23,65.71,11.39,84.0,60.0,79.6,100,Clean / Exemplary
+274,274,Prataprao Jadhav,Maharashtra,BULDHANA,BJD,18,9,50.0,7.92,36.9,66.67,44.23,100,Moderate Risk
+275,275,Rajabhau,Maharashtra,NASHIK,BJP,7,3,42.86,-1.93,50.9,85.71,33.39,100,High Risk
+276,276,Ravindra Dattaram Waikar,Maharashtra,MUMBAI NORTH WEST,DMK,40,24,60.0,12.99,44.9,55.0,60.6,100,Moderate Risk
+277,277,Ravindra Vasantrao Chavan,Maharashtra,NANDED,BSP,49,32,65.31,8.33,83.4,73.47,24.1,100,High Risk
+278,278,Sanjay Dina Patil,Maharashtra,MUMBAI NORTH EAST,JDU,29,18,62.07,9.16,83.9,86.21,48.78,100,Moderate Risk
+279,279,Sanjay Haribhau Jadhav,Maharashtra,PARBHANI,AITC,24,17,70.83,14.35,70.2,66.67,87.44,100,Clean / Exemplary
+280,280,Sanjay Uttamrao Deshmukh,Maharashtra,YAVATMAL-WASHIM,TMC,50,37,74.0,10.3,81.3,64.0,50.52,100,Moderate Risk
+281,281,Shrikant Eknath Shinde,Maharashtra,KALYAN,YSR Congress,15,9,60.0,0.91,69.4,60.0,38.03,100,High Risk
+282,282,Shrimant Chh Udayanraje Pratapsinhamaharaj Bhonsle,Maharashtra,SATARA,INC,21,12,57.14,6.01,38.7,85.71,46.87,100,Moderate Risk
+283,283,Shrirang Appa Barne,Maharashtra,MAVAL,INC,12,6,50.0,5.88,78.2,91.67,66.8,100,Clean / Exemplary
+284,284,Shyamkumar,Maharashtra,RAMTEK(SC),YSR Congress,36,22,61.11,4.76,54.4,75.0,64.53,100,Moderate Risk
+285,285,Smita Uday Wagh,Maharashtra,JALGAON,DMK,31,21,67.74,14.68,88.6,54.84,31.75,100,High Risk
+286,286,Smt Raksha Nikhil Khadse,Maharashtra,RAVER,BJP,21,14,66.67,16.7,72.8,71.43,54.23,100,Moderate Risk
+287,287,Smt Supriya Sadanand Sule,Maharashtra,BARAMATI,INC,14,8,57.14,9.51,111.5,85.71,47.26,100,Moderate Risk
+288,288,Sunil Dattatray Tatkare,Maharashtra,RAIGAD,BSP,28,21,75.0,10.55,101.3,85.71,40.0,100,Moderate Risk
+289,289,Vishal,Maharashtra,SANGLI,BJD,25,16,64.0,11.71,55.7,68.0,40.67,100,Moderate Risk
+290,290,Alfred Kanngam S Arthur,Manipur,OUTER MANIPUR(ST),INC,10,10,100.0,20.67,132.9,70.0,54.57,100,Moderate Risk
+291,291,Angomcha Bimol Akoijam,Manipur,INNER MANIPUR,BJP,27,18,66.67,2.27,55.5,59.26,78.47,100,Clean / Exemplary
+292,292,Andrew J. Syngkon,Meghalaya,SHILLONG,YSR Congress,9,8,88.89,17.53,112.7,44.44,45.74,100,Moderate Risk
+293,293,Saleng A Sangma,Meghalaya,TURA,JDU,26,10,38.46,3.44,51.7,76.92,38.32,100,High Risk
+294,294,Richard Vanlalhmangaiha,Mizoram,MIZORAM (ST),BJP,26,19,73.08,7.65,89.9,53.85,56.21,100,Moderate Risk
+295,295,S Supongmeren Jamir,Nagaland,NAGALAND,INC,36,26,72.22,6.99,83.4,63.89,85.85,100,Clean / Exemplary
+296,296,Ananta Nayak,Odisha,KEONJHAR(ST),BJP,49,34,69.39,13.1,59.3,77.55,83.58,100,Clean / Exemplary
+297,297,Anita Subhadarshini,Odisha,ASKA,DMK,17,13,76.47,21.85,58.0,76.47,66.2,100,Clean / Exemplary
+298,298,Avimanyu Sethi,Odisha,BHADRAK(SC),SHS,16,9,56.25,9.31,34.8,75.0,22.14,100,High Risk
+299,299,Baijayant Panda,Odisha,KENDRAPARA,YSR Congress,15,12,80.0,14.85,85.9,60.0,71.65,100,Clean / Exemplary
+300,300,Balabhadra Majhi,Odisha,NABARANGPUR(ST),AAP,23,17,73.91,8.16,75.0,78.26,31.63,100,High Risk
+301,301,Bibhu Prasad Tarai,Odisha,JAGATSINGHPUR(SC),SP,13,8,61.54,14.47,49.2,53.85,86.31,100,Clean / Exemplary
+302,302,Dharmendra Pradhan,Odisha,SAMBALPUR,BJP,29,18,62.07,9.58,91.8,68.97,51.32,100,Moderate Risk
+303,303,Dr. Pradeep Kumar Panigrahy,Odisha,BERHAMPUR,BJP,14,9,64.29,4.89,53.2,78.57,30.62,100,High Risk
+304,304,Malvika Devi,Odisha,KALAHANDI,JDU,16,10,62.5,12.34,61.9,37.5,29.21,100,High Risk
+305,305,Naba Charan Majhi,Odisha,MAYURBHANJ (ST),DMK,39,28,71.79,9.69,66.5,53.85,45.95,100,Moderate Risk
+306,306,Pradeep Purohit,Odisha,BARGARH,BJP,9,8,88.89,9.42,99.1,77.78,22.53,100,High Risk
+307,307,Pratap Chandra Sarangi,Odisha,BALASORE,INC,37,23,62.16,2.52,63.7,59.46,42.19,100,Moderate Risk
+308,308,Rabindra Narayan Behera,Odisha,JAJPUR(SC),BSP,28,17,60.71,5.78,75.2,53.57,63.1,100,Moderate Risk
+309,309,Rudra Narayan Pany,Odisha,DHENKANAL,BJP,20,16,80.0,16.04,97.0,70.0,30.97,100,High Risk
+310,310,Sambit Patra,Odisha,PURI,BSP,28,18,64.29,15.39,99.6,85.71,73.16,100,Clean / Exemplary
+311,311,Saptagiri Sankar Ulaka,Odisha,KORAPUT(ST),INC,30,22,73.33,19.49,82.4,63.33,28.38,100,High Risk
+312,312,Shri Bhartruhari Mahtab,Odisha,CUTTACK,TDP,39,24,61.54,9.54,98.4,66.67,84.27,100,Clean / Exemplary
+313,313,Shri Jual Oram,Odisha,SUNDARGARH (ST),DMK,56,37,66.07,6.1,54.9,53.57,61.78,100,Moderate Risk
+314,314,Smt Aparajita Sarangi,Odisha,BHUBANESWAR,BSP,32,21,65.62,12.81,58.4,71.88,41.02,100,Moderate Risk
+315,315,Smt Sangeeta Kumari Singh Deo,Odisha,BOLANGIR,CPI(M),46,29,63.04,6.03,92.5,56.52,83.01,100,Clean / Exemplary
+316,316,Sukanta Kumar Panigrahi,Odisha,KANDHAMAL,JDU,31,22,70.97,6.65,89.9,67.74,31.83,100,High Risk
+317,317,Vaithilingam Ve,Puducherry,PUDUCHERRY,BJP,13,10,76.92,15.16,59.7,76.92,40.33,100,Moderate Risk
+318,318,Amrinder Singh Raja Warring,Punjab,LUDHIANA,AAP,49,30,61.22,11.77,54.4,69.39,42.62,100,Moderate Risk
+319,319,Charanjit Singh Channi,Punjab,JALANDHAR(SC),Others,42,29,69.05,7.02,87.2,76.19,76.9,100,Clean / Exemplary
+320,320,Dr Dharamvira Gandhi,Punjab,PATIALA,BJP,19,10,52.63,9.25,91.0,63.16,58.97,100,Moderate Risk
+321,321,Dr. Raj Kumar Chabbewal,Punjab,HOSHIARPUR(SC),BJP,40,21,52.5,2.37,54.1,70.0,27.74,100,High Risk
+322,322,Gurmeet Singh Meet Hayer,Punjab,SANGRUR,DMK,10,4,40.0,-1.61,59.0,80.0,21.57,100,High Risk
+323,323,Malvinder Singh Kang,Punjab,ANANDPUR SAHIB,TDP,21,12,57.14,9.26,65.0,71.43,88.0,100,Clean / Exemplary
+324,324,Sarabjeet Singh Khalsa,Punjab,FARIDKOT(SC),NCP,8,5,62.5,-1.74,64.6,100.0,32.49,100,High Risk
+325,325,Sher Singh Ghubaya,Punjab,FIROZPUR,DMK,42,24,57.14,9.0,63.1,57.14,31.36,100,High Risk
+326,326,Shri Amar Singh,Punjab,FATEHGARH SAHIB(SC),BJP,11,10,90.91,12.08,38.9,36.36,68.04,100,Clean / Exemplary
+327,327,Shri Gurjeet Singh Aujla,Punjab,AMRITSAR,BJP,12,9,75.0,15.7,91.2,75.0,69.26,100,Clean / Exemplary
+328,328,Smt Harsimrat Kaur Badal,Punjab,BHATINDA,YSR Congress,30,20,66.67,5.95,59.7,60.0,53.29,100,Moderate Risk
+329,329,Sukhjinder Singh Randhawa,Punjab,GURDASPUR,AITC,23,12,52.17,5.03,46.3,78.26,39.3,100,High Risk
+330,330,Amraram,Rajasthan,SIKAR,BJP,56,34,60.71,11.69,53.1,66.07,46.7,100,Moderate Risk
+331,331,Bhagirath Chaudhary,Rajasthan,AJMER,YSR Congress,31,20,64.52,10.28,83.1,74.19,28.27,100,High Risk
+332,332,Bhajan Lal Jatav,Rajasthan,KARAULI-DHOLPUR(SC),BJP,35,25,71.43,15.89,65.7,65.71,76.24,100,Clean / Exemplary
+333,333,Bhupender Yadav,Rajasthan,ALWAR,INC,36,22,61.11,11.48,83.2,69.44,25.94,100,High Risk
+334,334,Brijendra Singh Ola,Rajasthan,JHUNJHUNU,BJP,31,19,61.29,12.57,60.1,77.42,20.85,100,High Risk
+335,335,Chandra Prakash Joshi,Rajasthan,CHITTORGARH,NCP,18,11,61.11,5.58,58.7,50.0,21.85,100,High Risk
+336,336,Damodar Agarwal,Rajasthan,BHILWARA,BJP,22,13,59.09,6.9,83.5,68.18,36.81,100,High Risk
+337,337,Dushyant Singh,Rajasthan,JHALAWAR-BARAN,INC,17,11,64.71,3.95,77.5,70.59,56.32,100,Moderate Risk
+338,338,Gajendra Singh Shekhawat,Rajasthan,JODHPUR,TMC,28,16,57.14,7.48,60.6,75.0,74.29,100,Clean / Exemplary
+339,339,Harish Chandra Meena,Rajasthan,TONK-SAWAI MADHOPUR,BJP,37,22,59.46,6.59,39.7,78.38,62.04,100,Moderate Risk
+340,340,Kuldeep Indora,Rajasthan,GANGANAGAR(SC),BSP,28,18,64.29,16.41,60.7,60.71,68.65,100,Clean / Exemplary
+341,341,Lumbaram,Rajasthan,JALORE,BJP,30,22,73.33,13.26,62.2,70.0,22.21,100,High Risk
+342,342,Mahima Kumari Mewar,Rajasthan,RAJSAMAND,INC,5,3,60.0,11.6,23.4,80.0,37.76,100,High Risk
+343,343,Manju Sharma,Rajasthan,JAIPUR,BJP,21,15,71.43,6.3,63.6,85.71,63.16,100,Moderate Risk
+344,344,Manna Lal Rawat,Rajasthan,UDAIPUR(ST),BJP,40,28,70.0,7.73,47.5,62.5,31.69,100,High Risk
+345,345,Murari Lal Meena,Rajasthan,DAUSA(ST),BJP,31,21,67.74,6.51,43.1,61.29,36.63,100,High Risk
+346,346,Om Birla,Rajasthan,KOTA,SP,14,11,78.57,11.88,85.2,64.29,53.46,100,Moderate Risk
+347,347,Rahul Kaswan,Rajasthan,CHURU,JDU,42,28,66.67,7.83,47.0,69.05,52.16,100,Moderate Risk
+348,348,Raj Kumar Roat,Rajasthan,BANSWARA(ST),YSR Congress,25,20,80.0,13.61,105.3,64.0,82.66,100,Clean / Exemplary
+349,349,Rao Rajendra Singh,Rajasthan,JAIPUR RURAL,YSR Congress,34,17,50.0,10.19,34.9,67.65,68.69,100,Clean / Exemplary
+350,350,Sanjna Jatav,Rajasthan,BHARATPUR(SC),AAP,9,5,55.56,6.99,53.4,88.89,70.6,100,Clean / Exemplary
+351,351,Shri Arjun Ram Meghwal,Rajasthan,BIKANER(SC),BSP,22,16,72.73,5.54,60.2,50.0,85.68,100,Clean / Exemplary
+352,352,Shri Hanuman Beniwal,Rajasthan,NAGAUR,YSR Congress,17,10,58.82,10.53,43.8,76.47,52.81,100,Moderate Risk
+353,353,Shri Pp Chaudhary,Rajasthan,PALI,INC,14,6,42.86,14.35,32.4,57.14,39.38,100,High Risk
+354,354,Ummeda Ram Beniwal,Rajasthan,BARMER,AAP,33,24,72.73,11.75,56.0,54.55,63.73,100,Moderate Risk
+355,355,Indra Hang Subba,Sikkim,SIKKIM,SP,11,8,72.73,4.39,23.3,72.73,56.55,100,Moderate Risk
+356,356,Andimuthu Raja,Tamil Nadu,NILGIRIS(SC),BSP,37,25,67.57,5.81,58.7,72.97,36.94,100,High Risk
+357,357,Arun Nehru,Tamil Nadu,PERAMBALUR,BJP,18,15,83.33,18.99,52.6,50.0,70.57,100,Clean / Exemplary
+358,358,Cn Annadurai,Tamil Nadu,TIRUVANNAMALAI,BJP,19,10,52.63,5.65,89.2,63.16,58.16,100,Moderate Risk
+359,359,D M Kathir Anand,Tamil Nadu,VELLORE,INC,27,16,59.26,4.07,97.4,77.78,53.6,100,Moderate Risk
+360,360,D Ravikumar,Tamil Nadu,VILUPPURAM(SC),INC,33,21,63.64,9.07,48.6,60.61,40.42,100,Moderate Risk
+361,361,Dr Rani Sri Kumar,Tamil Nadu,TENKASI(SC),TMC,12,7,58.33,8.44,54.4,66.67,60.41,100,Moderate Risk
+362,362,Durai Vaiko,Tamil Nadu,TIRUCHIRAPPALLI,RJD,21,13,61.9,5.49,74.5,66.67,71.55,100,Clean / Exemplary
+363,363,Eswarasamy K,Tamil Nadu,POLLACHI,INC,35,22,62.86,9.96,56.1,71.43,46.76,100,Moderate Risk
+364,364,Ganapathy Rajkumar P,Tamil Nadu,COIMBATORE,BJP,44,29,65.91,11.85,77.3,56.82,52.39,100,Moderate Risk
+365,365,Ganesan Selvam,Tamil Nadu,KANCHEEPURAM(SC),BJD,8,5,62.5,2.82,113.4,50.0,36.2,100,High Risk
+366,366,Gopinath K,Tamil Nadu,KRISHNAGIRI,YSR Congress,38,25,65.79,6.28,76.5,71.05,61.32,100,Moderate Risk
+367,367,K E Prakash,Tamil Nadu,ERODE,BJD,41,24,58.54,6.53,71.6,70.73,49.94,100,Moderate Risk
+368,368,K Subbarayan,Tamil Nadu,TIRUPPUR,BJP,7,3,42.86,13.39,21.6,71.43,52.72,100,Moderate Risk
+369,369,Kalanidhi Veeraswamy,Tamil Nadu,CHENNAI NORTH,TDP,15,9,60.0,13.51,14.8,53.33,53.2,100,Moderate Risk
+370,370,Kani K Navas,Tamil Nadu,RAMANATHAPURAM,YSR Congress,34,20,58.82,10.0,47.8,85.29,63.18,100,Moderate Risk
+371,371,Kanimozhi Karunanidhi,Tamil Nadu,THOOTHUKKUDI,BJP,36,22,61.11,9.16,103.6,69.44,57.8,100,Moderate Risk
+372,372,M.K. Vishnuprasad,Tamil Nadu,CUDDALORE,DMK,28,17,60.71,10.2,54.0,60.71,25.61,100,High Risk
+373,373,Malaiyarasan D,Tamil Nadu,KALLAKURICHI,YSR Congress,36,21,58.33,6.53,71.0,66.67,52.37,100,Moderate Risk
+374,374,Mani. A.,Tamil Nadu,DHARAMAPURI,TMC,35,24,68.57,13.57,63.9,48.57,64.83,100,Moderate Risk
+375,375,Manickam Tagore B,Tamil Nadu,VIRUDHUNAGAR,Independent,47,30,63.83,11.03,57.7,68.09,31.45,100,High Risk
+376,376,Murasoli S,Tamil Nadu,THANJAVUR,TMC,38,22,57.89,6.89,73.9,52.63,66.77,100,Clean / Exemplary
+377,377,Robert Bruce C,Tamil Nadu,TIRUNELVELI,YSR Congress,34,20,58.82,9.95,60.1,67.65,33.54,100,High Risk
+378,378,S Venkatesan,Tamil Nadu,MADURAI,TMC,13,8,61.54,15.36,65.2,61.54,33.03,100,High Risk
+379,379,S. Jagathrakshakan,Tamil Nadu,ARAKKONAM,TMC,36,20,55.56,5.41,51.7,91.67,27.42,100,High Risk
+380,380,Sachithanantham R,Tamil Nadu,DINDIGUL,YSR Congress,36,25,69.44,11.4,71.7,77.78,73.59,100,Clean / Exemplary
+381,381,Sasikanth Senthil,Tamil Nadu,TIRUVALLUR(SC),BJP,26,15,57.69,12.66,36.1,73.08,61.45,100,Moderate Risk
+382,382,Selvaganapathi T M,Tamil Nadu,SALEM,YSR Congress,24,15,62.5,7.9,79.5,87.5,75.5,100,Clean / Exemplary
+383,383,Selvaraj V,Tamil Nadu,NAGAPATTINAM(SC),BJP,43,29,67.44,9.33,97.0,60.47,84.06,100,Clean / Exemplary
+384,384,Shri Karti P Chidambaram,Tamil Nadu,SIVAGANGA,INC,21,15,71.43,16.01,97.7,71.43,52.87,100,Moderate Risk
+385,385,Shri Vijayakumar Vasanth,Tamil Nadu,KANNIYAKUMARI,BJP,10,6,60.0,8.82,77.4,90.0,68.2,100,Clean / Exemplary
+386,386,Smt S Jothimani,Tamil Nadu,KARUR,TMC,20,12,60.0,4.4,112.2,55.0,68.18,100,Clean / Exemplary
+387,387,Sudha R,Tamil Nadu,MAYILADUTHURAI,YSR Congress,25,16,64.0,3.7,98.7,68.0,35.57,100,High Risk
+388,388,T Sumathy (A) Thamizhachi Thangapandian,Tamil Nadu,CHENNAI SOUTH,CPI(M),37,24,64.86,3.85,91.5,78.38,39.51,100,High Risk
+389,389,Thalikkottai Rajuthevar Baalu,Tamil Nadu,SRIPERUMBUDUR,INC,14,10,71.43,14.81,43.8,85.71,39.63,100,High Risk
+390,390,Thanga Tamilselvan,Tamil Nadu,THENI,NCP,12,8,66.67,17.63,64.2,58.33,44.42,100,Moderate Risk
+391,391,Tharaniventhan M S,Tamil Nadu,ARANI,BJP,31,19,61.29,10.65,48.8,67.74,68.2,100,Clean / Exemplary
+392,392,Thiru Dayanidhi Maran,Tamil Nadu,CHENNAI CENTRAL,BJP,19,8,42.11,8.27,49.1,68.42,75.62,100,Clean / Exemplary
+393,393,Thirumaa Valavan Thol,Tamil Nadu,CHIDAMBARAM(SC),BJP,31,16,51.61,6.11,40.5,70.97,40.67,100,Moderate Risk
+394,394,V S Matheswaran,Tamil Nadu,NAMAKKAL,TMC,15,10,66.67,13.05,86.7,66.67,61.01,100,Moderate Risk
+395,395,Aruna. D. K,Telangana,MAHABUBNAGAR,RJD,13,11,84.62,4.56,86.8,61.54,85.83,100,Clean / Exemplary
+396,396,Arvind Dharmapuri,Telangana,NIZAMABAD,TDP,19,12,63.16,10.41,74.6,73.68,20.89,100,High Risk
+397,397,Asaduddin Owaisi,Telangana,HYDERABAD,BJP,50,33,66.0,9.73,61.1,66.0,63.05,100,Moderate Risk
+398,398,Balram Naik Porika,Telangana,MAHABUBABAD,BJP,39,28,71.79,18.77,54.5,71.79,63.11,100,Moderate Risk
+399,399,Chamala Kiran Kumar Reddy,Telangana,BHONGIR,SHS,36,20,55.56,8.68,48.3,72.22,31.38,100,High Risk
+400,400,Dr.Mallu Ravi,Telangana,NAGARKURNOOL(SC),DMK,35,18,51.43,10.05,52.1,85.71,81.05,100,Clean / Exemplary
+401,401,Eatala Rajender,Telangana,MALKAJGIRI,BJP,25,18,72.0,14.98,84.8,64.0,19.49,100,High Risk
+402,402,Godam Nagesh,Telangana,ADILABAD(ST),INC,26,13,50.0,9.25,60.0,73.08,82.49,100,Clean / Exemplary
+403,403,Kadiyam Kavya,Telangana,WARANGEL(SC),JDU,43,28,65.12,13.14,65.8,69.77,24.05,100,High Risk
+404,404,Kishan Reddy Gangapuram,Telangana,SECUNDERABAD,BJP,22,17,77.27,10.66,97.4,63.64,64.7,100,Moderate Risk
+405,405,Konda Vishweshwar Reddy,Telangana,CHELVELLA,TMC,18,12,66.67,6.33,45.6,66.67,22.37,100,High Risk
+406,406,Kunduru Raghuveer,Telangana,NALGONDA,Others,17,12,70.59,0.25,73.8,76.47,34.2,100,High Risk
+407,407,Madhavaneni Raghunandan Rao,Telangana,MEDAK,TDP,42,26,61.9,4.24,108.4,78.57,37.3,100,High Risk
+408,408,Ramasahayam Raghuram Reddy,Telangana,KHAMMAM,TMC,28,15,53.57,10.06,82.6,82.14,57.96,100,Moderate Risk
+409,409,Sanjay Kumar Bandi,Telangana,KARIMNAGAR,TMC,25,11,44.0,4.29,39.9,72.0,37.92,100,High Risk
+410,410,Suresh Kumar Shetkar,Telangana,ZAHIRABAD,TMC,34,26,76.47,11.56,75.4,82.35,84.85,100,Clean / Exemplary
+411,411,Vamsi Krishna Gaddam,Telangana,PEDDAPALLE,BJP,22,11,50.0,6.61,40.5,77.27,63.57,100,Moderate Risk
+412,412,Kalaben Mohanbhai Delkar,The Dadra And Nagar Haveli And Daman And Diu,DADRA & NAGAR HAVELI (ST),BJP,29,18,62.07,7.58,69.9,79.31,77.11,100,Clean / Exemplary
+413,413,Patel Umeshbhai Babubhai,The Dadra And Nagar Haveli And Daman And Diu,DAMAN AND DIU,DMK,24,14,58.33,4.28,63.4,66.67,32.6,100,High Risk
+414,414,Biplab Kumar Deb,Tripura,TRIPURA WEST,SP,47,30,63.83,4.64,53.9,65.96,28.23,100,High Risk
+415,415,Kriti Devi Debbarman,Tripura,TRIPURA EAST(ST),TMC,24,15,62.5,0.47,54.4,75.0,25.07,100,High Risk
+416,416,Aditya Yadav,Uttar Pradesh,BADAUN,BJP,45,32,71.11,11.74,64.6,68.89,62.53,100,Moderate Risk
+417,417,Afzal Ansari,Uttar Pradesh,GHAZIPUR,BJP,24,19,79.17,11.66,127.9,79.17,52.66,100,Moderate Risk
+418,418,Ajendra Singh Lodhi,Uttar Pradesh,HAMIRPUR_UP,INC,26,18,69.23,12.51,81.5,73.08,80.42,100,Clean / Exemplary
+419,419,Akhilesh Yadav,Uttar Pradesh,KANNAUJ,YSR Congress,32,20,62.5,13.61,32.4,71.88,42.76,100,Moderate Risk
+420,420,Akshaya Yadav,Uttar Pradesh,FIROZABAD,BSP,36,26,72.22,13.95,66.2,69.44,28.37,100,High Risk
+421,421,Anand Bhadauriya,Uttar Pradesh,DHAURAHRA,TMC,10,5,50.0,-1.22,60.1,70.0,87.37,100,Clean / Exemplary
+422,422,Anand Kumar,Uttar Pradesh,BAHRAICH(SC),TMC,22,15,68.18,5.2,77.0,68.18,22.58,100,High Risk
+423,423,Anoop Pradhan Balmiki,Uttar Pradesh,HATHRAS (SC),JDU,33,19,57.58,7.3,71.1,66.67,44.44,100,Moderate Risk
+424,424,Anurag Sharma,Uttar Pradesh,JHANSI,BJD,37,22,59.46,5.37,64.5,72.97,58.41,100,Moderate Risk
+425,425,Arun Govil,Uttar Pradesh,MEERUT,DMK,17,11,64.71,11.62,53.1,94.12,75.64,100,Clean / Exemplary
+426,426,Ashok Kumar Rawat,Uttar Pradesh,MISRIKH(SC),TDP,25,16,64.0,15.82,60.8,64.0,76.66,100,Clean / Exemplary
+427,427,Atul Garg,Uttar Pradesh,GHAZIABAD,DMK,33,15,45.45,6.78,74.0,66.67,31.44,100,High Risk
+428,428,Awadhesh Prasad,Uttar Pradesh,FAIZABAD,BJP,11,7,63.64,7.76,81.9,72.73,56.56,100,Moderate Risk
+429,429,Babu Singh Kushwaha,Uttar Pradesh,JAUNPUR,BJP,43,29,67.44,7.81,74.6,72.09,50.73,100,Moderate Risk
+430,430,Bhola Singh,Uttar Pradesh,BULANDSHAHR(SC),JDU,13,8,61.54,21.28,37.8,53.85,58.47,100,Moderate Risk
+431,431,Chandan Chauhan,Uttar Pradesh,BIJNOR,AITC,12,7,58.33,13.36,31.3,58.33,62.94,100,Moderate Risk
+432,432,Chandra Shekhar,Uttar Pradesh,NAGINA(SC),Independent,34,20,58.82,1.05,53.9,61.76,61.59,100,Moderate Risk
+433,433,Chhatra Pal Singh Gangwar,Uttar Pradesh,BAREILLY,BJP,8,1,12.5,1.11,53.1,75.0,86.13,100,Clean / Exemplary
+434,434,Chhotelal,Uttar Pradesh,ROBERTSGANJ(SC),BJD,41,28,68.29,13.91,70.7,51.22,45.07,100,Moderate Risk
+435,435,Daroga Prasad Saroj,Uttar Pradesh,LALGANJ (SC),BJP,40,28,70.0,16.29,76.4,70.0,29.72,100,High Risk
+436,436,Devendra Alias Bhole Singh,Uttar Pradesh,AKBARPUR,INC,32,12,37.5,-1.08,84.1,81.25,52.25,100,Moderate Risk
+437,437,Devesh Shakya,Uttar Pradesh,ETAH,BJP,35,25,71.43,6.89,96.7,65.71,84.46,100,Clean / Exemplary
+438,438,Dharmendra Yadav,Uttar Pradesh,AZAMGARH,BJP,15,9,60.0,5.63,48.7,80.0,21.4,100,High Risk
+439,439,Dr Rajkumar Sangwan,Uttar Pradesh,BAGHPAT,NCP,26,15,57.69,4.23,18.9,69.23,89.3,100,Clean / Exemplary
+440,440,Dr. S P Singh,Uttar Pradesh,PRATAPGARH,BJP,16,9,56.25,11.18,43.9,75.0,68.58,100,Clean / Exemplary
+441,441,Harendra Singh Malik,Uttar Pradesh,MUZAFFARNAGAR,BJD,19,13,68.42,11.4,37.2,73.68,39.18,100,High Risk
+442,442,Imran Masood,Uttar Pradesh,SAHARANPUR,BJP,29,16,55.17,5.47,90.8,58.62,44.9,100,Moderate Risk
+443,443,Iqra Choudhary,Uttar Pradesh,KAIRANA,BJP,28,19,67.86,12.76,76.6,75.0,38.36,100,High Risk
+444,444,Jagdambika Pal,Uttar Pradesh,DOMARIYAGANJ,TDP,46,26,56.52,6.35,73.2,73.91,37.41,100,High Risk
+445,445,Jai Prakash,Uttar Pradesh,HARDOI (SC),AITC,39,22,56.41,11.16,57.9,64.1,35.48,100,High Risk
+446,446,Jitendra Kumar Dohare,Uttar Pradesh,ETAWAH(SC),SP,20,12,60.0,7.76,99.4,70.0,45.89,100,Moderate Risk
+447,447,Jitin Prasada,Uttar Pradesh,PILIBHIT,BJP,12,9,75.0,9.44,38.8,83.33,63.11,100,Moderate Risk
+448,448,Kamlesh Paswan,Uttar Pradesh,BANSGAON(SC),INC,11,7,63.64,11.53,57.8,63.64,77.81,100,Clean / Exemplary
+449,449,Kanwar Singh Tanwar,Uttar Pradesh,AMROHA,YSR Congress,10,5,50.0,12.81,22.3,70.0,87.41,100,Clean / Exemplary
+450,450,Karan Bhushan Singh,Uttar Pradesh,KAISERGANJ,BJP,35,20,57.14,7.92,57.9,62.86,85.61,100,Clean / Exemplary
+451,451,Kirti Vardhan Singh,Uttar Pradesh,GONDA,INC,25,12,48.0,3.08,89.4,68.0,86.56,100,Clean / Exemplary
+452,452,Kishori Lal,Uttar Pradesh,AMETHI,BJP,38,24,63.16,9.71,78.4,63.16,65.76,100,Clean / Exemplary
+453,453,Krishna Devi Shivshanker Patel,Uttar Pradesh,BANDA,TMC,25,16,64.0,10.15,48.7,68.0,50.12,100,Moderate Risk
+454,454,Lalji Verma,Uttar Pradesh,AMBEDKAR NAGAR,DMK,18,10,55.56,-2.96,61.2,61.11,63.27,100,Moderate Risk
+455,455,Laxmikant Pappu Nishad,Uttar Pradesh,SANT KABIR NAGAR,DMK,48,27,56.25,8.0,50.6,70.83,47.78,100,Moderate Risk
+456,456,Mahesh Sharma,Uttar Pradesh,GAUTAM BUDDHA NAGAR,TDP,32,16,50.0,6.08,67.2,75.0,40.31,100,Moderate Risk
+457,457,Mohibbullah,Uttar Pradesh,RAMPUR,BJD,41,21,51.22,8.42,58.8,68.29,85.17,100,Clean / Exemplary
+458,458,Mukesh Rajput,Uttar Pradesh,FARRUKHABAD,DMK,17,12,70.59,14.84,90.3,70.59,77.25,100,Clean / Exemplary
+459,459,Narayan Das Ahirwar,Uttar Pradesh,JALAUN(SC),JDU,54,35,64.81,7.43,55.7,64.81,20.53,100,High Risk
+460,460,Naresh Chandra Uttam Patel,Uttar Pradesh,FATEHPUR,INC,26,16,61.54,17.32,59.8,69.23,37.97,100,High Risk
+461,461,Neeraj Maurya,Uttar Pradesh,AONLA,DMK,39,24,61.54,13.68,48.3,71.79,69.63,100,Clean / Exemplary
+462,462,Pankaj Chowdhary,Uttar Pradesh,MAHARAJGANJ_UP,INC,37,22,59.46,8.02,52.4,72.97,29.55,100,High Risk
+463,463,Praveen Patel,Uttar Pradesh,PHULPUR,BJP,24,17,70.83,9.27,94.5,79.17,32.73,100,High Risk
+464,464,Priya Saroj,Uttar Pradesh,MACHHLISHAHR(SC),INC,24,12,50.0,7.38,53.9,83.33,87.61,100,Clean / Exemplary
+465,465,Prof Sp Singh Baghel,Uttar Pradesh,AGRA(SC),INC,35,19,54.29,5.71,58.5,57.14,29.96,100,High Risk
+466,466,Pushpendra Saroj,Uttar Pradesh,KAUSHAMBI(SC),Others,41,27,65.85,10.77,84.9,68.29,24.36,100,High Risk
+467,467,R.K. Chaudhary,Uttar Pradesh,MOHANLALGANJ(SC),BJP,25,14,56.0,1.92,64.2,68.0,82.06,100,Clean / Exemplary
+468,468,Rahul Gandhi,Uttar Pradesh,RAE BARELI,TMC,24,16,66.67,12.82,57.2,66.67,42.73,100,Moderate Risk
+469,469,Rajeev Rai,Uttar Pradesh,GHOSI,BJP,5,5,100.0,23.34,172.6,40.0,74.23,100,Clean / Exemplary
+470,470,Rajkumar Chahar,Uttar Pradesh,FATEHPUR SIKRI,INC,21,12,57.14,1.37,84.1,71.43,65.95,100,Clean / Exemplary
+471,471,Rajnath Singh,Uttar Pradesh,LUCKNOW,INC,50,31,62.0,12.1,77.9,74.0,44.89,100,Moderate Risk
+472,472,Rakesh Rathor,Uttar Pradesh,SITAPUR,TMC,39,20,51.28,2.86,30.1,53.85,37.66,100,High Risk
+473,473,Ram Prasad Chaudhary,Uttar Pradesh,BASTI,BJP,26,15,57.69,9.94,48.5,73.08,53.12,100,Moderate Risk
+474,474,Ram Shiromani,Uttar Pradesh,SHRAWASTI,TMC,32,16,50.0,3.67,53.0,75.0,62.71,100,Moderate Risk
+475,475,Ramashankar Rajbhar,Uttar Pradesh,SALEMPUR,YSR Congress,13,11,84.62,10.24,106.1,53.85,57.56,100,Moderate Risk
+476,476,Rambhual Nishad,Uttar Pradesh,SULTANPUR,BJP,48,36,75.0,13.21,67.0,56.25,48.46,100,Moderate Risk
+477,477,Ramesh Awasthi,Uttar Pradesh,KANPUR,NCP,38,25,65.79,12.77,77.7,68.42,26.94,100,High Risk
+478,478,Ravindra Shyamnarayan Alias Ravi Kishan Shukla,Uttar Pradesh,GORAKHPUR,SHS,15,11,73.33,15.33,103.8,80.0,76.35,100,Clean / Exemplary
+479,479,Ruchi Vira,Uttar Pradesh,MORADABAD,INC,12,5,41.67,3.32,28.7,58.33,61.14,100,Moderate Risk
+480,480,Sanatan Pandey,Uttar Pradesh,BALLIA,JDU,28,19,67.86,12.19,104.9,82.14,26.01,100,High Risk
+481,481,Shashank Mani,Uttar Pradesh,DEORIA,Independent,49,35,71.43,9.09,66.1,69.39,76.25,100,Clean / Exemplary
+482,482,Shri Arun Kumar Sagar,Uttar Pradesh,SHAHJAHANPUR(SC),BJD,12,6,50.0,0.44,42.4,91.67,38.22,100,High Risk
+483,483,Shri Narendra Modi,Uttar Pradesh,VARANASI,TMC,13,6,46.15,4.14,49.6,61.54,54.03,100,Moderate Risk
+484,484,Shri Satish Kumar Gautam,Uttar Pradesh,ALIGARH,TMC,34,21,61.76,11.89,68.0,73.53,76.18,100,Clean / Exemplary
+485,485,Smt Anupriya Patel,Uttar Pradesh,MIRZAPUR,AAP,34,21,61.76,4.88,61.1,70.59,65.66,100,Clean / Exemplary
+486,486,Smt Dimple Yadav,Uttar Pradesh,MAINPURI,RJD,30,17,56.67,5.31,67.0,70.0,49.67,100,Moderate Risk
+487,487,Smt Hema Malini,Uttar Pradesh,MATHURA,INC,44,29,65.91,6.57,66.9,72.73,46.22,100,Moderate Risk
+488,488,Swami Sachchidanandhari Sakshi Ji Maharaj,Uttar Pradesh,UNNAO,BJP,40,23,57.5,10.5,29.9,80.0,68.48,100,Clean / Exemplary
+489,489,Tanuj Punia,Uttar Pradesh,BARABANKI(SC),BJP,45,29,64.44,13.8,68.8,77.78,63.37,100,Moderate Risk
+490,490,Ujjwal Raman Singh,Uttar Pradesh,ALLAHABAD,TMC,27,15,55.56,8.05,47.3,81.48,28.6,100,High Risk
+491,491,Utkarsh Verma Madhur,Uttar Pradesh,KHERI,DMK,7,6,85.71,-5.9,12.9,71.43,77.58,100,Clean / Exemplary
+492,492,Vijay Kumar Dubey,Uttar Pradesh,KUSHI NAGAR,BJP,35,20,57.14,4.57,59.0,71.43,55.31,100,Moderate Risk
+493,493,Vinod Kumar Bind,Uttar Pradesh,BHADOHI,INC,34,21,61.76,10.12,64.0,73.53,34.62,100,High Risk
+494,494,Virendra Singh,Uttar Pradesh,CHANDAULI,BJP,27,18,66.67,12.68,79.4,66.67,53.06,100,Moderate Risk
+495,495,Zia Ur Rehman,Uttar Pradesh,SAMBHAL,BJP,25,17,68.0,10.37,58.8,76.0,76.5,100,Clean / Exemplary
+496,496,Ajay Bhatt,Uttarakhand,NAINITAL UDHAM SINGH NAG.,NCP,56,31,55.36,11.37,54.4,75.0,57.99,100,Moderate Risk
+497,497,Ajay Tamta,Uttarakhand,ALMORA(SC),BJP,10,6,60.0,9.22,32.8,70.0,71.03,100,Clean / Exemplary
+498,498,Anil Baluni,Uttarakhand,GARHWAL,TMC,32,19,59.38,8.88,70.3,71.88,67.43,100,Clean / Exemplary
+499,499,Mala Rajya Laxmi Shah,Uttarakhand,TEHRI GARHWAL,INC,23,16,69.57,16.75,78.4,60.87,80.69,100,Clean / Exemplary
+500,500,Trivendra Singh Rawat,Uttarakhand,HARDWAR,YSR Congress,27,20,74.07,10.01,106.0,59.26,64.83,100,Moderate Risk
+501,501,Abhijit Gangopadhyay,West Bengal,TAMLUK,TMC,14,7,50.0,7.01,45.1,64.29,32.84,100,High Risk
+502,502,Abu Taher Khan,West Bengal,MURSHIDABAD,BJP,29,17,58.62,5.89,72.7,65.52,62.83,100,Moderate Risk
+503,503,Adhikari Soumendu,West Bengal,KANTHI,TMC,7,5,71.43,17.78,69.1,85.71,74.96,100,Clean / Exemplary
+504,504,Arup Chakraborty,West Bengal,BANKURA,Independent,32,21,65.62,12.9,62.8,75.0,84.98,100,Clean / Exemplary
+505,505,Asit Kumar Mal,West Bengal,BOLPUR(SC),INC,29,16,55.17,2.51,44.1,68.97,32.8,100,High Risk
+506,506,Azad Kirti Jha,West Bengal,BARDHAMAN-DURGAPUR,DMK,38,28,73.68,5.52,52.8,63.16,26.55,100,High Risk
+507,507,Bag Mitali,West Bengal,ARAMBAG(SC),BJD,63,44,69.84,13.35,65.7,63.49,58.45,100,Moderate Risk
+508,508,Bapi Haldar,West Bengal,MATHURAPUR(SC),JDU,18,17,94.44,11.7,71.8,61.11,47.03,100,Moderate Risk
+509,509,Dr Jayanta Kumar Roy,West Bengal,JALPAIGURI(SC),TMC,14,6,42.86,3.33,44.0,78.57,42.66,100,Moderate Risk
+510,510,Dr Sukanta Majumdar,West Bengal,BALURGHAT,BJP,31,20,64.52,10.95,65.9,77.42,67.53,100,Clean / Exemplary
+511,511,Dr. Sharmila Sarkar,West Bengal,BARDHAMAN PURBA(SC),INC,47,35,74.47,9.32,55.3,76.6,83.59,100,Clean / Exemplary
+512,512,Isha Khan Choudhury,West Bengal,MALDAHA DAKSHIN,BJP,43,27,62.79,9.18,38.2,55.81,43.4,100,Moderate Risk
+513,513,Jagadish Chandra Barma Basunia,West Bengal,COOCHBEHAR(SC),INC,38,25,65.79,11.32,56.2,73.68,49.82,100,Moderate Risk
+514,514,Jagannath Sarkar,West Bengal,RANAGHAT(SC),BJP,30,17,56.67,10.11,92.3,66.67,26.41,100,High Risk
+515,515,June Maliah,West Bengal,MEDINIPUR,BSP,28,19,67.86,9.29,49.2,60.71,81.16,100,Clean / Exemplary
+516,516,Kakoli Ghosh Dastidar,West Bengal,BARASAT,SP,17,9,52.94,0.62,56.5,58.82,32.17,100,High Risk
+517,517,Kalipada Saren,West Bengal,JHARGRAM(ST),BJP,29,18,62.07,8.81,63.2,82.76,70.64,100,Clean / Exemplary
+518,518,Kalyan Banerjee,West Bengal,SREERAMPUR,TMC,32,20,62.5,7.58,66.7,65.62,25.33,100,High Risk
+519,519,Kartick Chandra Paul,West Bengal,RAIGANJ,INC,9,5,55.56,1.07,86.4,77.78,27.02,100,High Risk
+520,520,Khagen Murmu,West Bengal,MALDAHA UTTAR,BJP,21,16,76.19,13.87,64.0,66.67,73.08,100,Clean / Exemplary
+521,521,Khalilur Rahaman,West Bengal,JANGIPUR,INC,52,37,71.15,12.74,60.7,71.15,73.93,100,Clean / Exemplary
+522,522,Mala Roy,West Bengal,KOLKATA DAKSHIN,INC,25,16,64.0,8.09,36.2,76.0,81.14,100,Clean / Exemplary
+523,523,Manoj Tigga,West Bengal,ALIPURDUARS(ST),BJP,35,20,57.14,5.46,92.4,82.86,85.56,100,Clean / Exemplary
+524,524,Ms Mahua Moitra,West Bengal,KRISHNANAGAR,TDP,21,12,57.14,2.23,82.2,85.71,52.68,100,Moderate Risk
+525,525,Partha Bhowmick,West Bengal,BARRACKPUR,BJP,13,5,38.46,9.66,41.8,76.92,33.43,100,High Risk
+526,526,Pathan Yusuf,West Bengal,BAHARAMPUR,BJD,37,24,64.86,16.76,54.6,64.86,66.86,100,Clean / Exemplary
+527,527,Prasun Banerjee,West Bengal,HOWRAH,TDP,39,25,64.1,10.74,68.8,58.97,46.64,100,Moderate Risk
+528,528,Pratima Mondal,West Bengal,JOYNAGAR(SC),TMC,38,22,57.89,4.67,53.7,71.05,80.34,100,Clean / Exemplary
+529,529,Prof Sougata Ray,West Bengal,DUM DUM,AAP,12,8,66.67,0.64,153.1,58.33,89.64,100,Clean / Exemplary
+530,530,Rachna Banerjee,West Bengal,HOOGHLY,BJP,19,12,63.16,4.18,106.1,57.89,53.69,100,Moderate Risk
+531,531,Raju Bista,West Bengal,DARJEELING,TDP,36,24,66.67,15.88,54.5,69.44,40.01,100,Moderate Risk
+532,532,Saumitra Khan,West Bengal,BISHNUPUR(SC),TMC,36,22,61.11,5.01,67.7,58.33,80.94,100,Clean / Exemplary
+533,533,Sayani Ghosh,West Bengal,JADAVPUR,BJD,20,13,65.0,2.86,55.8,55.0,54.85,100,Moderate Risk
+534,534,Shatrughan Sinha,West Bengal,ASANSOL,BJP,19,16,84.21,7.68,103.5,63.16,66.75,100,Clean / Exemplary
+535,535,Shri Abhishek Banerjee,West Bengal,DIAMOND HARBOUR,BJP,24,19,79.17,20.24,85.1,58.33,88.54,100,Clean / Exemplary
+536,536,Shri Deepak (Dev) Adhikari,West Bengal,GHATAL,BJP,14,11,78.57,6.47,30.2,92.86,34.14,100,High Risk
+537,537,Shri Jyotirmay Singh Mahato,West Bengal,PURULIA,BJD,41,30,73.17,10.0,95.5,70.73,26.57,100,High Risk
+538,538,Shri Shantanu Thakur,West Bengal,BANGAON(SC),YSR Congress,19,11,57.89,5.86,47.2,84.21,47.79,100,Moderate Risk
+539,539,Sk Nurul Islam,West Bengal,BASIRHAT,BJP,35,25,71.43,7.35,73.8,77.14,20.82,100,High Risk
+540,540,Smt Sajda Ahmed,West Bengal,ULUBERIA,BJP,14,12,85.71,17.21,76.2,71.43,87.48,100,Clean / Exemplary
+541,541,Smt Satabdi Roy (Banerjee),West Bengal,BIRBHUM,Others,50,29,58.0,3.58,65.0,72.0,62.21,100,Moderate Risk
+542,542,Sudip Bandyopadhyay,West Bengal,KOLKATA UTTAR,BJP,28,13,46.43,2.65,81.0,78.57,34.09,100,High Risk
