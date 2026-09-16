@@ -155,13 +155,13 @@ The datasets represent the most realistic and rigorous open synthetic simulation
 | `payment_count` | `Integer` | `1` - `20` | Number of partial payment disbursements issued for the work. |
 | `is_anomalous` | `Binary (0/1)` | `0` (Clean), `1` (Anomalous) | Ground truth flag indicating regular vs irregular execution. |
 | `anomaly_type` | `String` | 7 Categories | `clean`, `delay_anomaly`, `cost_anomaly`, `duplicate_work`, `ghost_asset`, `vendor_anomaly`, `payment_anomaly`. |
-| `cost_overrun_ratio` | `Float` | `[-0.20, +1.50]` | Engineered: $\frac{\text{actual\_expenditure} - \text{sanctioned\_cost}}{\max(1, \text{sanctioned\_cost})}$. |
-| `delay_days` | `Float` | `0` - `500+` Days | Engineered: $\max(0, \text{actual\_days} - \text{expected\_days})$. |
-| `cost_deviation_pct` | `Float` | Percentage (%) | Engineered: $\frac{\text{actual\_expenditure} - \text{estimated\_cost}}{\max(1, \text{estimated\_cost})} \times 100$. |
-| `completion_ratio` | `Float` | Ratio | Engineered: $\frac{\text{actual\_completion\_days}}{\max(1, \text{expected\_completion\_days})}$. |
-| `cost_efficiency` | `Float` | Ratio | Engineered: $\frac{\text{actual\_expenditure\_inr}}{\max(1, \text{sanctioned\_cost\_inr})}$. |
-| `evidence_score` | `Float` | `[0.0, 1.0]` | Engineered: $\frac{\text{inspection\_done} + \text{photo\_available} + \text{photo\_location\_match}}{3}$. |
-| `is_severely_delayed`| `Binary (0/1)`| `0`, `1` | Engineered: $\mathbb{I}(\text{delay\_days} > 45)$. |
+| `cost_overrun_ratio` | `Float` | `[-0.20, +1.50]` | Engineered: `(actual_expenditure - sanctioned_cost) / max(1, sanctioned_cost)` |
+| `delay_days` | `Float` | `0` - `500+` Days | Engineered: `max(0, actual_days - expected_days)` |
+| `cost_deviation_pct` | `Float` | Percentage (%) | Engineered: `((actual_expenditure - estimated_cost) / max(1, estimated_cost)) * 100` |
+| `completion_ratio` | `Float` | Ratio | Engineered: `actual_completion_days / max(1, expected_completion_days)` |
+| `cost_efficiency` | `Float` | Ratio | Engineered: `actual_expenditure_inr / max(1, sanctioned_cost_inr)` |
+| `evidence_score` | `Float` | `[0.0, 1.0]` | Engineered: `(inspection_done + photo_available + photo_location_match) / 3` |
+| `is_severely_delayed`| `Binary (0/1)`| `0`, `1` | Engineered: `1 if delay_days > 45 else 0` |
 
 ---
 
@@ -297,9 +297,9 @@ Where the weights $\sum_{k=1}^{6} w_k = 1.00$ are distributed across 6 risk vect
 | $C_1 = P_{\text{ML}}$ | Supervised Anomaly Probability | **0.30** | $P(\text{anomalous} \mid X_i) \times 100$ from Model 1 |
 | $C_2 = S_{\text{Iso}}$ | Unsupervised Outlier Score | **0.15** | Normalized Isolation Forest score $\in [0, 100]$ from Model 3 |
 | $C_3 = R_{\text{Cost}}$ | Financial Overrun Penalty | **0.20** | $\min\left(100, \; \max\left(0, \; \frac{\text{Actual} - \text{Sanctioned}}{\text{Sanctioned}} \times 100\right)\right)$ |
-| $C_4 = R_{\text{Geo}}$ | Spatial Duplication Penalty | **0.10** | $\min\left(100, \; \text{similar\_work\_count\_500m} \times 25\right)$ |
+| $C_4 = R_{\text{Geo}}$ | Spatial Duplication Penalty | **0.10** | `min(100, similar_work_count_500m * 25)` (25 pts per proximate work within 500m) |
 | $C_5 = R_{\text{Evidence}}$ | Physical Verification Deficit | **0.15** | $(1 - \text{match}_{\text{GPS}}) \cdot 50 + (1 - \text{inspection}) \cdot 30 + (1 - \text{photo}) \cdot 20$ |
-| $C_6 = R_{\text{Delay}}$ | Statutory Delay Penalty | **0.10** | $\min\left(100, \; \frac{\max(0, \; \text{delay\_days} - 45)}{30} \times 20\right)$ |
+| $C_6 = R_{\text{Delay}}$ | Statutory Delay Penalty | **0.10** | `min(100, (max(0, delay_days - 45) / 30) * 20)` (20 pts per 30d past 45d limit) |
 
 ### 6.2 Risk Stratification Tiers
 

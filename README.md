@@ -98,9 +98,9 @@ Where:
 * $P_{\text{ML}} \in [0, 100]$: Supervised XGBoost anomaly probability from Model 1 ($P(\text{anomalous}) \times 100$).
 * $S_{\text{Iso}} \in [0, 100]$: Inverted normalized Isolation Forest outlier score from Model 3.
 * $R_{\text{Cost}} = \min\left(100, \; \max\left(0, \; \frac{\text{Actual} - \text{Sanctioned}}{\text{Sanctioned}} \times 100\right)\right)$: Cost overrun ratio above sanctioned limit.
-* $R_{\text{Geo}} = \min(100, \; \text{similar\_work\_count\_500m} \times 25)$: Spatial clustering penalty (25 pts per proximate work).
+* $R_{\text{Geo}} = \min(100, \; N_{\text{proximate}} \times 25)$: Spatial clustering penalty (25 pts per proximate work within 500m, from `similar_work_count_500m`).
 * $R_{\text{Evidence}}$: Geotag mismatch (50 pts) + uninspected work penalty (30 pts) + missing photo (20 pts).
-* $R_{\text{Delay}} = \min\left(100, \; \frac{\max(0, \; \text{delay\_days} - 45)}{30} \times 20\right)$: Statutory 45-day delay penalty.
+* $R_{\text{Delay}} = \min\left(100, \; \frac{\max(0, \; \Delta_{\text{days}} - 45)}{30} \times 20\right)$: Statutory 45-day delay penalty (from `delay_days`).
 
 ---
 

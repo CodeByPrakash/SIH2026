@@ -202,17 +202,21 @@ The primary analysis dataset `dataset/mplads_work_table.csv` contains 15,000 row
 
 ### 7.1 Financial & Operational Feature Formulas
 
-1. **Cost Overrun Ratio**:
-   $$\text{cost\_overrun\_ratio} = \frac{\text{actual\_expenditure\_inr} - \text{sanctioned\_cost\_inr}}{\max(1.0, \; \text{sanctioned\_cost\_inr})}$$
+1. **Cost Overrun Ratio** (`cost_overrun_ratio`):
+   $$\text{Cost Overrun Ratio} = \frac{\text{Actual Expenditure} - \text{Sanctioned Cost}}{\max(1.0, \; \text{Sanctioned Cost})}$$
+   *Implementation*: `cost_overrun_ratio = (actual_expenditure_inr - sanctioned_cost_inr) / max(1.0, sanctioned_cost_inr)`
 
-2. **Statutory Delay Days**:
-   $$\text{delay\_days} = \max\left(0, \; \text{actual\_completion\_days} - \text{expected\_completion\_days}\right)$$
+2. **Statutory Delay Days** (`delay_days`):
+   $$\text{Delay Days} = \max\left(0, \; \text{Actual Completion Days} - \text{Expected Completion Days}\right)$$
+   *Implementation*: `delay_days = max(0, actual_completion_days - expected_completion_days)`
 
-3. **Cost Deviation Percentage**:
-   $$\text{cost\_deviation\_pct} = \frac{\text{actual\_expenditure\_inr} - \text{estimated\_cost\_inr}}{\max(1.0, \; \text{estimated\_cost\_inr})} \times 100$$
+3. **Cost Deviation Percentage** (`cost_deviation_pct`):
+   $$\text{Cost Deviation \%} = \frac{\text{Actual Expenditure} - \text{Estimated Cost}}{\max(1.0, \; \text{Estimated Cost})} \times 100$$
+   *Implementation*: `cost_deviation_pct = ((actual_expenditure_inr - estimated_cost_inr) / max(1.0, estimated_cost_inr)) * 100`
 
-4. **Physical Evidence Score**:
-   $$\text{evidence\_score} = \frac{\text{inspection\_done} + \text{photo\_available} + \text{photo\_location\_match}}{3.0}$$
+4. **Physical Evidence Score** (`evidence_score`):
+   $$\text{Evidence Score} = \frac{\text{Inspection Done} + \text{Photo Available} + \text{Location Match}}{3.0}$$
+   *Implementation*: `evidence_score = (inspection_done + photo_available + photo_location_match) / 3.0`
 
 ### 7.2 Risk Fusion Engine Formulation
 
@@ -223,10 +227,10 @@ $$R_i = \min\left(100, \; 0.30 \cdot P_{\text{ML}} + 0.15 \cdot S_{\text{Iso}} +
 Where:
 - $P_{\text{ML}} = \text{XGBoost Probability} \times 100 \in [0, 100]$
 - $S_{\text{Iso}} = 100 - \left( \frac{s(x) - \min(s)}{\max(s) - \min(s)} \times 100 \right) \in [0, 100]$
-- $R_{\text{Cost}} = \text{clip}\left(\text{cost\_overrun\_ratio} \times 100, \; 0, \; 100\right)$
-- $R_{\text{Geo}} = \text{clip}\left(\text{similar\_work\_count\_500m} \times 25, \; 0, \; 100\right)$
-- $R_{\text{Evidence}} = (1 - \text{photo\_location\_match}) \cdot 50 + (1 - \text{inspection\_done}) \cdot 30 + (1 - \text{photo\_available}) \cdot 20$
-- $R_{\text{Delay}} = \text{clip}\left(\frac{\max(0, \; \text{delay\_days} - 45)}{30} \times 20, \; 0, \; 100\right)$
+- $R_{\text{Cost}} = \text{clip}\left(\text{Cost Overrun Ratio} \times 100, \; 0, \; 100\right)$
+- $R_{\text{Geo}} = \text{clip}\left(N_{\text{proximate}} \times 25, \; 0, \; 100\right)$ where $N_{\text{proximate}}$ is `similar_work_count_500m`
+- $R_{\text{Evidence}} = (1 - \text{Location Match}) \cdot 50 + (1 - \text{Inspection}) \cdot 30 + (1 - \text{Photo}) \cdot 20$
+- $R_{\text{Delay}} = \text{clip}\left(\frac{\max(0, \; \text{Delay Days} - 45)}{30} \times 20, \; 0, \; 100\right)$ where $\text{Delay Days}$ is `delay_days`
 
 ---
 
