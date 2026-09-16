@@ -7,6 +7,7 @@
 > **Developed by**: Team CodeByPrakash  
 > **Version**: 1.0.0 (Production-Ready)  
 > **Date**: September 2026  
+> **Official PDF Document**: 📄 [MODEL_SRS_DOCUMENTATION.pdf](MODEL_SRS_DOCUMENTATION.pdf) *(20-Page Comprehensive Illustrated Technical Report with Restored Formal SRS, Full Data Dictionaries, Plain-English Concepts, and All 16 Execution Cells & Plots)*
 
 ---
 
@@ -352,7 +353,10 @@ The layout of `c:\Users\absol\Desktop\SIH2026\Model` is organized as follows:
 ```
 c:\Users\absol\Desktop\SIH2026\Model\
 │
-├── README.md                                # This document (Complete SRS & System Architecture)
+├── README.md                                # Comprehensive Technical & Architectural Guide
+├── MODEL_SRS_DOCUMENTATION.pdf              # 📄 Official 6-Page Publication-Grade SRS PDF (with Embedded Visuals)
+├── MODEL_SRS_DOCUMENTATION.md               # Formal IEEE 830-style Software Requirements Specification (Markdown)
+├── generate_srs_pdf.py                      # PDF Compilation Engine (ReportLab Platypus)
 ├── generate_dataset.py                      # Extended All-States Synthetic Dataset Engine (31.7 KB, 574 lines)
 ├── build_notebook.py                        # Programmatic Notebook Authoring Script (60.2 KB, 1,129 lines)
 ├── model.ipynb                              # Fully Executed Jupyter Notebook (2.83 MB, 41 cells, 16 embedded plots)
@@ -362,7 +366,8 @@ c:\Users\absol\Desktop\SIH2026\Model\
 │   ├── mplads_mp_table.csv                  # 542 MPs across 36 States/UTs (79.6 KB)
 │   ├── mplads_work_table.csv                # 15,000 project records with 26 features (2.93 MB)
 │   └── mplads_mp_risk_leaderboard.csv       # Ranked MP national risk leaderboard (57.5 KB)
-└── plots/  
+│
+└── plots/                                   # High-Resolution Visual Intelligence Suite (16 PNGs)
     ├── plot_anomaly_distribution.png        # Anomaly type breakdown (141.2 KB)
     ├── plot_binary_feature_importance.png   # Model 1 feature importance ranking (88.8 KB)
     ├── plot_binary_roc_pr.png               # Model 1 ROC and PR curves (99.1 KB)

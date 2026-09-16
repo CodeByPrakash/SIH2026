@@ -142,6 +142,7 @@ SIH2026/
 │
 ├── Model/                                   # 🤖 AI/ML Modeling & Risk Intelligence Engine
 │   ├── README.md                            # Comprehensive Architectural Guide & Feature Specification
+│   ├── MODEL_SRS_DOCUMENTATION.pdf          # 📄 20-Page Illustrated Technical Report (Restored SRS + Full Dictionaries + 16 Cells & Plots)
 │   ├── MODEL_SRS_DOCUMENTATION.md           # Formal IEEE 830-style Software Requirements Specification
 │   ├── generate_dataset.py                  # All-States Dataset Generator (36 States/UTs, 542 MPs, 15k Works)
 │   ├── build_notebook.py                    # Programmatic Notebook Authoring Script (41 cells)

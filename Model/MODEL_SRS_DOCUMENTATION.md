@@ -7,9 +7,12 @@ Document Reference : SIH2026-MPLADS-SATHI-SRS-MOD-001
 Directory Scope    : /Model
 Version            : 1.0.0
 Classification     : Technical / Architectural Specification
-Author             : Team CodeByPrakash (Smart India Hackathon 2026)
+Author             : Code_Warrior6 (Smart India Hackathon 2026)
 Status             : Fully Implemented & Verified
+Official PDF       : MODEL_SRS_DOCUMENTATION.pdf (20-Page Complete Illustrated Document)
 ```
+
+> 📄 **Download Official Illustrated PDF**: [MODEL_SRS_DOCUMENTATION.pdf](MODEL_SRS_DOCUMENTATION.pdf) *(20 Pages with All 16 Execution Cells & Plots)*
 
 ---
 
