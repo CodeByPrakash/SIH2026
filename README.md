@@ -138,35 +138,49 @@ Unlike synthetic datasets that assume an unrealistically clean distribution, **M
 ```
 SIH2026/
 ├── README.md                                # Root Project Documentation
+├── CODE_OF_CONDUCT.md                       # Contributor Covenant Code of Conduct (v2.1)
 ├── .gitignore                               # Git ignored files & environments
 │
-├── Model/                                   # 🤖 AI/ML Modeling & Risk Intelligence Engine
+├── Model/                                   # 🤖 AI/ML Modeling, MLOps & Risk Intelligence Engine
 │   ├── README.md                            # Comprehensive Architectural Guide & Feature Specification
-│   ├── MODEL_SRS_DOCUMENTATION.pdf          # 📄 20-Page Illustrated Technical Report (Restored SRS + Full Dictionaries + 16 Cells & Plots)
+│   ├── MODEL_SRS_DOCUMENTATION.pdf          # 📄 20-Page Illustrated Technical Report (PDF)
 │   ├── MODEL_SRS_DOCUMENTATION.md           # Formal IEEE 830-style Software Requirements Specification
+│   ├── model.ipynb                          # Executed End-to-End Jupyter Notebook (16 embedded plots)
 │   ├── generate_dataset.py                  # All-States Dataset Generator (36 States/UTs, 542 MPs, 15k Works)
 │   ├── build_notebook.py                    # Programmatic Notebook Authoring Script (41 cells)
-│   ├── model.ipynb                          # Executed End-to-End Jupyter Notebook (16 embedded plots)
+│   ├── generate_srs_pdf.py                  # PDF Compilation Engine (ReportLab Platypus)
 │   │
-│   ├── dataset/                             # Data Lake & Visualization Repository
+│   ├── dataset/                             # [Data Layer] 15,000 Works & 542 MPs Tables
 │   │    ├── MPLADS_MP_Allocated_Limit_Analysis.csv # Real MoSPI seed data
 │   │    ├── mplads_mp_table.csv              # Baseline allocations for 542 MPs (36 States/UTs)
 │   │    ├── mplads_work_table.csv            # 15,000 calibrated works with 26 features
 │   │    └── mplads_mp_risk_leaderboard.csv   # Ranked MP risk audit leaderboard
 │   │
-│   └── plots
-│       ├── plot_correlation_heatmap.png     # Feature correlation temperature map
-│       ├── plot_state_risk_heatmap.png      # State-wise anomaly temperature matrix
-│       ├── plot_feature_temperature.png     # Feature intensity grid by anomaly archetype
-│       ├── plot_cost_vs_delay_scatter.png   # Delay vs Cost Overrun temperature scatter plot
-│       ├── plot_binary_roc_pr.png           # Model 1 ROC and Precision-Recall curves
-│       ├── plot_binary_feature_importance.png # Model 1 feature importance ranking
-│       ├── plot_multiclass_confusion.png    # 6x6 confusion matrix heatmap with percentage overlays
-│       ├── plot_multiclass_feature_importance.png # Model 2 feature importance ranking
-│       ├── plot_isolation_forest.png        # Isolation Forest score distributions & boxplots
-│       ├── plot_risk_fusion.png             # 4-panel comprehensive Risk Fusion Engine breakdown
-│       ├── plot_model_comparison.png        # Benchmark comparison bar chart
-│       └── ... (16 high-res plots total)    # Complete visual intelligence suite
+│   ├── plots/                               # [Visual Layer] 16 Visual Intelligence Plots (PNGs)
+│   │    ├── plot_anomaly_distribution.png   # Anomaly type breakdown
+│   │    ├── plot_correlation_heatmap.png    # Feature correlation temperature map
+│   │    ├── plot_state_risk_heatmap.png     # State-wise anomaly temperature matrix
+│   │    ├── plot_cost_vs_delay_scatter.png  # Delay vs Cost Overrun temperature scatter
+│   │    ├── plot_risk_fusion.png            # 4-panel Risk Fusion Engine breakdown
+│   │    └── ... (11 additional high-res plots)
+│   │
+│   ├── training/                            # 🧱 [Base / MLOps Layer] Model Training & Export
+│   │    └── export_models.py                # Serializes models, scalers, and metadata to registry
+│   │
+│   ├── saved_models/                        # 📦 [Model Registry] Serialized Production Artifacts
+│   │    ├── xgb_binary.json                 # Model 1: XGBoost Binary Risk Classifier
+│   │    ├── xgb_multi.json                  # Model 2: XGBoost Multiclass Classifier
+│   │    ├── iso_forest.joblib               # Model 3: Isolation Forest Outlier Detector
+│   │    ├── iso_scaler.joblib               # Standard scaler for Isolation Forest
+│   │    ├── le_anomaly.joblib               # Anomaly archetype label encoder
+│   │    ├── le_constituency.joblib          # Constituency reservation label encoder
+│   │    └── metadata.json                   # Feature manifests, bounds, and risk weights
+│   │
+│   └── serving/                             # 🚀 [Execution Layer] FastAPI Service for Frontend
+│        ├── api.py                          # Production FastAPI REST API with Risk Fusion Engine
+│        ├── test_client.py                  # Automated verification client (test cases)
+│        ├── requirements.txt                # Serving dependencies
+│        └── Dockerfile                      # Container deployment configuration
 │
 └── Research On MPLADS/                      # 📚 Domain Research & System Assets
     ├── Datasets/
@@ -182,76 +196,192 @@ SIH2026/
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Step-by-Step Execution Guide (Base Pipeline & Serving Engine)
 
-### 1. Prerequisites
+The system is separated into two operational stages:
+1. **Base Pipeline**: Data generation, interactive Jupyter experimentation, and automated model serialization.
+2. **Execution Engine**: Production FastAPI serving server delivering sub-millisecond predictions to Frontend clients.
+
+---
+
+### 1. Prerequisites & Environment Setup
 * Python 3.10 or higher (Python 3.11 recommended)
-* Terminal with PowerShell or Bash
+* Terminal with PowerShell, Bash, or Command Prompt
 
-### 2. Installation
-Clone the repository and install the verified data science dependencies:
 ```bash
+# Clone the repository
 git clone https://github.com/CodeByPrakash/SIH2026.git
 cd SIH2026
 
-# Install required dependencies
-pip install numpy pandas scikit-learn xgboost matplotlib seaborn jupyter nbformat nbconvert
+# Install core data science, MLOps, and API dependencies
+pip install numpy pandas scikit-learn xgboost matplotlib seaborn jupyter fastapi uvicorn pydantic
 ```
 
-### 3. Step-by-Step Model Execution
+---
 
-All operations in the `Model/` directory are deterministic and automated:
+### 2. Base Pipeline: Data Generation & Model Serialization
 
+#### Step 1: Synthesize Nationwide All-States Datasets
+Generates 15,000 project works and 542 MP profiles across all 36 States/UTs calibrated to CAG audit findings:
 ```powershell
-# Navigate to Model Directory
 cd Model
-
-# 1. Regenerate Cleaned Datasets (All 36 States/UTs, 542 MPs, 15,000 Works)
 $env:PYTHONIOENCODING="utf-8"
 python generate_dataset.py
+```
 
-# 2. Rebuild the Clean Jupyter Notebook Structure
-python build_notebook.py
+#### Step 2: Train & Export Models to Model Registry (`saved_models/`)
+Executes model training for Model 1 (Binary), Model 2 (Multiclass), and Model 3 (Isolation Forest), saving all production artifacts into `Model/saved_models/`:
+```powershell
+python training/export_models.py
+```
+*Artifacts Generated:*
+* `xgb_binary.json`: Native XGBoost binary classifier (99.70% accuracy, 0.9998 ROC-AUC)
+* `xgb_multi.json`: 6-archetype anomaly classifier (98.58% accuracy, 0.9859 F1)
+* `iso_forest.joblib` & `iso_scaler.joblib`: Unsupervised structural outlier detector
+* `le_anomaly.joblib` & `le_constituency.joblib`: Production label encoders
+* `metadata.json`: Feature manifest, normalizer score bounds, and regulatory weights
 
-# 3. Launch Interactive Jupyter Notebook
+#### Step 3: Interactive Jupyter Notebook (Optional)
+Explore all 16 temperature maps, state risk matrices, and interactive cells:
+```powershell
 jupyter notebook model.ipynb
 ```
 
-For headless execution and automated re-verification of all 30 code cells and 16 plots:
+---
+
+### 3. Execution Pipeline: Production FastAPI Server for Frontend
+
+#### Step 1: Start the FastAPI Inference Server
+Launch the high-performance ASGI server with live reload:
 ```powershell
-python -m nbconvert --to notebook --execute --ExecutePreprocessor.timeout=600 --output model.ipynb model.ipynb
+cd Model
+uvicorn serving.api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 4. Downstream Inference API Specification
+Once running, interactive documentation is immediately accessible:
+* **Interactive Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* **ReDoc Specification**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+* **Health Check**: `GET http://127.0.0.1:8000/api/v1/health`
 
-The ML models and Risk Fusion Engine provide structured risk scores and audit flags consumed by the FastAPI backend and web dashboard:
+#### Step 2: Run the Verification Test Client
+Runs automated verification audits on a high-risk fraudulent work and a clean benchmark work:
+```powershell
+python serving/test_client.py
+```
 
+---
+
+### 4. Frontend Integration Guide (React / Next.js / TypeScript)
+
+The FastAPI server provides full Cross-Origin Resource Sharing (**CORS**) enabled out-of-the-box (`allow_origins=["*"]`).
+
+#### A. Frontend API Service (`auditService.ts`):
+```typescript
+export interface WorkAuditRequest {
+  work_id: string;
+  work_title: string;
+  state: string;
+  district: string;
+  constituency: string;
+  constituency_type: "General" | "SC" | "ST";
+  work_category: string;
+  estimated_cost_inr: number;
+  sanctioned_cost_inr: number;
+  actual_expenditure_inr: number;
+  expected_completion_days: number;
+  actual_completion_days: number;
+  inspection_done: 0 | 1;
+  photo_available: 0 | 1;
+  photo_location_match: 0 | 1;
+  similar_work_count_500m: number;
+  payment_count: number;
+}
+
+export interface WorkAuditResponse {
+  work_id: string;
+  is_anomalous: boolean;
+  anomaly_probability: number;
+  predicted_archetype: string;
+  composite_risk_score: number; // 0.0 to 100.0
+  risk_tier: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  governance_action: string;
+  risk_drivers: string[];
+}
+
+export async function auditProjectWork(payload: WorkAuditRequest): Promise<WorkAuditResponse> {
+  const res = await fetch("http://127.0.0.1:8000/api/v1/audit/single", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(`Audit request failed: ${res.statusText}`);
+  return res.json();
+}
+```
+
+#### B. Sample Request Payload:
 ```json
 {
-  "work_id": "W008412",
-  "risk_score": 86.4,
-  "risk_tier": "Critical Risk",
-  "primary_anomaly_type": "ghost_asset",
-  "anomaly_probabilities": {
-    "ghost_asset": 0.74,
-    "cost_anomaly": 0.16,
-    "delay_anomaly": 0.08,
-    "duplicate_work": 0.02
-  },
-  "component_scores": {
-    "supervised_ml_score": 99.8,
-    "isolation_forest_score": 78.4,
-    "cost_overrun_penalty": 24.5,
-    "evidence_deficit_penalty": 80.0,
-    "statutory_delay_penalty": 66.7
-  },
-  "audit_flags": [
-    "DELAY_BEYOND_45D: Completion delayed by 150 days (violates 45-day statutory guideline)",
-    "PHOTO_GPS_MISMATCH: Uploaded asset photo geo-coordinates do not match work site (Ghost Asset Risk)",
-    "INSPECTION_MISSING: Zero physical inspections logged for high-value asset",
-    "POSSIBLE_DUPLICATE_500M: 3 similar works recorded within 500m radius"
-  ]
+  "work_id": "WRK-MH-PUNE-2026-001",
+  "work_title": "Primary Health Centre Solar Backup",
+  "state": "Maharashtra",
+  "district": "Pune",
+  "constituency": "Pune",
+  "constituency_type": "General",
+  "work_category": "Healthcare",
+  "estimated_cost_inr": 2500000.0,
+  "sanctioned_cost_inr": 3000000.0,
+  "actual_expenditure_inr": 4800000.0,
+  "expected_completion_days": 60,
+  "actual_completion_days": 180,
+  "inspection_done": 0,
+  "photo_available": 1,
+  "photo_location_match": 0,
+  "similar_work_count_500m": 3,
+  "payment_count": 8
 }
+```
+
+#### C. Sample Response Payload (Consumed by Frontend):
+```json
+{
+  "work_id": "WRK-MH-PUNE-2026-001",
+  "is_anomalous": true,
+  "anomaly_probability": 1.0,
+  "predicted_archetype": "vendor_anomaly",
+  "archetype_confidence": 0.985,
+  "composite_risk_score": 73.64,
+  "risk_tier": "HIGH",
+  "governance_action": "Mandatory District Field Audit — Physical site inspection required.",
+  "risk_drivers": [
+    "Significant Cost Overrun: +60.0% beyond sanctioned budget",
+    "Statutory Delay Exceeded: 120 days past statutory grace period",
+    "GPS Coordinate Mismatch: Uploaded photo does not match GIS sanction coordinates",
+    "Missing Physical Site Inspection Certificate",
+    "Spatial Duplication Risk: 3 proximate works within 500m radius"
+  ],
+  "component_breakdown": {
+    "c1_supervised_ml": 100.0,
+    "c2_isolation_outlier": 68.27,
+    "c3_cost_overrun_penalty": 60.0,
+    "c4_spatial_duplication_penalty": 75.0,
+    "c5_evidence_deficit_penalty": 80.0,
+    "c6_statutory_delay_penalty": 50.0
+  }
+}
+```
+
+---
+
+### 5. Production Docker Deployment
+
+Deploy the FastAPI inference engine inside an isolated Docker container:
+```bash
+# Build the production container
+docker build -f Model/serving/Dockerfile -t mplads-sathi-api:v1 .
+
+# Run the container
+docker run -d -p 8000:8000 --name mplads-api mplads-sathi-api:v1
 ```
 
 ---
@@ -273,8 +403,8 @@ When presenting to SIH Evaluators, emphasize these three core differentiators:
 
 ## 👥 Contributors
 
-* **Team CodeByPrakash** — Smart India Hackathon 2026
-* Lead Developer: [CodeByPrakash](https://github.com/CodeByPrakash)
+* **Team Code_Warrior6** — Smart India Hackathon 2026
+* Lead Developer & Maintainer: [CodeByPrakash](https://github.com/CodeByPrakash)
 
 ---
 
