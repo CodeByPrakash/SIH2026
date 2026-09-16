@@ -348,96 +348,100 @@ All 16 visual assets are saved in high resolution (`150 DPI`) in the `dataset/` 
 
 ## 8. Directory Structure & Artifact Inventory
 
-The layout of `c:\Users\absol\Desktop\SIH2026\Model` is organized as follows:
+The layout of `c:\Users\absol\Desktop\SIH2026\Model` is organized into modular directories separating base research/training from production serving/execution:
 
 ```
 c:\Users\absol\Desktop\SIH2026\Model\
 │
 ├── README.md                                # Comprehensive Technical & Architectural Guide
-├── MODEL_SRS_DOCUMENTATION.pdf              # 📄 Official 6-Page Publication-Grade SRS PDF (with Embedded Visuals)
-├── MODEL_SRS_DOCUMENTATION.md               # Formal IEEE 830-style Software Requirements Specification (Markdown)
+├── MODEL_SRS_DOCUMENTATION.pdf              # 📄 Official 20-Page Illustrated Technical Report (PDF)
+├── MODEL_SRS_DOCUMENTATION.md               # Formal IEEE 830-style Software Requirements Specification
+├── model.ipynb                              # Fully Executed Jupyter Notebook (2.83 MB, 41 cells, 16 plots)
+├── generate_dataset.py                      # Extended All-States Synthetic Dataset Engine
+├── build_notebook.py                        # Programmatic Notebook Authoring Script
 ├── generate_srs_pdf.py                      # PDF Compilation Engine (ReportLab Platypus)
-├── generate_dataset.py                      # Extended All-States Synthetic Dataset Engine (31.7 KB, 574 lines)
-├── build_notebook.py                        # Programmatic Notebook Authoring Script (60.2 KB, 1,129 lines)
-├── model.ipynb                              # Fully Executed Jupyter Notebook (2.83 MB, 41 cells, 16 embedded plots)
 │
-├── dataset/                                 # Data Repository
-│   ├── MPLADS_MP_Allocated_Limit_Analysis.csv # Real MoSPI seed data (55.5 KB)
-│   ├── mplads_mp_table.csv                  # 542 MPs across 36 States/UTs (79.6 KB)
-│   ├── mplads_work_table.csv                # 15,000 project records with 26 features (2.93 MB)
-│   └── mplads_mp_risk_leaderboard.csv       # Ranked MP national risk leaderboard (57.5 KB)
+├── dataset/                                 # [DATA LAYER] CSV Datasets
+│   ├── MPLADS_MP_Allocated_Limit_Analysis.csv # Real MoSPI seed data
+│   ├── mplads_mp_table.csv                  # 542 MPs across 36 States/UTs
+│   ├── mplads_work_table.csv                # 15,000 project records with 26 features
+│   └── mplads_mp_risk_leaderboard.csv       # Ranked MP national risk leaderboard
 │
-└── plots/                                   # High-Resolution Visual Intelligence Suite (16 PNGs)
-    ├── plot_anomaly_distribution.png        # Anomaly type breakdown (141.2 KB)
-    ├── plot_binary_feature_importance.png   # Model 1 feature importance ranking (88.8 KB)
-    ├── plot_binary_roc_pr.png               # Model 1 ROC and PR curves (99.1 KB)
-    ├── plot_correlation_heatmap.png         # Feature correlation temperature map (255.8 KB)
-    ├── plot_cost_analysis.png               # Sectoral cost breakdown (101.5 KB)
-    ├── plot_cost_vs_delay_scatter.png       # Delay vs Cost Overrun temperature scatter (1.37 MB)
-    ├── plot_feature_temperature.png         # Feature temperature grid by anomaly (163.5 KB)
-    ├── plot_isolation_forest.png            # Isolation Forest score distributions (136.3 KB)
-    ├── plot_model_comparison.png            # Model benchmark comparison (67.0 KB)
-    ├── plot_multiclass_confusion.png        # 6x6 confusion matrix heatmap (190.5 KB)
-    ├── plot_multiclass_feature_importance.png # Model 2 feature importances (85.6 KB)
-    ├── plot_risk_fusion.png                 # 4-panel Risk Fusion Engine analysis (247.2 KB)
-    ├── plot_risk_tiers.png                  # MP risk tier distribution (123.9 KB)
-    ├── plot_state_distribution.png          # State-wise work volume (110.6 KB)
-    ├── plot_state_risk_heatmap.png          # State-wise anomaly temperature map (266.7 KB)
-    └── plot_work_categories.png             # Distribution across 8 sectors (151.2 KB)
+├── plots/                                   # [VISUAL LAYER] 16 Visual Intelligence Plots (PNGs)
+│   ├── plot_anomaly_distribution.png        # Anomaly type breakdown
+│   ├── plot_correlation_heatmap.png         # Feature correlation temperature map
+│   ├── plot_state_risk_heatmap.png          # State-wise anomaly temperature map
+│   ├── plot_cost_vs_delay_scatter.png       # Delay vs Cost Overrun temperature scatter
+│   ├── plot_risk_fusion.png                 # 4-panel Risk Fusion Engine analysis
+│   └── ... (11 additional high-res charts)
+│
+├── training/                                # [BASE / MLOps LAYER] Model Training & Export
+│   └── export_models.py                     # Serializes trained models, scalers & metadata
+│
+├── saved_models/                            # [MODEL REGISTRY] Serialized Production Artifacts
+│   ├── xgb_binary.json                      # Model 1: XGBoost Binary Classifier
+│   ├── xgb_multi.json                       # Model 2: XGBoost Multiclass Classifier
+│   ├── iso_forest.joblib                    # Model 3: Isolation Forest Outlier Detector
+│   ├── iso_scaler.joblib                    # Feature standardizer for Isolation Forest
+│   ├── le_anomaly.joblib                    # Anomaly archetype label encoder
+│   ├── le_constituency.joblib               # Constituency reservation label encoder
+│   └── metadata.json                        # Feature manifests, bounds, and risk weights
+│
+└── serving/                                 # [EXECUTION LAYER] FastAPI Service for Frontend
+    ├── api.py                               # Production FastAPI REST API with Risk Fusion Engine
+    ├── test_client.py                       # Automated verification client (test cases)
+    ├── requirements.txt                     # Serving dependencies
+    └── Dockerfile                           # Container deployment configuration
 ```
 
 ---
 
 ## 9. Step-by-Step Execution & Operational Guide
 
-Follow these instructions to regenerate datasets, re-train models, or inspect notebook outputs.
+Follow these instructions to train models, launch the FastAPI inference server, or inspect notebook outputs.
 
 ### 9.1 Environment Setup
 
 Install the required dependencies in your Python environment:
 ```powershell
-pip install numpy pandas scikit-learn xgboost matplotlib seaborn jupyter nbformat nbconvert
+pip install numpy pandas scikit-learn xgboost matplotlib seaborn jupyter fastapi uvicorn pydantic
 ```
 
 ### 9.2 Step 1: Generate Nationwide Datasets
-Executes the data generator, synthesizing 15,000 records calibrated against real allocation limits:
+Synthesizes 15,000 records calibrated against real parliamentary allocation limits:
 ```powershell
 cd c:\Users\absol\Desktop\SIH2026\Model
 $env:PYTHONIOENCODING="utf-8"
 python generate_dataset.py
 ```
-*Expected Console Output*:
-```
-======================================================================
-  MPLADS-SATHI: Extended All-States Dataset Generator
-======================================================================
-  Generated 542 MP records across 36 states/UTs
-  Generated 15000 work records
-  Saved: dataset/mplads_mp_table.csv (542 rows, 12 cols)
-  Saved: dataset/mplads_work_table.csv (15000 rows, 26 cols)
-  Saved: dataset/mplads_mp_risk_leaderboard.csv (542 rows, 14 cols)
-```
 
-### 9.3 Step 2: Reconstruct Jupyter Notebook
-Builds the 41-cell clean notebook structure programmatically:
+### 9.3 Step 2: Train & Export Models (MLOps Base)
+Trains all three models and exports production-grade serialized artifacts to `saved_models/`:
 ```powershell
-python build_notebook.py
-```
-*Expected Console Output*:
-```
-Notebook written to: c:\Users\absol\Desktop\SIH2026\Model\model.ipynb
-   Total cells: 41 (30 code, 11 markdown)
+python training/export_models.py
 ```
 
-### 9.4 Step 3: Run Interactive Jupyter Lab / Notebook
+### 9.4 Step 3: Run the FastAPI Serving Server (Execution Engine)
+Launches the high-performance REST API with live auto-reload for Frontend integration:
+```powershell
+uvicorn serving.api:app --host 0.0.0.0 --port 8000 --reload
+```
+Interactive API docs are available at:
+* **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+### 9.5 Step 4: Run Direct Verification & Test Cases
+Executes test audits for both a high-risk irregular project and a clean benchmark project:
+```powershell
+python serving/test_client.py
+```
+
+### 9.6 Step 5: Run Interactive Jupyter Notebook
 Launch Jupyter to explore interactive charts, filter states, and inspect individual MP records:
 ```powershell
 jupyter notebook model.ipynb
 ```
 
-### 9.5 Headless Batch Execution & Re-verification
-To execute and validate all cells in headless automated environments (e.g., CI/CD or Docker):
-```powershell
 python -m nbconvert --to notebook --execute --ExecutePreprocessor.timeout=600 --output model.ipynb model.ipynb
 ```
 

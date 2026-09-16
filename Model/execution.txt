@@ -1,0 +1,189 @@
+3. Step 1: Model Serialization & Artifact Export
+Before serving, models are trained and exported into lightweight artifacts:
+
+xgb_binary.json (XGBoost native format, fast C++ execution)
+xgb_multi.json (6-class softprob anomaly classifier)
+iso_forest.joblib & iso_scaler.joblib (Isolation Forest + StandardScaler)
+le_constituency.joblib & le_anomaly.joblib (Encoders)
+metadata.json (Feature manifest, score bounds, and regulatory risk weights)
+To re-export at any time:
+
+bash
+cd Model
+python export_models.py
+4. Step 2: Running the FastAPI Backend
+Start the server locally with auto-reload:
+
+bash
+cd Model
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+Once running, interactive documentation is immediately accessible at:
+
+Swagger UI: http://127.0.0.1:8000/docs
+ReDoc: http://127.0.0.1:8000/redoc
+Core Endpoints:
+GET /api/v1/health: Health and model registry verification.
+GET /api/v1/metadata: Regulatory weights, tiers, and feature names.
+POST /api/v1/audit/single: Real-time single project evaluation.
+POST /api/v1/audit/batch: Bulk project evaluation (up to 1,000 works in one request).
+5. Step 3: Frontend Integration (React / Next.js / TypeScript)
+A. Frontend Service (auditService.ts):
+typescript
+export interface WorkAuditRequest {
+  work_id: string;
+  work_title: string;
+  state: string;
+  district: string;
+  constituency: string;
+  constituency_type: "General" | "SC" | "ST";
+  work_category: string;
+  estimated_cost_inr: number;
+  sanctioned_cost_inr: number;
+  actual_expenditure_inr: number;
+  expected_completion_days: number;
+  actual_completion_days: number;
+  inspection_done: 0 | 1;
+  photo_available: 0 | 1;
+  photo_location_match: 0 | 1;
+  similar_work_count_500m: number;
+  payment_count: number;
+}
+export interface WorkAuditResponse {
+  work_id: string;
+  is_anomalous: boolean;
+  anomaly_probability: number;
+  predicted_archetype: string;
+  composite_risk_score: number; // 0.0 to 100.0
+  risk_tier: "LOW" | "MODERATE" | "HIGH" | "CRITICAL";
+  governance_action: string;
+  risk_drivers: string[];
+}
+export async function auditProjectWork(data: WorkAuditRequest): Promise<WorkAuditResponse> {
+  const response = await fetch("http://127.0.0.1:8000/api/v1/audit/single", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error(`Audit request failed: ${response.statusText}`);
+  }
+  return response.json();
+}
+B. Sample Request Payload:
+json
+{
+  "work_id": "WRK-MH-PUNE-2026",
+  "work_title": "Primary Health Centre Solar Backup",
+  "state": "Maharashtra",
+  "district": "Pune",
+  "constituency": "Pune",
+  "constituency_type": "General",
+  "work_category": "Healthcare",
+  "estimated_cost_inr": 2500000.0,
+  "sanctioned_cost_inr": 3000000.0,
+  "actual_expenditure_inr": 4800000.0,
+  "expected_completion_days": 60,
+  "actual_completion_days": 180,
+  "inspection_done": 0,
+  "photo_available": 1,
+  "photo_location_match": 0,
+  "similar_work_count_500m": 3,
+  "payment_count": 8
+}
+C. Sample API Response:
+json
+{
+  "work_id": "WRK-MH-PUNE-2026",
+  "is_anomalous": true,
+  "anomaly_probability": 1.0,
+  "predicted_archetype": "vendor_anomaly",
+  "archetype_confidence": 0.985,
+  "composite_risk_score": 73.64,
+  "risk_tier": "HIGH",
+  "governance_action": "Mandatory District Field Audit — Physical site inspection required.",
+  "risk_drivers": [
+    "Significant Cost Overrun: +60.0% beyond sanctioned budget",
+    "Statutory Delay Exceeded: 120 days past statutory grace period",
+    "GPS Coordinate Mismatch: Uploaded photo does not match GIS sanction coordinates",
+    "Missing Physical Site Inspection Certificate",
+    "Spatial Duplication Risk: 3 proximate works within 500m radius"
+  ],
+  "component_breakdown": {
+    "c1_supervised_ml": 100.0,
+    "c2_isolation_outlier": 68.27,
+    "c3_cost_overrun_penalty": 60.0,
+    "c4_spatial_duplication_penalty": 75.0,
+    "c5_evidence_deficit_penalty": 80.0,
+    "c6_statutory_delay_penalty": 50.0
+  }
+}
+D. React Component Example:
+tsx
+import React, { useState } from "react";
+import { auditProjectWork, WorkAuditResponse } from "./auditService";
+const tierColors: Record<string, string> = {
+  LOW: "bg-green-100 text-green-800 border-green-400",
+  MODERATE: "bg-yellow-100 text-yellow-800 border-yellow-400",
+  HIGH: "bg-orange-100 text-orange-800 border-orange-400",
+  CRITICAL: "bg-red-100 text-red-800 border-red-400",
+};
+export function ProjectAuditCard({ workData }: { workData: any }) {
+  const [result, setResult] = useState<WorkAuditResponse | null>(null);
+  const [loading, setLoading] = useState(false);
+  const handleAudit = async () => {
+    setLoading(true);
+    try {
+      const res = await auditProjectWork(workData);
+      setResult(res);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <div className="p-6 bg-white rounded-xl shadow border">
+      <button 
+        onClick={handleAudit} 
+        disabled={loading}
+        className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+      >
+        {loading ? "Auditing with AI..." : "Run AI Audit"}
+      </button>
+      {result && (
+        <div className="mt-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xl font-bold">Risk Score: {result.composite_risk_score} / 100</span>
+            <span className={`px-3 py-1 text-sm font-bold border rounded-full ${tierColors[result.risk_tier]}`}>
+              {result.risk_tier} RISK
+            </span>
+          </div>
+          <p className="text-sm text-gray-700 font-medium">📋 Action: {result.governance_action}</p>
+          <div>
+            <h4 className="text-xs font-bold uppercase text-gray-500">Key Risk Drivers:</h4>
+            <ul className="list-disc list-inside text-sm text-red-700 mt-1">
+              {result.risk_drivers.map((driver, idx) => (
+                <li key={idx}>{driver}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+6. Step 4: Production MLOps Best Practices
+Model Registry & Tracking (MLflow / DVC):
+Track each training experiment run (hyperparameters learning_rate, max_depth, subsample, metrics ROC-AUC, F1-Score).
+Store versioned artifacts (s3:// or MinIO/GCS bucket).
+Automated CI/CD Pipeline (GitHub Actions):
+Lint & Unit Test: Validate export_models.py and test_client.py on pull request.
+Quality Gate: Block deployment if test set ROC-AUC drops below 0.990 or latency exceeds 50ms.
+Docker Build: Build and push Docker image to Docker Hub / GitHub Container Registry (GHCR).
+Containerized Deployment (Docker):
+bash
+cd Model
+docker build -t mplads-sathi-api:v1 .
+docker run -d -p 8000:8000 --name mplads-api mplads-sathi-api:v1
+Data Drift & Concept Drift Monitoring:
+Collect inference payloads in an append-only log table (audit_log.parquet).
+Use Evidently AI or Kolmogorov-Smirnov statistical tests weekly on actual_expenditure and delay_days to detect shifts in administrative reporting across states.
+Trigger automated re-training when distribution divergence (P-value $< 0.05$) is detected.

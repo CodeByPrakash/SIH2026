@@ -1,0 +1,80 @@
+{
+  "project": "MPLADS-SATHI",
+  "team": "Code_Warrior6",
+  "version": "1.0.0",
+  "feature_cols_supervised": [
+    "estimated_cost_inr",
+    "sanctioned_cost_inr",
+    "actual_expenditure_inr",
+    "expected_completion_days",
+    "actual_completion_days",
+    "inspection_done",
+    "photo_available",
+    "photo_location_match",
+    "similar_work_count_500m",
+    "payment_count",
+    "cost_overrun_ratio",
+    "delay_days",
+    "cost_deviation_pct",
+    "completion_ratio",
+    "cost_efficiency",
+    "evidence_score",
+    "constituency_type_enc"
+  ],
+  "feature_cols_isolation": [
+    "estimated_cost_inr",
+    "sanctioned_cost_inr",
+    "actual_expenditure_inr",
+    "expected_completion_days",
+    "actual_completion_days",
+    "cost_overrun_ratio",
+    "delay_days",
+    "payment_count",
+    "similar_work_count_500m",
+    "cost_deviation_pct",
+    "completion_ratio"
+  ],
+  "constituency_types": [
+    "General",
+    "SC",
+    "ST"
+  ],
+  "anomaly_types": [
+    "cost_anomaly",
+    "delay_anomaly",
+    "duplicate_work",
+    "ghost_asset",
+    "payment_anomaly",
+    "vendor_anomaly"
+  ],
+  "iso_score_bounds": {
+    "min": -0.1684533165827311,
+    "max": 0.16635012719696374
+  },
+  "risk_weights": {
+    "w_ml": 0.3,
+    "w_iso": 0.15,
+    "w_cost": 0.2,
+    "w_geo": 0.1,
+    "w_evidence": 0.15,
+    "w_delay": 0.1
+  },
+  "risk_tiers": {
+    "LOW": [
+      0,
+      30
+    ],
+    "MODERATE": [
+      30,
+      60
+    ],
+    "HIGH": [
+      60,
+      80
+    ],
+    "CRITICAL": [
+      80,
+      100
+    ]
+  }
+}
