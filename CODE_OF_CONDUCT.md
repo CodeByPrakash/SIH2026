@@ -2,7 +2,6 @@
 
 ## Our Pledge
 
-<<<<<<< HEAD
 We as members, contributors, and leaders of the **MPLADS-SATHI** project (Team **Code_Warrior6** — Smart India Hackathon 2026) pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, caste, religion, or sexual identity and orientation.
 
 We pledge to act and interact in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community dedicated to building transparent, public-spirited civic technology and AI governance tools.
@@ -210,4 +209,3 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
->>>>>>> e60492719bbbbe445ebe45a2feb8b9baa5dc002f
