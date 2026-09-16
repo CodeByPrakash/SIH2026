@@ -404,6 +404,7 @@ When presenting to SIH Evaluators, emphasize these three core differentiators:
 ## 👥 Contributors
 
 * **Team Code_Warrior6** — Smart India Hackathon 2026
+* Team Leader: [SmrutiRanjan](https://github.com/Smrutiranjan8895/)
 * Lead Developer & Maintainer: [CodeByPrakash](https://github.com/CodeByPrakash)
 
 ---
