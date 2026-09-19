@@ -268,7 +268,12 @@ Runs automated verification audits on a high-risk fraudulent work and a clean be
 ```powershell
 python serving/test_client.py
 ```
-
+---
+### Backend Serving For The React App
+```powershell
+cd Model
+python -m uvicorn serving.api:app --host 0.0.0.0 --port 8000
+```
 ---
 
 ### 4. Frontend Integration Guide (React / Next.js / TypeScript)

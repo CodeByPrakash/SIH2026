@@ -1,0 +1,10 @@
+{
+  "description": "AI-powered platform monitors MPLADS projects with real-time dashboards, risk detection, compliance checks, and GIS mapping to support decision-making across roles.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

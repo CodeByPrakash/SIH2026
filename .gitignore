@@ -3,4 +3,8 @@ build_notebook.py
 generate_dataset.py
 generate_srs_pdf.py
 __pycache__/
-*.pyc
+*.pyc
+node_modules
+.vscode
+.next
+
