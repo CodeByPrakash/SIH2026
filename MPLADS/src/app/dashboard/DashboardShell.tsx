@@ -13,12 +13,28 @@ import GISView from "@/components/GISView";
 import Reports from "@/components/Reports";
 import Investigation from "@/components/Investigation";
 import Grievance from "@/components/Grievance";
-import AiAuditEngine from "@/components/AiAuditEngine";
+import CitizenEvidenceVerification from "@/components/CitizenEvidenceVerification";
+import InterventionSimulation from "@/components/InterventionSimulation";
+import GeoPhotoCrossCheckUSP from "@/components/GeoPhotoCrossCheckUSP";
 import AICopilot from "@/components/AICopilot";
+import AiAuditEngine from "@/components/AiAuditEngine";
 import { ALERTS, MP_USERS, DISTRICT_USERS, STATE_USERS, MINISTRY_USER, CITIZEN_USER } from "@/data/mpladsData";
 import type { User, UserRole } from "@/types";
 
-type Page = "dashboard" | "projects" | "risk" | "alerts" | "compliance" | "gis" | "reports" | "investigation" | "grievance" | "ai-audit";
+type Page =
+  | "dashboard"
+  | "projects"
+  | "risk"
+  | "alerts"
+  | "compliance"
+  | "gis"
+  | "reports"
+  | "investigation"
+  | "grievance"
+  | "evidence"
+  | "simulation"
+  | "crosscheck"
+  | "ai-audit";
 
 interface DashboardShellProps {
   role?: UserRole;
@@ -50,7 +66,8 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
   // Derive current page from path or prop
   let currentPage: Page = activeSection || "dashboard";
   if (!activeSection) {
-    if (pathname.includes("/projects")) currentPage = "projects";
+    if (pathname.includes("/ai-audit")) currentPage = "ai-audit";
+    else if (pathname.includes("/projects")) currentPage = "projects";
     else if (pathname.includes("/risk")) currentPage = "risk";
     else if (pathname.includes("/alerts")) currentPage = "alerts";
     else if (pathname.includes("/compliance")) currentPage = "compliance";
@@ -58,7 +75,9 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
     else if (pathname.includes("/reports")) currentPage = "reports";
     else if (pathname.includes("/investigation")) currentPage = "investigation";
     else if (pathname.includes("/grievance")) currentPage = "grievance";
-    else if (pathname.includes("/ai-audit")) currentPage = "ai-audit";
+    else if (pathname.includes("/evidence")) currentPage = "evidence";
+    else if (pathname.includes("/simulation")) currentPage = "simulation";
+    else if (pathname.includes("/crosscheck")) currentPage = "crosscheck";
     else currentPage = "dashboard";
   }
 
@@ -103,6 +122,12 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
         return <Investigation />;
       case "grievance":
         return <Grievance />;
+      case "evidence":
+        return <CitizenEvidenceVerification user={currentUser} />;
+      case "simulation":
+        return <InterventionSimulation />;
+      case "crosscheck":
+        return <GeoPhotoCrossCheckUSP />;
       case "ai-audit":
         return <AiAuditEngine />;
       default:

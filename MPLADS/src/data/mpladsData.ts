@@ -66,11 +66,8 @@ export const PROJECTS: Project[] = [
     geoLng: 80.947,
     photos: 12,
     inspections: 3,
-    photoLocationMatch: false, // Geotags missing for 40% stretch - flagged location discrepancy
-    similarWorkCount500m: 0,
     ucSubmitted: false,
     assetCreated: true,
-    evidenceScore: 67, // (inspections=1, photos=1, photoLocationMatch=0) => 2/3 = 67%
     workOrderNo: "WO/LKO/2024/0156",
     agreementDate: "2024-04-01",
     payments: [
@@ -104,11 +101,8 @@ export const PROJECTS: Project[] = [
     geoLng: 80.973,
     photos: 28,
     inspections: 4,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: false,
     assetCreated: false,
-    evidenceScore: 100, // 3/3 physical evidence compliance
     workOrderNo: "WO/LKO/2024/0089",
     agreementDate: "2024-02-01",
     payments: [
@@ -142,11 +136,8 @@ export const PROJECTS: Project[] = [
     geoLng: 75.787,
     photos: 5,
     inspections: 1,
-    photoLocationMatch: false, // Geo-verification unconfirmed, units scattered outside zone
-    similarWorkCount500m: 1,
     ucSubmitted: true,
     assetCreated: false,
-    evidenceScore: 67,
     workOrderNo: "WO/JP/2023/0444",
     agreementDate: "2023-12-01",
     payments: [
@@ -180,11 +171,8 @@ export const PROJECTS: Project[] = [
     geoLng: 78.602,
     photos: 45,
     inspections: 6,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: true,
     assetCreated: true,
-    evidenceScore: 100,
     workOrderNo: "WO/WRD/2023/0211",
     agreementDate: "2023-08-10",
     payments: [
@@ -219,11 +207,8 @@ export const PROJECTS: Project[] = [
     geoLng: 77.658,
     photos: 22,
     inspections: 5,
-    photoLocationMatch: true,
-    similarWorkCount500m: 3, // 3 borewells clustered within 500m in same GP
     ucSubmitted: true,
     assetCreated: true,
-    evidenceScore: 100,
     workOrderNo: "WO/SHP/2023/0312",
     agreementDate: "2023-07-01",
     payments: [
@@ -257,11 +242,8 @@ export const PROJECTS: Project[] = [
     geoLng: 76.956,
     photos: 64,
     inspections: 8,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: false,
     assetCreated: false,
-    evidenceScore: 100,
     workOrderNo: "WO/CBE/2024/0067",
     agreementDate: "2024-02-01",
     payments: [
@@ -295,11 +277,8 @@ export const PROJECTS: Project[] = [
     geoLng: 69.859,
     photos: 38,
     inspections: 7,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: true,
     assetCreated: true,
-    evidenceScore: 100,
     workOrderNo: "WO/KCH/2023/0289",
     agreementDate: "2023-10-01",
     payments: [
@@ -333,11 +312,8 @@ export const PROJECTS: Project[] = [
     geoLng: 88.532,
     photos: 18,
     inspections: 2,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: false,
     assetCreated: false,
-    evidenceScore: 100,
     workOrderNo: "WO/S24P/2023/0147",
     agreementDate: "2023-05-15",
     payments: [
@@ -371,11 +347,8 @@ export const PROJECTS: Project[] = [
     geoLng: 77.566,
     photos: 72,
     inspections: 9,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: true,
     assetCreated: true,
-    evidenceScore: 100,
     workOrderNo: "WO/BGR/2023/0334",
     agreementDate: "2023-09-01",
     payments: [
@@ -410,11 +383,8 @@ export const PROJECTS: Project[] = [
     geoLng: 78.008,
     photos: 19,
     inspections: 4,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: true,
     assetCreated: true,
-    evidenceScore: 100,
     workOrderNo: "WO/AGR/2024/0031",
     agreementDate: "2024-03-01",
     payments: [
@@ -447,11 +417,8 @@ export const PROJECTS: Project[] = [
     geoLng: 71.393,
     photos: 8,
     inspections: 1,
-    photoLocationMatch: false, // Severe location discrepancy / ghost asset risk
-    similarWorkCount500m: 2,
     ucSubmitted: false,
     assetCreated: false,
-    evidenceScore: 67,
     workOrderNo: "WO/BMR/2023/0082",
     agreementDate: "2023-04-01",
     payments: [
@@ -484,11 +451,8 @@ export const PROJECTS: Project[] = [
     geoLng: 73.790,
     photos: 89,
     inspections: 11,
-    photoLocationMatch: true,
-    similarWorkCount500m: 0,
     ucSubmitted: false,
     assetCreated: false,
-    evidenceScore: 100,
     workOrderNo: "WO/NSK/2023/0489",
     agreementDate: "2023-12-15",
     payments: [

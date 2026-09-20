@@ -129,6 +129,7 @@ function SidebarProvider({
   return (
     <SidebarContext.Provider value={contextValue}>
       <div
+        suppressHydrationWarning
         data-slot="sidebar-wrapper"
         style={
           {
@@ -207,6 +208,7 @@ function Sidebar({
 
   return (
     <div
+      suppressHydrationWarning
       className="group peer hidden text-sidebar-foreground md:block"
       data-state={state}
       data-collapsible={state === "collapsed" ? collapsible : ""}

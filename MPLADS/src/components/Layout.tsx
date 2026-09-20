@@ -63,6 +63,8 @@ import {
   IconArrowRight,
   IconAlertTriangle,
   IconClock,
+  IconScale,
+  IconPhoto,
   IconBrain,
 } from "@tabler/icons-react";
 
@@ -76,6 +78,9 @@ type Page =
   | "reports"
   | "investigation"
   | "grievance"
+  | "evidence"
+  | "simulation"
+  | "crosscheck"
   | "ai-audit";
 
 interface LayoutProps {
@@ -139,6 +144,30 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
 
   const intelligence: NavItem[] = [
     {
+      id: "ai-audit",
+      label: "AI Audit Engine",
+      sub: "ML-Powered CAG Anomaly Audit",
+      icon: IconBrain,
+    },
+    {
+      id: "crosscheck",
+      label: "Photo Geo-CrossCheck AI",
+      sub: "Geo-Distance & Image Reuse AI",
+      icon: IconPhoto,
+    },
+    {
+      id: "simulation",
+      label: "AI Intervention Simulator",
+      sub: "Compare Release, Hold & Action",
+      icon: IconScale,
+    },
+    {
+      id: "evidence",
+      label: "Citizen Evidence AI",
+      sub: "Ground Discrepancy Cross-Check",
+      icon: IconSparkles,
+    },
+    {
       id: "risk",
       label: "AI Risk Center",
       sub: "Risk Analysis & Anomaly",
@@ -156,12 +185,6 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
       label: "Duplicate Detection",
       sub: "Overlapping Works AI",
       icon: IconLayersIntersect,
-    },
-    {
-      id: "ai-audit",
-      label: "AI Audit Engine",
-      sub: "Live ML Model Inference",
-      icon: IconBrain,
     },
   ];
 
@@ -181,6 +204,24 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
   ];
 
   const citizenIntelligence: NavItem[] = [
+    {
+      id: "crosscheck",
+      label: "Photo Geo-CrossCheck AI",
+      sub: "On-Site Image & Geo Verification",
+      icon: IconPhoto,
+    },
+    {
+      id: "simulation",
+      label: "AI Intervention Simulator",
+      sub: "Compare Scenario Projections",
+      icon: IconScale,
+    },
+    {
+      id: "evidence",
+      label: "Citizen Evidence AI",
+      sub: "Independent Evidence Verification",
+      icon: IconSparkles,
+    },
     {
       id: "grievance",
       label: "Public Grievances",
@@ -202,7 +243,7 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
           {
             id: "reports",
             label: "Public Reports",
-            sub: "Analytics & Downloads",
+            sub: "Constituency Spending & Works",
             icon: IconChartBar,
           },
         ],
@@ -212,8 +253,8 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
 
   return [
     { label: "Monitor", items: monitor },
-    { label: "AI Intelligence", items: intelligence },
-    { label: "Governance & Audit", items: governance },
+    { label: "AI & Intelligence", items: intelligence },
+    { label: "Governance", items: governance },
   ];
 };
 
@@ -337,11 +378,11 @@ function AppSidebar({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               onClick={() => onNavigate("dashboard")}
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+              <div className="flex aspect-square size-9 items-center justify-center rounded-lg overflow-hidden shrink-0">
                 <img
                   src={typeof nidhiLogo === "string" ? nidhiLogo : (nidhiLogo as { src?: string })?.src || "/logo.png"}
-                  alt="NIDHI-RAKSHAK Emblem"
-                  className="size-6 object-contain"
+                  alt="NIDHI-RAKSHAK Logo"
+                  className="size-full object-contain"
                 />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">

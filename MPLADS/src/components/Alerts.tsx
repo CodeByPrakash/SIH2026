@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ALERTS } from "@/data/mpladsData";
+import { useAlerts } from "@/hooks/useAlerts";
 import type { Alert } from "@/types";
 import {
   Card,
@@ -43,7 +44,7 @@ import {
 } from "@tabler/icons-react";
 
 export default function Alerts() {
-  const [alertsList, setAlertsList] = React.useState<Alert[]>(ALERTS);
+  const { alerts, isLive, lastUpdated, acknowledgeAlert, resolveAlert } = useAlerts();
   const [selectedAlert, setSelectedAlert] = React.useState<Alert | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [filterSev, setFilterSev] = React.useState<string>("All");
@@ -51,7 +52,7 @@ export default function Alerts() {
   const [filterStatus, setFilterStatus] = React.useState<string>("All");
 
   const filtered = React.useMemo(() => {
-    return alertsList.filter((a) => {
+    return alerts.filter((a) => {
       const matchSearch =
         searchQuery.trim() === "" ||
         a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -66,32 +67,28 @@ export default function Alerts() {
 
       return matchSearch && matchSev && matchType && matchStatus;
     });
-  }, [alertsList, searchQuery, filterSev, filterType, filterStatus]);
+  }, [alerts, searchQuery, filterSev, filterType, filterStatus]);
 
   const stats = React.useMemo(() => {
     return {
-      active: alertsList.filter((a) => a.status === "Active").length,
-      critical: alertsList.filter((a) => a.severity === "Critical").length,
-      high: alertsList.filter((a) => a.severity === "High").length,
-      medium: alertsList.filter((a) => a.severity === "Medium").length,
-      low: alertsList.filter((a) => a.severity === "Low").length,
+      active: alerts.filter((a) => a.status === "Active").length,
+      critical: alerts.filter((a) => a.severity === "Critical").length,
+      high: alerts.filter((a) => a.severity === "High").length,
+      medium: alerts.filter((a) => a.severity === "Medium").length,
+      low: alerts.filter((a) => a.severity === "Low").length,
     };
-  }, [alertsList]);
+  }, [alerts]);
 
   const handleAcknowledge = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setAlertsList((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Acknowledged" } : a))
-    );
+    acknowledgeAlert(id);
     if (selectedAlert && selectedAlert.id === id) {
       setSelectedAlert((prev) => (prev ? { ...prev, status: "Acknowledged" } : null));
     }
   };
 
   const handleResolve = (id: string) => {
-    setAlertsList((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "Resolved" } : a))
-    );
+    resolveAlert(id);
     setSelectedAlert(null);
   };
 
@@ -107,9 +104,20 @@ export default function Alerts() {
             <Badge variant="destructive" className="font-mono text-[10px]">
               {stats.active} ACTIVE
             </Badge>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+                isLive
+                  ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/30"
+                  : "bg-slate-100 text-slate-600 border-slate-200"
+              }`}
+            >
+              <span className={`size-1.5 rounded-full ${isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
+              {isLive ? "Live Sync" : "Static Mode"}
+            </span>
           </div>
           <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
             Intelligent prioritization • Predictive risk detection • SLA breach prevention
+            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
           </p>
         </div>
 
@@ -131,9 +139,9 @@ export default function Alerts() {
           <Button
             size="sm"
             onClick={() => {
-              setAlertsList((prev) =>
-                prev.map((a) => (a.status === "Active" ? { ...a, status: "Acknowledged" } : a))
-              );
+              alerts
+                .filter((a) => a.status === "Active")
+                .forEach((a) => acknowledgeAlert(a.id));
             }}
             className="text-xs h-9 gap-1.5 font-medium"
           >

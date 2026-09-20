@@ -5,6 +5,7 @@ import { useState, useMemo } from "react";
 import * as XLSX from "xlsx";
 import type { Project } from "../types";
 import { PROJECTS } from "../data/mpladsData";
+import { useProjects } from "@/hooks/useProjects";
 import {
   Table,
   TableHeader,
@@ -59,18 +60,8 @@ import {
   IconShieldCheck,
   IconRefresh,
   IconFilter,
-  IconBrain,
-  IconPlayerPlay,
-  IconLoader2,
-  IconChevronRight,
+  IconSparkles,
 } from "@tabler/icons-react";
-import {
-  auditWebsiteProject,
-  type WorkAuditResponse,
-  tierColor,
-  ARCHETYPE_LABELS,
-} from "@/lib/auditApi";
-import { ArchetypeIcon } from "@/components/ArchetypeIcon";
 
 const STATUSES = ["All", "Completed", "In Progress", "Delayed", "On Hold", "Not Started"] as const;
 const CATEGORIES = [
@@ -210,6 +201,7 @@ function RiskScorePill({ score, level }: { score: number; level: string }) {
 }
 
 export default function ProjectExplorer() {
+  const { projects, isLive, lastUpdated, updateProjectStatus } = useProjects();
   const [status, setStatus] = useState<string>("All");
   const [category, setCategory] = useState<string>("All");
   const [state, setState] = useState<string>("All");
@@ -217,29 +209,9 @@ export default function ProjectExplorer() {
   const [sortBy, setSortBy] = useState<"riskScore" | "sanctionedAmount" | "progress" | "name">("riskScore");
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [aiAuditResult, setAiAuditResult] = useState<WorkAuditResponse | null>(null);
-  const [aiAuditLoading, setAiAuditLoading] = useState<boolean>(false);
-
-  // Clear AI Audit result when selected project changes
-  React.useEffect(() => {
-    setAiAuditResult(null);
-  }, [selectedProject?.id]);
-
-  const handleRunAiAudit = async () => {
-    if (!selectedProject) return;
-    setAiAuditLoading(true);
-    try {
-      const res = await auditWebsiteProject(selectedProject);
-      setAiAuditResult(res);
-    } catch (e) {
-      console.error("AI Audit error:", e);
-    } finally {
-      setAiAuditLoading(false);
-    }
-  };
 
   const filtered = useMemo(() => {
-    return PROJECTS.filter((p) => {
+    return projects.filter((p) => {
       const matchStatus = status === "All" || p.status === status;
       const matchCategory = category === "All" || p.category === category;
       const matchState = state === "All" || p.state === state;
@@ -260,17 +232,17 @@ export default function ProjectExplorer() {
       }
       return b[sortBy] - a[sortBy];
     });
-  }, [status, category, state, search, sortBy]);
+  }, [projects, status, category, state, search, sortBy]);
 
   const stats = useMemo(() => {
     return {
-      total: PROJECTS.length,
-      completed: PROJECTS.filter((p) => p.status === "Completed").length,
-      inProgress: PROJECTS.filter((p) => p.status === "In Progress").length,
-      delayed: PROJECTS.filter((p) => p.status === "Delayed").length,
-      onHold: PROJECTS.filter((p) => p.status === "On Hold").length,
+      total: projects.length,
+      completed: projects.filter((p) => p.status === "Completed").length,
+      inProgress: projects.filter((p) => p.status === "In Progress").length,
+      delayed: projects.filter((p) => p.status === "Delayed").length,
+      onHold: projects.filter((p) => p.status === "On Hold").length,
     };
-  }, []);
+  }, [projects]);
 
   const hasActiveFilters = status !== "All" || category !== "All" || state !== "All" || search !== "";
 
@@ -319,11 +291,28 @@ export default function ProjectExplorer() {
       {/* ── Header ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
-            Project Explorer
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+              Project Explorer
+            </h1>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
+                isLive
+                  ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/30"
+                  : "bg-slate-100 text-slate-600 border-slate-200"
+              }`}
+            >
+              <span
+                className={`size-1.5 rounded-full ${
+                  isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
+                }`}
+              />
+              {isLive ? "Live Data" : "Static Mode"}
+            </span>
+          </div>
           <p className="text-xs text-muted-foreground md:text-sm">
             Browse, filter, and inspect all MPLADS works across constituencies
+            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -866,103 +855,6 @@ export default function ProjectExplorer() {
                   </div>
                 </div>
 
-                {/* ── Live AI ML Risk Audit Card ── */}
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                        <IconBrain className="size-4" />
-                      </div>
-                      <div>
-                        <h3 className="text-xs font-bold text-foreground">AI Risk Audit Engine</h3>
-                        <p className="text-[10px] text-muted-foreground">XGBoost Binary + Archetype + Isolation Forest</p>
-                      </div>
-                    </div>
-                    {!aiAuditResult && (
-                      <Button
-                        size="sm"
-                        onClick={handleRunAiAudit}
-                        disabled={aiAuditLoading}
-                        className="h-7 text-xs gap-1.5 font-semibold"
-                      >
-                        {aiAuditLoading ? (
-                          <>
-                            <IconLoader2 className="size-3 animate-spin" />
-                            Evaluating...
-                          </>
-                        ) : (
-                          <>
-                            <IconPlayerPlay className="size-3" />
-                            Run AI Audit
-                          </>
-                        )}
-                      </Button>
-                    )}
-                  </div>
-
-                  {aiAuditResult ? (
-                    <div className="space-y-3 pt-2 border-t border-primary/15">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-[10px] text-muted-foreground">Live Risk Score</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg font-extrabold text-foreground">
-                              {aiAuditResult.composite_risk_score.toFixed(1)}
-                            </span>
-                            <span className="text-[10px] text-muted-foreground">/ 100</span>
-                            <Badge
-                              className={`${tierColor(aiAuditResult.risk_tier).bg} ${
-                                tierColor(aiAuditResult.risk_tier).text
-                              } ${tierColor(aiAuditResult.risk_tier).border} border text-[10px] px-2 py-0 font-bold`}
-                            >
-                              {aiAuditResult.risk_tier} RISK
-                            </Badge>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <span className="text-[10px] text-muted-foreground">Detected Archetype</span>
-                          <div className="flex items-center gap-1.5 text-xs font-semibold justify-end">
-                            <ArchetypeIcon archetype={aiAuditResult.predicted_archetype} className="size-3.5" />
-                            <span>{ARCHETYPE_LABELS[aiAuditResult.predicted_archetype]?.label || aiAuditResult.predicted_archetype}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Statutory Mandate */}
-                      <div className="p-2.5 rounded-lg bg-background/80 border text-[11px] text-foreground font-medium">
-                        <span className="font-bold text-primary mr-1">Statutory Mandate:</span>
-                        {aiAuditResult.governance_action}
-                      </div>
-
-                      {/* Risk Drivers */}
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-semibold text-muted-foreground">Model Audit Observations:</span>
-                        {aiAuditResult.risk_drivers.map((d, i) => (
-                          <div key={i} className="flex items-start gap-1.5 text-[11px] text-foreground">
-                            <IconChevronRight className="size-3 text-primary shrink-0 mt-0.5" />
-                            <span>{d}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRunAiAudit}
-                        disabled={aiAuditLoading}
-                        className="h-6 text-[10px] text-muted-foreground hover:text-foreground w-full justify-center"
-                      >
-                        <IconRefresh className="size-3 mr-1" /> Re-run Model Audit
-                      </Button>
-                    </div>
-                  ) : (
-                    <p className="text-[11px] text-muted-foreground">
-                      Click &quot;Run AI Audit&quot; to execute real-time feature extraction and evaluate this project against institutional corruption and delay risk models.
-                    </p>
-                  )}
-                </div>
-
                 {/* Key Metadata Grid */}
                 <div className="space-y-2">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -1057,15 +949,10 @@ export default function ProjectExplorer() {
 
                 {/* Compliance & Audit */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <IconShieldCheck className="size-4" />
-                      Statutory Compliance & Physical Evidence
-                    </h3>
-                    <Badge variant="outline" className="text-[10px] font-mono px-2 py-0">
-                      Evidence: {selectedProject.evidenceScore ?? 100}%
-                    </Badge>
-                  </div>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <IconShieldCheck className="size-4" />
+                    Statutory Compliance & Verification
+                  </h3>
                   <div className="grid grid-cols-2 gap-2">
                     {[
                       { label: "UC Submitted", ok: selectedProject.ucSubmitted },
@@ -1077,17 +964,6 @@ export default function ProjectExplorer() {
                       {
                         label: `Inspections (${selectedProject.inspections})`,
                         ok: selectedProject.inspections >= 3,
-                      },
-                      {
-                        label: selectedProject.photoLocationMatch !== false ? "GPS Matched (<500m)" : "GPS Mismatch (>500m)",
-                        ok: selectedProject.photoLocationMatch !== false,
-                      },
-                      {
-                        label:
-                          (selectedProject.similarWorkCount500m || 0) > 0
-                            ? `${selectedProject.similarWorkCount500m} Clustered (500m)`
-                            : "Zero Duplication (500m)",
-                        ok: (selectedProject.similarWorkCount500m || 0) === 0,
                       },
                     ].map(({ label, ok }) => (
                       <div
@@ -1103,7 +979,7 @@ export default function ProjectExplorer() {
                         ) : (
                           <IconX className="size-3.5 shrink-0" />
                         )}
-                        <span className="truncate">{label}</span>
+                        <span>{label}</span>
                       </div>
                     ))}
                   </div>
@@ -1111,36 +987,75 @@ export default function ProjectExplorer() {
               </div>
 
               {/* Sheet Footer */}
-              <SheetFooter className="p-4 border-t bg-card flex flex-row items-center justify-between gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const ws = XLSX.utils.json_to_sheet([
-                      {
-                        ID: selectedProject.id,
-                        Name: selectedProject.name,
-                        Status: selectedProject.status,
-                        Category: selectedProject.category,
-                        SanctionedAmount: selectedProject.sanctionedAmount,
-                        ReleasedAmount: selectedProject.releasedAmount,
-                        Expenditure: selectedProject.expenditure,
-                        Progress: selectedProject.progress,
-                        RiskScore: selectedProject.riskScore,
-                      },
-                    ]);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Dossier");
-                    XLSX.writeFile(wb, `${selectedProject.id}_Dossier.xlsx`);
-                  }}
-                  className="gap-1.5 text-xs"
-                >
-                  <IconFileSpreadsheet className="size-3.5" />
-                  Export Dossier
-                </Button>
-                <SheetClose render={<Button size="sm" className="text-xs" />}>
-                  Close
-                </SheetClose>
+              <SheetFooter className="p-4 border-t bg-card flex flex-col sm:flex-row items-center justify-between gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <span className="text-xs text-muted-foreground font-medium">Update Status:</span>
+                  <Select
+                    value={selectedProject.status}
+                    onValueChange={(val) => {
+                      if (val && selectedProject) {
+                        updateProjectStatus(selectedProject.id, val as Project["status"]);
+                        setSelectedProject((prev) => (prev ? { ...prev, status: val as Project["status"] } : null));
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="h-8 text-xs w-[140px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Completed">Completed</SelectItem>
+                      <SelectItem value="Delayed">Delayed</SelectItem>
+                      <SelectItem value="On Hold">On Hold</SelectItem>
+                      <SelectItem value="Not Started">Not Started</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        window.location.href = `/dashboard/simulation`;
+                      }
+                    }}
+                    className="gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white"
+                  >
+                    <IconSparkles className="size-3.5" />
+                    Simulate AI Intervention →
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const ws = XLSX.utils.json_to_sheet([
+                        {
+                          ID: selectedProject.id,
+                          Name: selectedProject.name,
+                          Status: selectedProject.status,
+                          Category: selectedProject.category,
+                          SanctionedAmount: selectedProject.sanctionedAmount,
+                          ReleasedAmount: selectedProject.releasedAmount,
+                          Expenditure: selectedProject.expenditure,
+                          Progress: selectedProject.progress,
+                          RiskScore: selectedProject.riskScore,
+                        },
+                      ]);
+                      const wb = XLSX.utils.book_new();
+                      XLSX.utils.book_append_sheet(wb, ws, "Dossier");
+                      XLSX.writeFile(wb, `${selectedProject.id}_Dossier.xlsx`);
+                    }}
+                    className="gap-1.5 text-xs"
+                  >
+                    <IconFileSpreadsheet className="size-3.5" />
+                    Export Dossier
+                  </Button>
+                  <SheetClose render={<Button size="sm" className="text-xs" />}>
+                    Close
+                  </SheetClose>
+                </div>
               </SheetFooter>
             </>
           )}

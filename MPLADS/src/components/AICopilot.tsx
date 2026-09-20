@@ -378,20 +378,79 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [messages, loading]);
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 120); }, [open]);
 
-  const sendMessage = useCallback((text: string) => {
-    if (!text.trim() || loading) return;
-    const userMsg: Message = { id: Date.now().toString(), role: "user", text: text.trim(), timestamp: new Date() };
+  const sendMessage = useCallback(async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || loading) return;
+
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      text: trimmed,
+      timestamp: new Date(),
+    };
+
     setMessages(prev => [...prev, userMsg]);
     setInput("");
     setLoading(true);
     setShowSuggested(false);
-    const capturedLang = lang;
-    setTimeout(() => {
-      const response = generateResponse(text, capturedLang);
-      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: "ai", timestamp: new Date(), ...response }]);
+
+    try {
+      const currentPath = typeof window !== "undefined" ? window.location.pathname : "/dashboard";
+      const userPayload = user ? { name: user.name, role: user.role, constituency: user.constituency, state: user.state } : null;
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: trimmed,
+          currentRoute: currentPath,
+          user: userPayload,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success && data?.data?.message) {
+        setMessages(prev => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "ai",
+            text: data.data.message,
+            timestamp: new Date(),
+          },
+        ]);
+      } else {
+        const errorText =
+          data?.message ||
+          "Sorry, I couldn't connect to the chatbot right now. Please try again.";
+        setMessages(prev => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "ai",
+            text: errorText,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (err) {
+      setMessages(prev => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "ai",
+          text: "Sorry, I couldn't connect to the chatbot right now. Please try again.",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
       setLoading(false);
-    }, 900 + Math.random() * 600);
-  }, [loading, lang]);
+    }
+  }, [loading]);
+
 
   const handleVoice = () => { setListening(true); setTimeout(() => { setListening(false); sendMessage(ui.voiceQuery); }, 2200); };
   const handleAction = (action: ActionButton) => { onNavigate(action.payload?.split("?")[0] ?? "dashboard"); setOpen(false); };

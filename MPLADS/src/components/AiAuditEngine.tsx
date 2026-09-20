@@ -432,9 +432,9 @@ export default function AiAuditEngine() {
   };
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-16 px-1">
       {/* ── Page Header ────────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b pb-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between border-b pb-6">
         <div>
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
@@ -442,7 +442,7 @@ export default function AiAuditEngine() {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">AI Audit Engine & Intelligence Hub</h1>
-              <p className="text-xs md:text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mt-0.5">
                 Official ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
               </p>
             </div>
@@ -494,92 +494,97 @@ export default function AiAuditEngine() {
 
       {/* ── Main Feature Tabs ──────────────────────────────────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full max-w-3xl h-11 p-1 bg-muted/60 border">
-          <TabsTrigger value="studio" className="gap-2 text-xs font-semibold data-[state=active]:shadow-sm">
-            <IconActivity className="size-4" />
-            <span>Project Audit Studio</span>
+        <TabsList className="grid grid-cols-4 w-full h-12 p-1 bg-muted/60 border rounded-xl">
+          <TabsTrigger value="studio" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
+            <IconActivity className="size-4 shrink-0" />
+            <span className="hidden sm:inline">Project Audit Studio</span>
+            <span className="sm:hidden">Studio</span>
           </TabsTrigger>
-          <TabsTrigger value="batch" className="gap-2 text-xs font-semibold data-[state=active]:shadow-sm">
-            <IconFileSpreadsheet className="size-4" />
-            <span>Database Batch Audit</span>
+          <TabsTrigger value="batch" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
+            <IconFileSpreadsheet className="size-4 shrink-0" />
+            <span className="hidden sm:inline">Database Batch Audit</span>
+            <span className="sm:hidden">Batch</span>
           </TabsTrigger>
-          <TabsTrigger value="proposal" className="gap-2 text-xs font-semibold data-[state=active]:shadow-sm">
-            <IconSend className="size-4" />
-            <span>New Proposal Audit</span>
+          <TabsTrigger value="proposal" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
+            <IconSend className="size-4 shrink-0" />
+            <span className="hidden sm:inline">New Proposal Audit</span>
+            <span className="sm:hidden">Proposal</span>
           </TabsTrigger>
-          <TabsTrigger value="intel" className="gap-2 text-xs font-semibold data-[state=active]:shadow-sm">
-            <IconSparkles className="size-4" />
-            <span>Model Intel & CAG Specs</span>
+          <TabsTrigger value="intel" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
+            <IconSparkles className="size-4 shrink-0" />
+            <span className="hidden sm:inline">Model Intel & CAG Specs</span>
+            <span className="sm:hidden">Model</span>
           </TabsTrigger>
         </TabsList>
 
         {/* ═════════════════════════════════════════════════════════════════════
             TAB 1: PROJECT AUDIT STUDIO (Easy Interactive Flow)
         ═════════════════════════════════════════════════════════════════════ */}
-        <TabsContent value="studio" className="space-y-6 mt-6 w-full">
+        <TabsContent value="studio" className="space-y-6 mt-5 w-full">
           {/* Step 1: Select Website Project Banner */}
-          <Card className="w-full border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent shadow-sm">
-            <CardHeader className="pb-3">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <Card className="w-full border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5 shadow-sm rounded-2xl">
+            <CardHeader className="pb-5">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-[10px]">
+                  <div className="flex items-center gap-2.5">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs px-2.5 py-0.5 rounded-full font-semibold">
                       STEP 1
                     </Badge>
-                    <CardTitle className="text-base font-bold">
+                    <CardTitle className="text-xl font-bold tracking-tight">
                       Select Website Project to Audit
                     </CardTitle>
                   </div>
-                  <CardDescription className="text-xs mt-1">
+                  <CardDescription className="text-sm mt-1.5 leading-relaxed">
                     Pick any active public works project from the national MPLADS database. All parameters load automatically in native ₹ Lakhs format.
                   </CardDescription>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="relative w-64">
-                    <IconSearch className="absolute left-2.5 top-2.5 size-3.5 text-muted-foreground" />
+                <div className="flex items-center gap-3">
+                  <div className="relative w-full sm:w-72">
+                    <IconSearch className="absolute left-3 top-3 size-4 text-muted-foreground" />
                     <Input
                       placeholder="Search ID, title, state, MP..."
                       value={searchProject}
                       onChange={(e) => setSearchProject(e.target.value)}
-                      className="h-8 pl-8 text-xs bg-card"
+                      className="h-10 pl-10 text-sm bg-card"
                     />
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-2">
               {/* Quick Select Project Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 max-h-56 overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 max-h-72 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
                 {filteredProjects.slice(0, 15).map((p) => {
                   const isSelected = p.id === selectedProjectId;
                   return (
                     <button
                       key={p.id}
                       onClick={() => setSelectedProjectId(p.id)}
-                      className={`text-left p-3 rounded-xl border transition-all text-xs flex flex-col justify-between ${
+                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between min-h-[120px] ${
                         isSelected
-                          ? "border-primary bg-primary/10 shadow-sm ring-1 ring-primary/30"
-                          : "border-border bg-card hover:bg-muted/50"
+                          ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/20"
+                          : "border-border bg-card hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm"
                       }`}
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-[10px] text-muted-foreground">{p.id}</span>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4">
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-mono text-[11px] text-muted-foreground">{p.id}</span>
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 shrink-0">
                             {p.category}
                           </Badge>
                         </div>
-                        <p className="font-semibold text-foreground line-clamp-1">{p.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {p.district}, {p.state} • MP: {p.mpName}
+                        <p className="font-bold text-sm text-foreground line-clamp-2 leading-tight">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {p.district}, {p.state}
                         </p>
+                        <p className="text-[11px] text-muted-foreground">MP: {p.mpName}</p>
                       </div>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/40 text-[11px]">
-                        <span className="font-medium text-foreground">
-                          Budget: {fmtLakhs(p.sanctionedAmount)}
+                      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/50 text-xs">
+                        <span className="font-semibold text-foreground">
+                          {fmtLakhs(p.sanctionedAmount)}
                         </span>
-                        <span className="text-muted-foreground">
-                          Spent: {fmtLakhs(p.expenditure)}
+                        <span className="text-muted-foreground text-[11px]">
+                          Spent {fmtLakhs(p.expenditure)}
                         </span>
                       </div>
                     </button>
@@ -590,9 +595,9 @@ export default function AiAuditEngine() {
           </Card>
 
           {/* Step 2: Audit Workspace (Form on Left + Live ML Results on Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* ── Left Column (5 cols): Selected Project & Parameter Adjustments ── */}
-            <div className="lg:col-span-5 space-y-4">
+            <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-4">
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
