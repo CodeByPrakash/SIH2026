@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           success: false,
+          error: "Message is required.",
           message: "Message is required.",
         },
         { status: 400 }
@@ -47,15 +48,32 @@ export async function POST(req: Request) {
       if (Date.now() - cached.timestamp < CHAT_CACHE_TTL_MS) {
         return NextResponse.json({
           success: true,
+          reply: cached.reply,
           data: {
+            reply: cached.reply,
             message: cached.reply,
             cached: true,
           },
+          cached: true,
         });
       }
     }
 
-    // Dynamically build website & live database context server-side
+    // Check server-side environment variable for DeepBot API URL
+    const targetUrl = process.env.DEEPBOT_API_URL;
+    if (!targetUrl) {
+      console.error("[Chatbot API Proxy] DEEPBOT_API_URL environment variable is missing on server.");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Chatbot service is not configured",
+          message: "Chatbot service is not configured",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Dynamically build user-aware & website-aware context server-side
     const contextualMessage = await buildContext({
       message: trimmedMessage,
       currentRoute,
@@ -64,18 +82,6 @@ export async function POST(req: Request) {
       mode,
       history,
     });
-
-    const targetUrl = process.env.DEEPBOT_API_URL;
-    if (!targetUrl) {
-      console.error("[Chat API Proxy] DEEPBOT_API_URL is not defined in environment variables");
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Chatbot service is misconfigured.",
-        },
-        { status: 500 }
-      );
-    }
 
     // Setup timeout signal (30 seconds for deep ML analysis)
     const controller = new AbortController();
@@ -93,11 +99,12 @@ export async function POST(req: Request) {
       });
     } catch (networkError: any) {
       clearTimeout(timeoutId);
-      console.error("[Chat API Proxy] Network/Timeout error:", networkError?.message);
+      console.error("[Chatbot API Proxy] Network or timeout error connecting to DeepBot:", networkError?.message || networkError);
       return NextResponse.json(
         {
           success: false,
-          message: "Unable to connect to the chatbot service.",
+          error: "Network error",
+          message: "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.",
         },
         { status: 503 }
       );
@@ -107,13 +114,12 @@ export async function POST(req: Request) {
 
     // Handle non-2xx HTTP errors from external backend
     if (!externalRes.ok) {
-      console.error(
-        `[Chat API Proxy] External service error status ${externalRes.status}`
-      );
+      console.error(`[Chatbot API Proxy] DeepBot backend HTTP error status ${externalRes.status}`);
       return NextResponse.json(
         {
           success: false,
-          message: "Chatbot service is temporarily unavailable.",
+          error: `HTTP ${externalRes.status}`,
+          message: "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.",
         },
         { status: externalRes.status >= 500 ? 502 : 400 }
       );
@@ -122,48 +128,54 @@ export async function POST(req: Request) {
     // Parse external JSON response safely
     const responseData = await externalRes.json().catch(() => null);
 
-    // DeepBot backend returns: { success: true, data: { reply: "..." } }
+    // Normalize DeepBot response formats (reply, message, response, or data object)
     const botReply =
+      responseData?.reply ||
+      responseData?.message ||
+      responseData?.response ||
       responseData?.data?.reply ||
       responseData?.data?.message ||
-      responseData?.reply ||
-      responseData?.message;
+      responseData?.data?.response;
 
     if (!botReply || typeof botReply !== "string") {
       console.error(
-        "[Chat API Proxy] Unexpected response structure from DeepBot:",
+        "[Chatbot API Proxy] Unexpected or empty response structure from DeepBot:",
         JSON.stringify(responseData)
       );
       return NextResponse.json(
         {
           success: false,
-          message: "The chatbot returned an unexpected response.",
+          error: "Invalid backend response format",
+          message: "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.",
         },
         { status: 502 }
       );
     }
 
     // Cache response for future instant queries
-    if (botReply && typeof botReply === "string") {
-      chatResponseCache.set(cacheKey, {
-        reply: botReply,
-        timestamp: Date.now(),
-      });
-    }
+    chatResponseCache.set(cacheKey, {
+      reply: botReply,
+      timestamp: Date.now(),
+    });
 
-    // Return normalized response to frontend
+    // Return normalized response format
     return NextResponse.json({
       success: true,
+      reply: botReply,
       data: {
+        reply: botReply,
         message: botReply,
+        cached: false,
       },
+      cached: false,
     });
   } catch (err: any) {
-    console.error("[Chat API Proxy] Internal error:", err);
+    console.error("[Chatbot API Proxy] Internal server exception:", err);
     return NextResponse.json(
       {
         success: false,
-        message: "Unable to connect to the chatbot service.",
+        error: "Internal server error",
+        message: "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.",
       },
       { status: 500 }
     );

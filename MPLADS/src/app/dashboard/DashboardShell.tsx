@@ -46,20 +46,25 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
   const router = useRouter();
   const pathname = usePathname();
 
-  // If a role is explicitly defined in route (e.g. /dashboard/district) and differs from current user, sync mock user
+  // Protect route & handle role switching for authenticated users
   useEffect(() => {
-    if (!isLoading && role) {
-      if (!user || user.role !== role) {
-        let u: User;
-        if (role === "MP") u = MP_USERS[0];
-        else if (role === "District") u = DISTRICT_USERS[0];
-        else if (role === "State") u = STATE_USERS[0];
-        else if (role === "Ministry") u = MINISTRY_USER;
-        else u = CITIZEN_USER;
-        login(u);
-      }
+    if (isLoading) return;
+
+    if (!user) {
+      router.replace("/login");
+      return;
     }
-  }, [role, user, isLoading, login]);
+
+    if (role && user.role !== role) {
+      let u: User;
+      if (role === "MP") u = MP_USERS[0];
+      else if (role === "District") u = DISTRICT_USERS[0];
+      else if (role === "State") u = STATE_USERS[0];
+      else if (role === "Ministry") u = MINISTRY_USER;
+      else u = CITIZEN_USER;
+      login(u);
+    }
+  }, [role, user, isLoading, login, router]);
 
   const activeAlerts = ALERTS.filter((a) => a.status === "Active").length;
 
@@ -94,13 +99,18 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
     logout();
   };
 
-  // Fallback user while loading or if directly visiting route
-  const currentUser: User = user || (role ? (
-    role === "District" ? DISTRICT_USERS[0] :
-    role === "State" ? STATE_USERS[0] :
-    role === "Ministry" ? MINISTRY_USER :
-    role === "Citizen" ? CITIZEN_USER : MP_USERS[0]
-  ) : MP_USERS[0]);
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-muted border-t-primary rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-xs text-muted-foreground font-medium">Loading MPLADS Portal...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentUser: User = user;
 
   const searchParams = useSearchParams();
   const paramProjectId = searchParams ? searchParams.get("projectId") : null;

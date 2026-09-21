@@ -21,17 +21,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { IconDotsVertical, IconUserCircle, IconCreditCard, IconNotification, IconLogout } from "@tabler/icons-react"
+import { useAuth } from "@/context/AuthContext"
 
 export function NavUser({
   user,
+  onLogout,
 }: {
   user: {
     name: string
     email: string
     avatar: string
   }
+  onLogout?: () => void
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()
+  const handleLogout = onLogout || logout
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -94,9 +99,17 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout
-              />
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLogout();
+              }}
+              onSelect={() => {
+                handleLogout();
+              }}
+            >
+              <IconLogout />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
