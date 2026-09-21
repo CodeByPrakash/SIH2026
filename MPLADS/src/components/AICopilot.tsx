@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { User, UserRole } from "../types";
+import { useAuth } from "@/context/AuthContext";
 import { PROJECTS, ALERTS, RISK_FLAGS, STATES_DATA, NATIONAL_KPIs } from "../data/mpladsData";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -345,11 +346,11 @@ const CARD_COLORS: Record<ResponseCard["color"], { bg: string; border: string; d
 function RenderText({ text }: { text: string }) {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
   return (
-    <span>
+    <span className="break-words [overflow-wrap:anywhere]">
       {parts.map((part, i) =>
         part.startsWith("**") && part.endsWith("**")
-          ? <strong key={i} className="font-semibold text-slate-800">{part.slice(2, -2)}</strong>
-          : part.split("\n").map((line, j) => <span key={`${i}-${j}`}>{j > 0 && <br />}{line}</span>)
+          ? <strong key={i} className="font-semibold text-slate-800 break-words [overflow-wrap:anywhere]">{part.slice(2, -2)}</strong>
+          : part.split("\n").map((line, j) => <span key={`${i}-${j}`} className="break-words [overflow-wrap:anywhere]">{j > 0 && <br />}{line}</span>)
       )}
     </span>
   );
@@ -360,6 +361,7 @@ function RenderText({ text }: { text: string }) {
 interface AICopilotProps { onNavigate: (page: string) => void; user?: User | null; }
 
 export default function AICopilot({ onNavigate, user }: AICopilotProps) {
+  const { user: authUser } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -396,7 +398,16 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
     try {
       const currentPath = typeof window !== "undefined" ? window.location.pathname : "/dashboard";
-      const userPayload = user ? { name: user.name, role: user.role, constituency: user.constituency, state: user.state } : null;
+      const currentUser = user || authUser;
+      const userPayload = currentUser
+        ? {
+            name: currentUser.name,
+            role: currentUser.role,
+            constituency: currentUser.constituency,
+            district: currentUser.district,
+            state: currentUser.state,
+          }
+        : null;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -411,22 +422,22 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
       });
 
       const data = await res.json().catch(() => null);
+      const botText = data?.reply || data?.data?.reply || data?.data?.message;
 
-      if (res.ok && data?.success && data?.data?.message) {
-        setMessages(prev => [
+      if (res.ok && data?.success && botText) {
+        setMessages((prev) => [
           ...prev,
           {
             id: (Date.now() + 1).toString(),
             role: "ai",
-            text: data.data.message,
+            text: botText,
             timestamp: new Date(),
           },
         ]);
       } else {
-        const errorText =
-          data?.message ||
-          "Sorry, I couldn't connect to the chatbot right now. Please try again.";
-        setMessages(prev => [
+        console.error("[AICopilot Error]", data);
+        const errorText = "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.";
+        setMessages((prev) => [
           ...prev,
           {
             id: (Date.now() + 1).toString(),
@@ -449,7 +460,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
     } finally {
       setLoading(false);
     }
-  }, [loading]);
+  }, [loading, user, authUser]);
 
 
   const handleVoice = () => { setListening(true); setTimeout(() => { setListening(false); sendMessage(ui.voiceQuery); }, 2200); };
@@ -460,27 +471,27 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   return (
     <>
       {open && (
-        <div className="fixed z-50 flex flex-col shadow-2xl animate-slide-in" style={{ bottom: 88, right: 24, width: 380, height: 560, borderRadius: 20, background: "#FFFFFF", border: "1px solid #E2E8F0", overflow: "hidden" }}>
+        <div className="fixed z-50 flex flex-col shadow-2xl animate-slide-in inset-0 sm:inset-auto sm:bottom-[88px] sm:right-6 w-full max-w-full sm:w-[380px] sm:max-w-[380px] h-[100dvh] sm:h-[560px] rounded-none sm:rounded-2xl bg-white border-0 sm:border border-slate-200 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 flex-shrink-0" style={{ background: "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 100%)" }}>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg" style={{ background: "linear-gradient(135deg, #F59E0B, #EF4444)" }}>
-              <svg viewBox="0 0 24 24" fill="white" className="w-5 h-5"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
+          <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 shrink-0" style={{ background: "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 100%)" }}>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 shadow-lg" style={{ background: "linear-gradient(135deg, #F59E0B, #EF4444)" }}>
+              <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 sm:w-5 sm:h-5"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white font-display font-bold text-sm leading-tight">NIDHI-RAKSHAK AI</div>
+              <div className="text-white font-display font-bold text-xs sm:text-sm leading-tight truncate">NIDHI-RAKSHAK AI</div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>
-                <span className="text-blue-200 text-[10px]">{ui.onlineStatus}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"/>
+                <span className="text-blue-200 text-[10px] truncate">{ui.onlineStatus}</span>
               </div>
             </div>
             {/* Language selector */}
-            <div className="relative">
-              <button onClick={() => setShowLangMenu(m => !m)} className="flex items-center gap-1 px-2 py-1 rounded-lg text-xs text-blue-200 hover:bg-white/10 transition-colors border border-white/15">
+            <div className="relative shrink-0">
+              <button onClick={() => setShowLangMenu(m => !m)} aria-label="Select Language" className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs text-blue-200 hover:bg-white/10 transition-colors border border-white/15 min-h-[36px]">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                 {LANGS.find(l => l.id === lang)?.native}
               </button>
               {showLangMenu && (
-                <div className="absolute right-0 top-8 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-10 min-w-[130px]">
+                <div className="absolute right-0 top-9 bg-white rounded-xl shadow-xl border border-slate-100 py-1 z-20 min-w-[130px]">
                   {LANGS.map(l => (
                     <button key={l.id} onClick={() => { setLang(l.id); setShowLangMenu(false); }}
                       className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs hover:bg-slate-50 transition-colors text-left ${lang === l.id ? "text-blue-600 font-semibold" : "text-slate-700"}`}>
@@ -493,17 +504,17 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
               )}
             </div>
             {messages.length > 0 && (
-              <button onClick={clearChat} className="text-blue-300 hover:text-white transition-colors px-1.5 py-1 rounded hover:bg-white/10" title={ui.clearTitle}>
+              <button onClick={clearChat} aria-label={ui.clearTitle} className="text-blue-300 hover:text-white transition-colors p-2 rounded hover:bg-white/10 shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center" title={ui.clearTitle}>
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
             )}
-            <button onClick={() => setOpen(false)} className="text-blue-300 hover:text-white transition-colors ml-0.5">
+            <button onClick={() => setOpen(false)} aria-label="Close Chat" className="text-blue-300 hover:text-white transition-colors p-2 rounded hover:bg-white/10 shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             </button>
           </div>
 
           {/* Messages */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-slate-50/60">
+          <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-3 space-y-3 sm:space-y-4 bg-slate-50/60">
             {messages.length === 0 && (
               <div className="text-center py-4">
                 <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
@@ -516,23 +527,23 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
             {messages.map(msg => (
               <div key={msg.id} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
                 {msg.role === "user" ? (
-                  <div className="max-w-[80%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm text-white shadow-sm" style={{ background: "linear-gradient(135deg, #1a3a6b, #2563EB)" }}>{msg.text}</div>
+                  <div className="max-w-[85%] sm:max-w-[80%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm text-white shadow-sm break-words [overflow-wrap:anywhere]" style={{ background: "linear-gradient(135deg, #1a3a6b, #2563EB)" }}>{msg.text}</div>
                 ) : (
-                  <div className="max-w-full space-y-2">
-                    <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm">
-                      <p className="text-sm text-slate-700 leading-relaxed"><RenderText text={msg.text}/></p>
+                  <div className="w-full max-w-[92%] sm:max-w-[88%] space-y-2">
+                    <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm break-words [overflow-wrap:anywhere]">
+                      <p className="text-sm text-slate-700 leading-relaxed break-words [overflow-wrap:anywhere]"><RenderText text={msg.text}/></p>
                     </div>
                     {msg.cards && msg.cards.length > 0 && (
-                      <div className="space-y-1.5">
+                      <div className="space-y-1.5 w-full">
                         {msg.cards.map((card, i) => {
                           const c = CARD_COLORS[card.color];
                           return (
-                            <div key={i} className={`${c.bg} ${c.border} border rounded-xl px-3 py-2.5 flex items-start gap-2.5`}>
-                              <div className={`w-2 h-2 rounded-full ${c.dot} flex-shrink-0 mt-1.5`}/>
+                            <div key={i} className={`${c.bg} ${c.border} border rounded-xl px-3 py-2.5 flex items-start gap-2.5 w-full overflow-hidden`}>
+                              <div className={`w-2 h-2 rounded-full ${c.dot} shrink-0 mt-1.5`}/>
                               <div className="min-w-0 flex-1">
-                                <div className="text-xs font-semibold text-slate-700 leading-snug">{card.label}</div>
-                                <div className={`text-xs font-bold ${c.val} mt-0.5`}>{card.value}</div>
-                                {card.sub && <div className="text-[10px] text-slate-400 mt-0.5 leading-snug">{card.sub}</div>}
+                                <div className="text-xs font-semibold text-slate-700 leading-snug break-words">{card.label}</div>
+                                <div className={`text-xs font-bold ${c.val} mt-0.5 break-words`}>{card.value}</div>
+                                {card.sub && <div className="text-[10px] text-slate-400 mt-0.5 leading-snug break-words">{card.sub}</div>}
                               </div>
                             </div>
                           );
@@ -540,10 +551,10 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
                       </div>
                     )}
                     {msg.actions && msg.actions.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-1.5 max-w-full">
                         {msg.actions.map((action, i) => (
                           <button key={i} onClick={() => handleAction(action)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:shadow-sm active:scale-95 ${action.type === "view" ? "bg-[#0D1B3E] text-white hover:bg-blue-900" : action.type === "filter" ? "bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100" : action.type === "alert" ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100" : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"}`}>
+                            className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all hover:shadow-sm active:scale-95 break-words max-w-full text-left ${action.type === "view" ? "bg-[#0D1B3E] text-white hover:bg-blue-900" : action.type === "filter" ? "bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100" : action.type === "alert" ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100" : "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"}`}>
                             {action.label} →
                           </button>
                         ))}
@@ -565,11 +576,11 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
           {/* Suggested */}
           {showSuggested && messages.length === 0 && (
-            <div className="px-3 pb-2 flex-shrink-0">
+            <div className="px-3 pb-2 shrink-0 max-w-full overflow-x-auto">
               <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5 px-1">{ui.suggestedLabel}</p>
               <div className="flex flex-wrap gap-1.5">
                 {suggested.slice(0, 6).map(q => (
-                  <button key={q} onClick={() => sendMessage(q)} className="px-2.5 py-1 bg-white border border-slate-200 rounded-full text-xs text-slate-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all whitespace-nowrap">
+                  <button key={q} onClick={() => sendMessage(q)} className="px-2.5 py-1 bg-white border border-slate-200 rounded-full text-xs text-slate-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all text-left break-words max-w-full inline-block">
                     {q}
                   </button>
                 ))}
@@ -579,25 +590,25 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
           {/* Listening */}
           {listening && (
-            <div className="mx-4 mb-2 flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
+            <div className="mx-3 sm:mx-4 mb-2 flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl shrink-0">
               <div className="flex items-center gap-0.5">
                 {[1,3,5,3,1].map((h, i) => <div key={i} className="w-1 rounded-full bg-red-500" style={{ height: h * 4, animation: `bounce 0.6s ease-in-out ${i * 0.1}s infinite alternate` }}/>)}
               </div>
-              <span className="text-xs text-red-600 font-medium">{ui.listening}</span>
-              <button onClick={() => setListening(false)} className="ml-auto text-red-400 hover:text-red-600">
+              <span className="text-xs text-red-600 font-medium truncate">{ui.listening}</span>
+              <button onClick={() => setListening(false)} aria-label="Stop listening" className="ml-auto text-red-400 hover:text-red-600 shrink-0">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
               </button>
             </div>
           )}
 
           {/* Input */}
-          <div className="px-3 pb-3 pt-2 border-t border-slate-100 bg-white flex-shrink-0">
-            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2 focus-within:border-blue-400 focus-within:bg-white transition-all">
-              <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)} placeholder={ui.placeholder} className="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none min-w-0"/>
-              <button onClick={handleVoice} disabled={loading || listening} className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all ${listening ? "bg-red-500 text-white" : "text-slate-400 hover:text-blue-600 hover:bg-blue-50"}`} title="Voice input">
+          <div className="px-3 pt-2 pb-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] border-t border-slate-100 bg-white shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-50 border border-slate-200 rounded-2xl px-2.5 sm:px-3 py-1.5 sm:py-2 focus-within:border-blue-400 focus-within:bg-white transition-all w-full min-w-0">
+              <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendMessage(input)} placeholder={ui.placeholder} className="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none min-w-0 w-full" aria-label="Type message"/>
+              <button onClick={handleVoice} disabled={loading || listening} aria-label="Voice input" className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all min-w-[32px] min-h-[32px] ${listening ? "bg-red-500 text-white" : "text-slate-400 hover:text-blue-600 hover:bg-blue-50"}`} title="Voice input">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
               </button>
-              <button onClick={() => sendMessage(input)} disabled={!input.trim() || loading} className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all disabled:opacity-30" style={{ background: input.trim() && !loading ? "linear-gradient(135deg, #0D1B3E, #2563EB)" : undefined }}>
+              <button onClick={() => sendMessage(input)} disabled={!input.trim() || loading} aria-label="Send message" className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all disabled:opacity-30 min-w-[32px] min-h-[32px]" style={{ background: input.trim() && !loading ? "linear-gradient(135deg, #0D1B3E, #2563EB)" : undefined }}>
                 <svg viewBox="0 0 24 24" fill={input.trim() && !loading ? "white" : "#94A3B8"} className="w-4 h-4"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
               </button>
             </div>
@@ -607,7 +618,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
       )}
 
       {/* FAB */}
-      <button onClick={() => setOpen(o => !o)} className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 active:scale-95 hover:scale-105" style={{ bottom: 24, right: 24, width: 56, height: 56, background: open ? "linear-gradient(135deg, #EF4444, #DC2626)" : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)", boxShadow: open ? "0 8px 32px rgba(239,68,68,0.45)" : "0 8px 32px rgba(13,27,62,0.55)" }} title="NIDHI-RAKSHAK AI Copilot" aria-label="Open AI Copilot">
+      <button onClick={() => setOpen(o => !o)} className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 active:scale-95 hover:scale-105 bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14" style={{ background: open ? "linear-gradient(135deg, #EF4444, #DC2626)" : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)", boxShadow: open ? "0 8px 32px rgba(239,68,68,0.45)" : "0 8px 32px rgba(13,27,62,0.55)" }} title="NIDHI-RAKSHAK AI Copilot" aria-label="Open AI Copilot">
         {open
           ? <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
           : <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
