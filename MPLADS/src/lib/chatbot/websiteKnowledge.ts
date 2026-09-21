@@ -1,7 +1,7 @@
 export const WEBSITE_IDENTITY = {
-  name: "NIDHI-RAKSHAK AI",
-  subtitle: "NIDHI-RAKSHAK Copilot",
-  platformName: "NIDHI-RAKSHAK Portal",
+  name: "NIDHI-SATHI AI",
+  subtitle: "NIDHI-SATHI Copilot",
+  platformName: "NIDHI-SATHI Portal",
   description:
     "An advanced AI-assisted governance and monitoring portal under the NIDHI-RAKSHAK framework. It provides project tracking, fund utilization monitoring, automated risk scoring, real-time alert triage, citizen evidence cross-checking with EXIF & GPS verification, image reuse detection (SHA-256 & perceptual hash), financial analytics, compliance tracking, and intervention simulation.",
 };

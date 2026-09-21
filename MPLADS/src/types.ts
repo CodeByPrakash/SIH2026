@@ -46,6 +46,8 @@ export interface Project {
   photoLocationMatch?: boolean;       // GPS geo-fencing match within 500m
   similarWorkCount500m?: number;      // Nearby duplicate works within 500m radius
   evidenceScore?: number;             // Composite (inspection + photo + gpsMatch) / 3.0 * 100
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Payment {
