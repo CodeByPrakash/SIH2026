@@ -319,7 +319,7 @@ export default function GISView() {
       } else {
         mapdata.state_specific[code].color = "#CBD5E1";
         mapdata.state_specific[code].hover_color = "#94A3B8";
-        mapdata.state_specific[code].description = `<strong>${stateName}</strong><br/><span style="color: #64748B;">MPLADS Data Syncing</span>`;
+        mapdata.state_specific[code].description = `<strong>${stateName}</strong><br/><span style="color: #64748B;">NIDHI-RAKSHAK Data Syncing</span>`;
       }
     });
 

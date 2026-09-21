@@ -232,9 +232,9 @@ export default function Login({ onLogin }: LoginProps = {}) {
             <div className="inline-flex items-center justify-center p-2 bg-card rounded-md border border-border shadow-xs mb-2.5">
               <StateEmblem />
             </div>
-            <h1 className="text-xl font-bold text-foreground tracking-tight">MPLADS SATHI</h1>
+            <h1 className="text-xl font-bold text-foreground tracking-tight">NIDHI-RAKSHAK</h1>
             <p className="text-xs text-muted-foreground">
-              Members of Parliament Local Area Development Scheme
+              National Public Fund & Infrastructure Vigilance System
             </p>
           </div>
 

@@ -453,7 +453,7 @@ export default function GeoPhotoCrossCheckUSP() {
         <IconInfoCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
         <div>
           <span className="font-semibold block text-blue-800 dark:text-blue-300">
-            Project Record Source — MPLADS SATHI Database & Image Hashing Engine
+            Project Record Source — NIDHI-RAKSHAK Database & Image Hashing Engine
           </span>
           <p className="text-xs text-blue-800/80 dark:text-blue-300/80 mt-0.5">
             Verification results are analytical estimations using Haversine GPS distance algorithms, SHA-256 file hashing, and 64-bit perceptual image fingerprinting. Flags are labeled as <strong>"Potentially Reused Evidence"</strong> or <strong>"Location Mismatch"</strong> to guide field inspections without making automated fraud assertions.

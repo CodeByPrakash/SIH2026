@@ -1,5 +1,5 @@
 /**
- * MPLADS-SATHI: Typed API Client for FastAPI ML Backend
+ * NIDHI-RAKSHAK: Typed API Client for FastAPI ML Backend
  * Provides typed interfaces and fetch wrappers for all model inference endpoints.
  */
 

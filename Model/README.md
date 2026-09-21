@@ -1,8 +1,8 @@
-# 🏛️ MPLADS-SATHI: AI & ML Risk Intelligence Engine
+# 🏛️ NIDHI-RAKSHAK: AI & ML Risk Intelligence Engine
 ## Software Requirements Specification (SRS) & System Architecture Document
 
 > **Module**: `Model/` Directory  
-> **System**: MPLADS-SATHI (*System for Automated Tracking, Hazard-detection & Inspection*)  
+> **System**: NIDHI-RAKSHAK (*National Infrastructure & Digital Hazard Inspection — Risk Assessment Knowledge-system*)  
 > **Target Event**: Smart India Hackathon (SIH) 2026  
 > **Developed by**: Team CodeByPrakash  
 > **Version**: 1.0.0 (Production-Ready)  

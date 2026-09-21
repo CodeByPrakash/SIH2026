@@ -1,12 +1,23 @@
 import { NextResponse } from "next/server";
 import { buildContext } from "@/lib/chatbot/buildContext";
 
+// In-Memory Chat Response Cache for faster AI conversation & reduced backend load
+interface ChatCacheEntry {
+  reply: string;
+  timestamp: number;
+}
+const chatResponseCache = new Map<string, ChatCacheEntry>();
+const CHAT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes TTL
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null);
     const rawMessage = body?.message;
     const currentRoute = body?.currentRoute || "/dashboard";
     const user = body?.user || null;
+    const auditContext = body?.auditContext || null;
+    const mode = body?.mode || "general";
+    const history = Array.isArray(body?.history) ? body.history : [];
 
     // Validate request input
     if (!rawMessage || typeof rawMessage !== "string" || !rawMessage.trim()) {
@@ -21,11 +32,37 @@ export async function POST(req: Request) {
 
     const trimmedMessage = rawMessage.trim();
 
+    // Cache lookup for rapid response
+    const cacheKey = [
+      user?.name || "guest",
+      user?.role || "",
+      user?.district || user?.constituency || user?.state || "",
+      mode,
+      auditContext?.project?.id || "",
+      trimmedMessage.toLowerCase(),
+    ].join("|");
+
+    if (mode !== "audit_explanation" && chatResponseCache.has(cacheKey)) {
+      const cached = chatResponseCache.get(cacheKey)!;
+      if (Date.now() - cached.timestamp < CHAT_CACHE_TTL_MS) {
+        return NextResponse.json({
+          success: true,
+          data: {
+            message: cached.reply,
+            cached: true,
+          },
+        });
+      }
+    }
+
     // Dynamically build website & live database context server-side
     const contextualMessage = await buildContext({
       message: trimmedMessage,
       currentRoute,
       user,
+      auditContext,
+      mode,
+      history,
     });
 
     const targetUrl = process.env.DEEPBOT_API_URL;
@@ -40,9 +77,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Setup timeout signal (15 seconds)
+    // Setup timeout signal (30 seconds for deep ML analysis)
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     let externalRes: Response;
     try {
@@ -104,6 +141,14 @@ export async function POST(req: Request) {
         },
         { status: 502 }
       );
+    }
+
+    // Cache response for future instant queries
+    if (botReply && typeof botReply === "string") {
+      chatResponseCache.set(cacheKey, {
+        reply: botReply,
+        timestamp: Date.now(),
+      });
     }
 
     // Return normalized response to frontend

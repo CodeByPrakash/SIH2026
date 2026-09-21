@@ -15,8 +15,8 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NIDHI RAKSHAK | Ministry of Statistics and Programme Implementation",
-  description: "AI-Powered Monitoring Platform for Members of Parliament Local Area Development Scheme",
+  title: "NIDHI-RAKSHAK | AI Public Fund & Infrastructure Vigilance Platform",
+  description: "NIDHI-RAKSHAK: Multi-Tier AI & Machine Learning Governance and Monitoring Platform",
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",

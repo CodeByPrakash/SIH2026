@@ -180,7 +180,7 @@ export function runAICrossCheck(
 ): AIVerificationResult {
   const analysis = analyzeCitizenObservation(evidenceInput.description);
   let { sentiment, confidence } = analysis;
-  const projectName = project ? project.name : "Selected MPLADS Project";
+  const projectName = project ? project.name : "Selected NIDHI-RAKSHAK Project";
   const projectStatus = project ? project.status : "Under Execution";
   const projectProgress = project ? project.progress : 50;
   const cleanDesc = evidenceInput.description.trim();
@@ -209,8 +209,8 @@ export function runAICrossCheck(
   }
 
   const officialClaim = project
-    ? `Official Record — MPLADS SATHI Database: Project "${project.name}" status is marked as "${project.status}" with ${project.progress}% physical progress. Sanctioned Amount: ₹${project.sanctionedAmount}L, Expenditure: ₹${project.expenditure}L. Contractor: ${project.contractor || "N/A"}.`
-    : `Official Record — MPLADS SATHI Database: Project data pending verification.`;
+    ? `Official Record — NIDHI-RAKSHAK Database: Project "${project.name}" status is marked as "${project.status}" with ${project.progress}% physical progress. Sanctioned Amount: ₹${project.sanctionedAmount}L, Expenditure: ₹${project.expenditure}L. Contractor: ${project.contractor || "N/A"}.`
+    : `Official Record — NIDHI-RAKSHAK Database: Project data pending verification.`;
 
   const photoLabel = photoRef ? ` [Uploaded Photo: ${evidenceInput.photoName || "Ground Image"}]` : "";
   const citizenClaim = `Citizen Evidence (${evidenceInput.evidenceType}${photoLabel}) at ${evidenceInput.location}: "${cleanDesc}"`;

@@ -360,7 +360,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
           </p>
           <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-mono">
             <span>Data Source:</span>
-            <span className="font-semibold text-slate-700">Official Project Record — MPLADS SATHI Database</span>
+            <span className="font-semibold text-slate-700">Official Project Record — NIDHI-RAKSHAK Database</span>
           </div>
         </div>
 
@@ -526,7 +526,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
           <div className="mb-5 pb-4 border-b border-border">
             <h2 className="text-lg font-bold text-foreground">Submit Independent Citizen Evidence</h2>
             <p className="text-xs text-muted-foreground mt-1">
-              Provide ground observation or photographs. Our AI engine will cross-check your submission against official MPLADS project records while keeping your identity confidential.
+              Provide ground observation or photographs. Our AI engine will cross-check your submission against official NIDHI-RAKSHAK project records while keeping your identity confidential.
             </p>
           </div>
 
@@ -806,7 +806,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                     onChange={(e) => setForm((p) => ({ ...p, consent: e.target.checked }))}
                     className="rounded text-blue-600 focus:ring-blue-500"
                   />
-                  <span>I agree to provide independent ground evidence under MPLADS privacy terms.</span>
+                  <span>I agree to provide independent ground evidence under NIDHI-RAKSHAK privacy terms.</span>
                 </label>
               </div>
 
@@ -874,7 +874,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                       <div className="space-y-2 text-xs">
                         <div>
                           <span className="text-muted-foreground block text-[10px]">Data Source:</span>
-                          <span className="font-medium text-slate-800">Official Project Record — MPLADS SATHI Database</span>
+                          <span className="font-medium text-slate-800">Official Project Record — NIDHI-RAKSHAK Database</span>
                         </div>
                         {selectedProject ? (
                           <>
@@ -1003,7 +1003,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                       </Badge>
                     </div>
                     <div className="text-slate-600 space-y-0.5 text-[11px]">
-                      <div>Project Recorded Site: <strong className="text-slate-800">{selectedProject?.district || selectedEvidence.location}, {selectedProject?.state || "MPLADS Site"}</strong></div>
+                      <div>Project Recorded Site: <strong className="text-slate-800">{selectedProject?.district || selectedEvidence.location}, {selectedProject?.state || "NIDHI-RAKSHAK Site"}</strong></div>
                       {typeof selectedEvidence.locationDistanceKm === "number" && (
                         <div>Photo GPS Distance: <strong className="text-indigo-700 font-mono font-bold">{selectedEvidence.locationDistanceKm} km</strong> from project benchmark</div>
                       )}

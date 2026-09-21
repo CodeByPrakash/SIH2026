@@ -222,7 +222,7 @@ export default function Compliance() {
                 Compliance Center
               </h1>
               <p className="text-xs text-muted-foreground md:text-sm">
-                Statutory MPLADS guidelines · UC tracking · Physical verification · Audit benchmarks
+                Statutory NIDHI-RAKSHAK guidelines · UC tracking · Physical verification · Audit benchmarks
               </p>
             </div>
           </div>
@@ -766,14 +766,14 @@ export default function Compliance() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
                 <CardTitle className="text-base font-semibold">
-                  MPLADS Guidelines Compliance Registry
+                  NIDHI-RAKSHAK Guidelines Compliance Registry
                 </CardTitle>
                 <CardDescription className="text-xs">
                   Statutory mandates and national violation metrics per Guidelines 2023
                 </CardDescription>
               </div>
               <Badge variant="outline" className="text-xs font-mono w-fit">
-                MoSPI Order No. 2023/MPLADS/33
+                Statutory Order No. 2023/NR/33
               </Badge>
             </div>
           </CardHeader>

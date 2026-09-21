@@ -282,8 +282,8 @@ export default function ProjectExplorer() {
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "MPLADS Projects");
-    XLSX.writeFile(workbook, `MPLADS_Projects_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "NIDHI-RAKSHAK Projects");
+    XLSX.writeFile(workbook, `NIDHI_RAKSHAK_Projects_Report_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
   return (
@@ -311,7 +311,7 @@ export default function ProjectExplorer() {
             </span>
           </div>
           <p className="text-xs text-muted-foreground md:text-sm">
-            Browse, filter, and inspect all MPLADS works across constituencies
+            Browse, filter, and inspect all NIDHI-RAKSHAK works across constituencies
             {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
           </p>
         </div>
