@@ -1,0 +1,3 @@
+{
+  "/api/citizen-evidence/[id]/cross-check/route": "app/api/citizen-evidence/[id]/cross-check/route.js"
+}

@@ -1,0 +1,3 @@
+module.exports=[40777,a=>{"use strict";var b=a.i(87924),c=a.i(56025),d=a.i(50944),e=a.i(72131),f=a.i(10715);a.s(["default",0,function(){let{user:a,isLoading:g}=(0,c.useAuth)(),h=(0,d.useRouter)();return((0,e.useEffect)(()=>{!g&&a&&h.push(`/dashboard/${a.role.toLowerCase()}`)},[a,g,h]),g)?(0,b.jsx)("div",{className:"min-h-screen flex items-center justify-center bg-slate-100",children:(0,b.jsxs)("div",{className:"text-center",children:[(0,b.jsx)("div",{className:"w-8 h-8 border-2 border-slate-300 border-t-slate-900 rounded-full animate-spin mx-auto mb-3"}),(0,b.jsx)("p",{className:"text-xs text-slate-500 font-medium",children:"Loading MPLADS Portal..."})]})}):a?null:(0,b.jsx)(f.default,{})}])}];
+
+//# sourceMappingURL=src_app_page_tsx_1chiuah._.js.map
