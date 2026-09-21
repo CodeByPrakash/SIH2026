@@ -62,7 +62,7 @@ async def lifespan(app: FastAPI):
 
 # ─── FastAPI App Initialization ─────────────────────────────────────────────
 app = FastAPI(
-    title="MPLADS-SATHI AI Governance & Anomaly Auditing Engine",
+    title="NIDHI-RAKSHAK | AI Governance & Anomaly Auditing Engine",
     description="Production REST API for real-time project risk auditing, fraud detection, and compliance scoring.",
     version="1.0.0",
     lifespan=lifespan
