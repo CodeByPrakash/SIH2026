@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import nidhiLogo from "../imports/logo.png";
+import Image from "next/image";
 import type { User, UserRole } from "@/types";
 import { ALERTS } from "@/data/mpladsData";
 import {
@@ -379,10 +379,13 @@ function AppSidebar({
               onClick={() => onNavigate("dashboard")}
             >
               <div className="flex aspect-square size-9 items-center justify-center rounded-lg overflow-hidden shrink-0">
-                <img
-                  src={typeof nidhiLogo === "string" ? nidhiLogo : (nidhiLogo as { src?: string })?.src || "/logo.png"}
+                <Image
+                  src="/logo.png"
                   alt="NIDHI-RAKSHAK Logo"
+                  width={36}
+                  height={36}
                   className="size-full object-contain"
+                  priority
                 />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
