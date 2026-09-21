@@ -15,8 +15,13 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MPLADS SATHI - Ministry of Statistics and Programme Implementation",
+  title: "NIDHI RAKSHAK | Ministry of Statistics and Programme Implementation",
   description: "AI-Powered Monitoring Platform for Members of Parliament Local Area Development Scheme",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
