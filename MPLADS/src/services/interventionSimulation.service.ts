@@ -137,7 +137,7 @@ export async function runInterventionSimulation(
   } else if (isUcPending) {
     releaseOutcome = `Funds release proceeds prior to UC submission; procedural compliance warning active.`;
     releaseBenefits.push("Prevents site execution stoppage due to liquidity constraints");
-    releaseRisks.push("Non-adherence to MPLADS UC submission guidelines prior to next installment");
+    releaseRisks.push("Non-adherence to NIDHI-RAKSHAK UC submission guidelines prior to next installment");
     releaseCompliance = "UC delay flagged â€” conditional release requires MoSPI/District waiver.";
     releaseImpact = "Accelerates physical work but increases documentation backlog.";
     releaseMonitoring.push("Enforce UC submission deadline within 30 days");
@@ -173,7 +173,7 @@ export async function runInterventionSimulation(
     holdOutcome = `Holding release enforces strict UC compliance before further public funds are disbursed.`;
     holdBenefits.push("Ensures full financial accountability and proper utilization of previous tranche");
     holdRisks.push("Project progress stalls; risk of cost overrun due to delay");
-    holdCompliance = "Strict adherence to MPLADS financial guidelines.";
+    holdCompliance = "Strict adherence to NIDHI-RAKSHAK financial guidelines.";
     holdImpact = "Work on hold until executing agency submits validated UC.";
     holdMonitoring.push("Issue formal request to Executing Agency for expedited UC submission");
   } else {
@@ -206,7 +206,7 @@ export async function runInterventionSimulation(
     correctiveMonitoring.push("Require geotagged post-rectification photographic evidence");
     correctiveMonitoring.push("Final joint re-inspection before fund release approval");
   } else {
-    correctiveOutcome = `Issuing corrective guidelines to align minor execution items with MPLADS standards.`;
+    correctiveOutcome = `Issuing corrective guidelines to align minor execution items with NIDHI-RAKSHAK standards.`;
     correctiveBenefits.push("Enhances asset durability and compliance documentation");
     correctiveRisks.push("Minor delay in final release while documentation/finishing touches are rectified");
     correctiveCompliance = "Ensures 100% adherence to technical specifications.";

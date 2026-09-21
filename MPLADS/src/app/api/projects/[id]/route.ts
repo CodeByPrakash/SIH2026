@@ -12,7 +12,15 @@ export async function GET(
     if (!project) {
       return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
-    return NextResponse.json({ success: true, data: project });
+    return NextResponse.json(
+      { success: true, data: project },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "X-Cache-Status": "HIT",
+        },
+      }
+    );
   } catch (error) {
     console.error("GET /api/projects/[id] error:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch project" }, { status: 500 });

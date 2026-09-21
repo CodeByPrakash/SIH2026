@@ -445,7 +445,7 @@ export default function Investigation() {
                       </CardDescription>
                     </div>
                     <Badge variant="outline" className="text-xs font-mono w-fit">
-                      TPI Protocol: MPLADS-TPI-88
+                      TPI Protocol: NR-TPI-88
                     </Badge>
                   </div>
                 </CardHeader>

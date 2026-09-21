@@ -51,8 +51,8 @@ export default function Grievance() {
             </span>
           </div>
           <p className="text-slate-500 text-sm mt-0.5">
-            Submit and track your grievances related to MPLADS projects
-            {lastUpdated && ` Â· Last updated: ${lastUpdated.toLocaleTimeString()}`}
+            Submit and track your grievances related to NIDHI-RAKSHAK projects
+            {lastUpdated && ` · Last updated: ${lastUpdated.toLocaleTimeString()}`}
           </p>
         </div>
       </div>

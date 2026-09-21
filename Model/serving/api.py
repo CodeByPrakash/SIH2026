@@ -1,5 +1,5 @@
 """
-MPLADS-SATHI: Production FastAPI Inference Service (Execution Engine)
+NIDHI-RAKSHAK: Production FastAPI Inference Service (Execution Engine)
 Author: Team Code_Warrior6 (SIH 2026)
 Location: Model/serving/api.py
 Purpose: High-performance REST API serving real-time single and batch audit predictions
@@ -29,7 +29,7 @@ models: Dict[str, Any] = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load machine learning models into memory upon application startup."""
-    print("Loading MPLADS-SATHI model artifacts from saved_models/...")
+    print("Loading NIDHI-RAKSHAK model artifacts from saved_models/...")
     try:
         # Load metadata
         with open(os.path.join(MODELS_DIR, "metadata.json"), "r", encoding="utf-8") as f:
@@ -62,7 +62,7 @@ async def lifespan(app: FastAPI):
 
 # ─── FastAPI App Initialization ─────────────────────────────────────────────
 app = FastAPI(
-    title="MPLADS-SATHI AI Governance & Anomaly Auditing Engine",
+    title="NIDHI-RAKSHAK | AI Governance & Anomaly Auditing Engine",
     description="Production REST API for real-time project risk auditing, fraud detection, and compliance scoring.",
     version="1.0.0",
     lifespan=lifespan

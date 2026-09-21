@@ -183,7 +183,7 @@ function RiskDetailPanel({
                 </span>
               </div>
               <Badge variant="outline" className="text-[10px] font-mono border-blue-400/30 text-blue-300">
-                MPLADS-AI v2.4
+                NIDHI-RAKSHAK AI v2.4
               </Badge>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed font-normal">

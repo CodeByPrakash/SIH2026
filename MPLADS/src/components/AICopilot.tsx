@@ -50,13 +50,13 @@ const UI: Record<Lang, {
   suggestedLabel: string; disclaimer: string; listening: string;
   onlineStatus: string; voiceQuery: string; clearTitle: string;
 }> = {
-  EN: { placeholder: "Ask about projects, funds, risks…", greeting: "Namaste! I'm your AI Copilot", subtitle: "Ask me anything about MPLADS projects, funds, risks, delays, or compliance — in any language.", suggestedLabel: "Suggested Questions", disclaimer: "AI responses are indicative. Verify critical data on official portals.", listening: "Listening… speak your query", onlineStatus: "Online · MPLADS Copilot", voiceQuery: "Show all critical risk projects", clearTitle: "Clear chat" },
-  HI: { placeholder: "परियोजनाओं, निधियों, जोखिमों के बारे में पूछें…", greeting: "नमस्ते! मैं आपका AI सहायक हूँ", subtitle: "MPLADS परियोजनाओं, निधियों, जोखिमों, देरी या अनुपालन के बारे में कुछ भी पूछें।", suggestedLabel: "सुझाए गए प्रश्न", disclaimer: "AI उत्तर संकेतात्मक हैं। आधिकारिक पोर्टल पर महत्वपूर्ण डेटा सत्यापित करें।", listening: "सुन रहा हूँ… अपना प्रश्न बोलें", onlineStatus: "ऑनलाइन · MPLADS सहायक", voiceQuery: "सभी गंभीर जोखिम परियोजनाएं दिखाएं", clearTitle: "चैट साफ़ करें" },
-  MR: { placeholder: "प्रकल्प, निधी, जोखीम विचारा…", greeting: "नमस्कार! मी तुमचा AI सहाय्यक आहे", subtitle: "MPLADS प्रकल्प, निधी, जोखीम, विलंब किंवा अनुपालनाबद्दल काहीही विचारा।", suggestedLabel: "सुचवलेले प्रश्न", disclaimer: "AI उत्तरे सूचक आहेत। अधिकृत पोर्टलवर महत्त्वाचा डेटा पडताळा.", listening: "ऐकत आहे… आपला प्रश्न बोला", onlineStatus: "ऑनलाइन · MPLADS सहाय्यक", voiceQuery: "सर्व गंभीर जोखीम प्रकल्प दाखवा", clearTitle: "चॅट साफ करा" },
-  TA: { placeholder: "திட்டங்கள், நிதி, அபாயங்கள் கேளுங்கள்…", greeting: "வணக்கம்! நான் உங்கள் AI உதவியாளர்", subtitle: "MPLADS திட்டங்கள், நிதி, அபாயங்கள், தாமதங்கள் அல்லது இணக்கம் பற்றி எதையும் கேளுங்கள்.", suggestedLabel: "பரிந்துரைக்கப்பட்ட கேள்விகள்", disclaimer: "AI பதில்கள் குறிப்பீட்டு தன்மையானவை. அதிகாரப்பூர்வ தளங்களில் தரவை சரிபார்க்கவும்.", listening: "கேட்கிறேன்… உங்கள் கேள்வியை பேசுங்கள்", onlineStatus: "ஆன்லைன் · MPLADS உதவியாளர்", voiceQuery: "அனைத்து முக்கியமான ஆபத்து திட்டங்களை காட்டு", clearTitle: "அரட்டையை அழி" },
-  BN: { placeholder: "প্রকল্প, তহবিল, ঝুঁকি সম্পর্কে জিজ্ঞাসা করুন…", greeting: "নমস্কার! আমি আপনার AI সহকারী", subtitle: "MPLADS প্রকল্প, তহবিল, ঝুঁকি, বিলম্ব বা সম্মতি সম্পর্কে যেকোনো প্রশ্ন করুন।", suggestedLabel: "প্রস্তাবিত প্রশ্নসমূহ", disclaimer: "AI উত্তরগুলি নির্দেশক। সরকারি পোর্টালে গুরুত্বপূর্ণ তথ্য যাচাই করুন।", listening: "শুনছি… আপনার প্রশ্ন বলুন", onlineStatus: "অনলাইন · MPLADS সহকারী", voiceQuery: "সমস্ত সঙ্কটজনক ঝুঁকি প্রকল্প দেখান", clearTitle: "চ্যাট পরিষ্কার করুন" },
-  KA: { placeholder: "ಯೋಜನೆಗಳು, ನಿಧಿಗಳು, ಅಪಾಯಗಳ ಬಗ್ಗೆ ಕೇಳಿ…", greeting: "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ", subtitle: "MPLADS ಯೋಜನೆಗಳು, ನಿಧಿ, ಅಪಾಯಗಳು, ವಿಳಂಬ ಅಥವಾ ಅನುಪಾಲನೆಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ.", suggestedLabel: "ಸೂಚಿಸಲಾದ ಪ್ರಶ್ನೆಗಳು", disclaimer: "AI ಉತ್ತರಗಳು ಸೂಚಕ. ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ನಿರ್ಣಾಯಕ ಡೇಟಾವನ್ನು ಪರಿಶೀಲಿಸಿ.", listening: "ಆಲಿಸುತ್ತಿದೆ… ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಿ", onlineStatus: "ಆನ್‌ಲೈನ್ · MPLADS ಸಹಾಯಕ", voiceQuery: "ಎಲ್ಲಾ ಗಂಭೀರ ಅಪಾಯದ ಯೋಜನೆಗಳನ್ನು ತೋರಿಸಿ", clearTitle: "ಚಾಟ್ ತೆರವುಗೊಳಿಸಿ" },
-  TE: { placeholder: "ప్రాజెక్టులు, నిధులు, నష్టాల గురించి అడగండి…", greeting: "నమస్కారం! నేను మీ AI సహాయకుడు", subtitle: "MPLADS ప్రాజెక్టులు, నిధులు, నష్టాలు, జాప్యాలు లేదా సమ్మతి గురించి ఏదైనా అడగండి.", suggestedLabel: "సూచించిన ప్రశ్నలు", disclaimer: "AI స్పందనలు సూచికమైనవి. అధికారిక పోర్టల్‌లలో క్రిటికల్ డేటాను ధృవీకరించండి.", listening: "వింటున్నాను… మీ ప్రశ్న చెప్పండి", onlineStatus: "ఆన్‌లైన్ · MPLADS సహాయకుడు", voiceQuery: "అన్ని క్రిటికల్ రిస్క్ ప్రాజెక్టులు చూపించు", clearTitle: "చాట్ క్లియర్ చేయండి" },
+  EN: { placeholder: "Ask about projects, funds, risks…", greeting: "Namaste! I'm your AI Copilot", subtitle: "Ask me anything about NIDHI-RAKSHAK projects, funds, risks, delays, or compliance — in any language.", suggestedLabel: "Suggested Questions", disclaimer: "AI responses are indicative. Verify critical data on official portals.", listening: "Listening… speak your query", onlineStatus: "Online · NIDHI-RAKSHAK Copilot", voiceQuery: "Show all critical risk projects", clearTitle: "Clear chat" },
+  HI: { placeholder: "परियोजनाओं, निधियों, जोखिमों के बारे में पूछें…", greeting: "नमस्ते! मैं आपका AI सहायक हूँ", subtitle: "NIDHI-RAKSHAK परियोजनाओं, निधियों, जोखिमों, देरी या अनुपालन के बारे में कुछ भी पूछें।", suggestedLabel: "सुझाए गए प्रश्न", disclaimer: "AI उत्तर संकेतात्मक हैं। आधिकारिक पोर्टल पर महत्वपूर्ण डेटा सत्यापित करें।", listening: "सुन रहा हूँ… अपना प्रश्न बोलें", onlineStatus: "ऑनलाइन · NIDHI-RAKSHAK सहायक", voiceQuery: "सभी गंभीर जोखिम परियोजनाएं दिखाएं", clearTitle: "चैट साफ़ करें" },
+  MR: { placeholder: "प्रकल्प, निधी, जोखीम विचारा…", greeting: "नमस्कार! मी तुमचा AI सहाय्यक आहे", subtitle: "NIDHI-RAKSHAK प्रकल्प, निधी, जोखीम, विलंब किंवा अनुपालनाबद्दल काहीही विचारा।", suggestedLabel: "सुचवलेले प्रश्न", disclaimer: "AI उत्तरे सूचक आहेत। अधिकृत पोर्टलवर महत्त्वाचा डेटा पडताळा.", listening: "ऐकत आहे… आपला प्रश्न बोला", onlineStatus: "ऑनलाइन · NIDHI-RAKSHAK सहाय्यक", voiceQuery: "सर्व गंभीर जोखीम प्रकल्प दाखवा", clearTitle: "चॅट साफ करा" },
+  TA: { placeholder: "திட்டங்கள், நிதி, அபாயங்கள் கேளுங்கள்…", greeting: "வணக்கம்! நான் உங்கள் AI உதவியாளர்", subtitle: "NIDHI-RAKSHAK திட்டங்கள், நிதி, அபாயங்கள், தாமதங்கள் அல்லது இணக்கம் பற்றி எதையும் கேளுங்கள்.", suggestedLabel: "பரிந்துரைக்கப்பட்ட கேள்விகள்", disclaimer: "AI பதில்கள் குறிப்பீட்டு தன்மையானவை. அதிகாரப்பூர்வ தளங்களில் தரவை சரிபார்க்கவும்.", listening: "கேட்கிறேன்… உங்கள் கேள்வியை பேசுங்கள்", onlineStatus: "ஆன்லைன் · NIDHI-RAKSHAK உதவியாளர்", voiceQuery: "அனைத்து முக்கியமான ஆபத்து திட்டங்களை காட்டு", clearTitle: "அரட்டையை அழி" },
+  BN: { placeholder: "প্রকল্প, তহবিল, ঝুঁকি সম্পর্কে জিজ্ঞাসা করুন…", greeting: "নমস্কার! আমি আপনার AI সহকারী", subtitle: "NIDHI-RAKSHAK প্রকল্প, তহবিল, ঝুঁকি, বিলম্ব বা সম্মতি সম্পর্কে যেকোনো প্রশ্ন করুন।", suggestedLabel: "প্রস্তাবিত প্রশ্নসমূহ", disclaimer: "AI উত্তরগুলি নির্দেশক। সরকারি পোর্টালে গুরুত্বপূর্ণ তথ্য যাচাই করুন।", listening: "শুনছি… আপনার প্রশ্ন বলুন", onlineStatus: "অনলাইন · NIDHI-RAKSHAK সহকারী", voiceQuery: "সমস্ত সঙ্কটজনক ঝুঁকি প্রকল্প দেখান", clearTitle: "চ্যাট পরিষ্কার করুন" },
+  KA: { placeholder: "ಯೋಜನೆಗಳು, ನಿಧಿಗಳು, ಅಪಾಯಗಳ ಬಗ್ಗೆ ಕೇಳಿ…", greeting: "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ", subtitle: "NIDHI-RAKSHAK ಯೋಜನೆಗಳು, ನಿಧಿ, ಅಪಾಯಗಳು, ವಿಳಂಬ ಅಥವಾ ಅನುಪಾಲನೆಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ.", suggestedLabel: "ಸೂಚಿಸಲಾದ ಪ್ರಶ್ನೆಗಳು", disclaimer: "AI ಉತ್ತರಗಳು ಸೂಚಕ. ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ನಿರ್ಣಾಯಕ ಡೇಟಾವನ್ನು ಪರಿಶೀಲಿಸಿ.", listening: "ಆಲಿಸುತ್ತಿದೆ… ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಿ", onlineStatus: "ಆನ್‌ಲೈನ್ · NIDHI-RAKSHAK ಸಹಾಯಕ", voiceQuery: "ಎಲ್ಲಾ ಗಂಭೀರ ಅಪಾಯದ ಯೋಜನೆಗಳನ್ನು ತೋರಿಸಿ", clearTitle: "ಚಾಟ್ ತೆರವುಗೊಳಿಸಿ" },
+  TE: { placeholder: "ప్రాజెక్టులు, నిధులు, నష్టాల గురించి అడగండి…", greeting: "నమస్కారం! నేను మీ AI సహాయకుడు", subtitle: "NIDHI-RAKSHAK ప్రాజెక్టులు, నిధులు, నష్టాలు, జాప్యాలు లేదా సమ్మతి గురించి ఏదైనా అడగండి.", suggestedLabel: "సూచించిన ప్రశ్నలు", disclaimer: "AI స్పందనలు సూచికమైనవి. అధికారిక పోర్టల్‌లలో క్రిటికల్ డేటాను ధృవీకరించండి.", listening: "వింటున్నాను… మీ ప్రశ్న చెప్పండి", onlineStatus: "ఆన్‌లైన్ · NIDHI-RAKSHAK సహాయకుడు", voiceQuery: "అన్ని క్రిటికల్ రిస్క్ ప్రాజెక్టులు చూపించు", clearTitle: "చాట్ క్లియర్ చేయండి" },
 };
 
 // ── Action button labels ──────────────────────────────────────────────────────
@@ -356,6 +356,31 @@ function RenderText({ text }: { text: string }) {
   );
 }
 
+function getLocalizedGreeting(lang: Lang, name: string): string {
+  switch (lang) {
+    case "HI": return `नमस्ते, ${name} जी! मैं आपका AI सहायक हूँ`;
+    case "MR": return `नमस्कार, ${name}! मी तुमचा AI सहाय्यक आहे`;
+    case "TA": return `வணக்கம், ${name}! நான் உங்கள் AI உதவியாளர்`;
+    case "BN": return `নমস্কার, ${name}! আমি আপনার AI সহকারী`;
+    case "KA": return `ನಮಸ್ಕಾರ, ${name}! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ`;
+    case "TE": return `నమస్కారం, ${name}! నేను మీ AI సహాయకుడు`;
+    default: return `Namaste, ${name}! I'm your AI Copilot`;
+  }
+}
+
+function getLocalizedWelcome(lang: Lang, name: string, role: string, loc: string): string {
+  switch (lang) {
+    case "HI":
+      return `नमस्ते, **${name}** जी! 🙏\n\nमैं आपका **NIDHI-RAKSHAK AI सहायक** हूँ, जो आपके **${role}** खाते (${loc}) से जुड़ा है।\n\nआज मैं आपकी क्या सहायता कर सकता हूँ? आप निधि उपयोग, विलंबित परियोजनाओं, या जोखिम विश्लेषण के बारे में पूछ सकते हैं।`;
+    case "MR":
+      return `नमस्कार, **${name}**! 🙏\n\nमी तुमचा **NIDHI-RAKSHAK AI सहाय्यक** आहे, जो तुमच्या **${role}** खात्याशी (${loc}) जोडलेला आहे।\n\nआज मी तुम्हाला कशी मदत करू शकतो? आपण निधी वापर, विलंबित प्रकल्प किंवा जोखीम विश्लेषणाबद्दल विचारू शकता.`;
+    case "TA":
+      return `வணக்கம், **${name}**! 🙏\n\nநான் உங்கள் **NIDHI-RAKSHAK AI உதவியாளர்**, உங்கள் **${role}** கணக்குடன் (${loc}) இணைக்கப்பட்டுள்ளது.\n\nஇன்று நான் உங்களுக்கு எவ்வாறு உதவ முடியும்? நிதி பயன்பாடு, தாமதமான திட்டங்கள் அல்லது ஆபத்து பகுப்பாய்வு பற்றி நீங்கள் கேட்கலாம்.`;
+    default:
+      return `Namaste, **${name}**! 🙏\n\nI am your **NIDHI-RAKSHAK AI Copilot**, personalized for your **${role}** account (${loc}).\n\nHow may I assist you today? You can ask me about fund utilization, delayed projects, pending UCs, statutory risk flags, or specific works in your jurisdiction.`;
+  }
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 interface AICopilotProps { onNavigate: (page: string) => void; user?: User | null; }
@@ -373,12 +398,109 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Synchronously fetch and track user account from prop, state, or localStorage
+  const [accountUser, setAccountUser] = useState<User | null>(() => {
+    if (user) return user;
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("mplads_user");
+        if (saved) return JSON.parse(saved);
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  });
+
+  // Re-sync account when user prop changes or storage updates
+  useEffect(() => {
+    if (user) {
+      setAccountUser(user);
+    } else if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("mplads_user");
+        if (saved) setAccountUser(JSON.parse(saved));
+      } catch {
+        // ignore
+      }
+    }
+  }, [user]);
+
+  // Derived user details for addressing
+  const userName = accountUser?.name || "Hon'ble Member";
+  const userRole = accountUser?.role || "MP";
+  const userLocation = accountUser?.constituency
+    ? `${accountUser.constituency} (${accountUser.state || ""})`
+    : accountUser?.district
+    ? `${accountUser.district} (${accountUser.state || ""})`
+    : accountUser?.state || "National Oversight";
+
   const ui = UI[lang];
-  const suggested = getSuggested(user?.role, lang);
+  const suggested = getSuggested(accountUser?.role, lang);
+
+  // Cache storage key for conversation persistence per user
+  const chatCacheKey = `nidhi_rakshak_chat_v2_${accountUser?.mpId || userName.replace(/\s+/g, "_")}`;
+
+  // Initial load from cache or seed with personal greeting
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const savedChat = localStorage.getItem(chatCacheKey);
+      if (savedChat) {
+        const parsed = JSON.parse(savedChat);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed.map((m: any) => ({ ...m, timestamp: new Date(m.timestamp) })));
+          setShowSuggested(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // Default: initialize with personalized welcome message addressing the user by name
+    const initialWelcome: Message = {
+      id: "welcome-init",
+      role: "ai",
+      text: getLocalizedWelcome(lang, userName, userRole, userLocation),
+      timestamp: new Date(),
+    };
+    setMessages([initialWelcome]);
+    setShowSuggested(true);
+  }, [chatCacheKey, userName, userRole, userLocation, lang]);
+
+  // Persist conversation to cache whenever messages update
+  useEffect(() => {
+    if (messages.length > 0 && typeof window !== "undefined") {
+      try {
+        localStorage.setItem(chatCacheKey, JSON.stringify(messages));
+      } catch {
+        // ignore
+      }
+    }
+  }, [messages, chatCacheKey]);
 
   useEffect(() => { const t = setInterval(() => {}, 3000); return () => clearInterval(t); }, []);
   useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [messages, loading]);
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 120); }, [open]);
+
+  // Toggle open and refresh user from account storage immediately
+  const handleToggleOpen = () => {
+    setOpen((prev) => {
+      const next = !prev;
+      if (next && typeof window !== "undefined") {
+        try {
+          const saved = localStorage.getItem("mplads_user");
+          if (saved) {
+            setAccountUser(JSON.parse(saved));
+          }
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
+  };
 
   const sendMessage = useCallback(async (text: string) => {
     const trimmed = text.trim();
@@ -398,16 +520,20 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
     try {
       const currentPath = typeof window !== "undefined" ? window.location.pathname : "/dashboard";
-      const currentUser = user || authUser;
-      const userPayload = currentUser
-        ? {
-            name: currentUser.name,
-            role: currentUser.role,
-            constituency: currentUser.constituency,
-            district: currentUser.district,
-            state: currentUser.state,
-          }
-        : null;
+      const currentUser = user || authUser || accountUser;
+      const userPayload = {
+        name: currentUser?.name || userName,
+        role: currentUser?.role || userRole,
+        constituency: currentUser?.constituency || accountUser?.constituency,
+        district: currentUser?.district || accountUser?.district,
+        state: currentUser?.state || accountUser?.state,
+      };
+
+      // Pass previous turns for conversational continuity
+      const historyPayload = messages.slice(-6).map((m) => ({
+        role: m.role,
+        text: m.text,
+      }));
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -418,6 +544,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
           message: trimmed,
           currentRoute: currentPath,
           user: userPayload,
+          history: historyPayload,
         }),
       });
 
@@ -460,12 +587,28 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
     } finally {
       setLoading(false);
     }
-  }, [loading, user, authUser]);
+  }, [loading, user, authUser, userName, userRole, accountUser, messages]);
 
 
   const handleVoice = () => { setListening(true); setTimeout(() => { setListening(false); sendMessage(ui.voiceQuery); }, 2200); };
   const handleAction = (action: ActionButton) => { onNavigate(action.payload?.split("?")[0] ?? "dashboard"); setOpen(false); };
-  const clearChat = () => { setMessages([]); setShowSuggested(true); };
+  const clearChat = () => {
+    const freshWelcome: Message = {
+      id: Date.now().toString(),
+      role: "ai",
+      text: getLocalizedWelcome(lang, userName, userRole, userLocation),
+      timestamp: new Date(),
+    };
+    setMessages([freshWelcome]);
+    setShowSuggested(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem(chatCacheKey);
+      } catch {
+        // ignore
+      }
+    }
+  };
   const timeStr = (d: Date) => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
@@ -478,10 +621,17 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
               <svg viewBox="0 0 24 24" fill="white" className="w-4 h-4 sm:w-5 sm:h-5"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-white font-display font-bold text-xs sm:text-sm leading-tight truncate">NIDHI-RAKSHAK AI</div>
+              <div className="text-white font-display font-bold text-xs sm:text-sm leading-tight flex items-center gap-1.5 truncate">
+                <span>NIDHI-RAKSHAK AI</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/30 font-medium">Copilot</span>
+              </div>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"/>
-                <span className="text-blue-200 text-[10px] truncate">{ui.onlineStatus}</span>
+                <span className="text-blue-100 text-[10px] sm:text-[10.5px] font-medium truncate max-w-[130px]" title={`Account: ${userName}`}>
+                  {userName}
+                </span>
+                <span className="text-blue-300/60 text-[9px]">·</span>
+                <span className="text-amber-300 text-[10px] font-semibold">{userRole}</span>
               </div>
             </div>
             {/* Language selector */}
@@ -515,13 +665,17 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-3 space-y-3 sm:space-y-4 bg-slate-50/60">
-            {messages.length === 0 && (
-              <div className="text-center py-4">
-                <div className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
-                  <svg viewBox="0 0 24 24" fill="#F59E0B" className="w-7 h-7"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
+            {messages.length <= 1 && (
+              <div className="text-center py-3 sm:py-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl mx-auto mb-2 sm:mb-3 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
+                  <svg viewBox="0 0 24 24" fill="#F59E0B" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
                 </div>
-                <p className="text-slate-700 text-sm font-semibold font-display">{ui.greeting}</p>
-                <p className="text-slate-500 text-xs mt-1 leading-relaxed max-w-[260px] mx-auto">{ui.subtitle}</p>
+                <p className="text-slate-700 text-xs font-semibold font-display">
+                  {getLocalizedGreeting(lang, userName)}
+                </p>
+                <p className="text-slate-500 text-[11px] mt-0.5 leading-relaxed max-w-[280px] mx-auto">
+                  {userRole} Account ({userLocation}) · Ask me anything about projects, funds, risks, or compliance.
+                </p>
               </div>
             )}
             {messages.map(msg => (
@@ -618,7 +772,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
       )}
 
       {/* FAB */}
-      <button onClick={() => setOpen(o => !o)} className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 active:scale-95 hover:scale-105 bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14" style={{ background: open ? "linear-gradient(135deg, #EF4444, #DC2626)" : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)", boxShadow: open ? "0 8px 32px rgba(239,68,68,0.45)" : "0 8px 32px rgba(13,27,62,0.55)" }} title="NIDHI-RAKSHAK AI Copilot" aria-label="Open AI Copilot">
+      <button onClick={handleToggleOpen} className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 active:scale-95 hover:scale-105 bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14" style={{ background: open ? "linear-gradient(135deg, #EF4444, #DC2626)" : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)", boxShadow: open ? "0 8px 32px rgba(239,68,68,0.45)" : "0 8px 32px rgba(13,27,62,0.55)" }} title="NIDHI-RAKSHAK AI Copilot" aria-label="Open AI Copilot">
         {open
           ? <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
           : <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>

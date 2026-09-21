@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import AiNlpAuditSection from "@/components/AiNlpAuditSection";
 import {
   RadarChart,
   Radar,
@@ -91,6 +93,7 @@ import {
 } from "@tabler/icons-react";
 import type { Project } from "../types";
 import { PROJECTS, STATES_DATA } from "../data/mpladsData";
+import { useProjects } from "@/hooks/useProjects";
 import { ArchetypeIcon } from "@/components/ArchetypeIcon";
 import {
   type WorkAuditRequest,
@@ -192,28 +195,96 @@ function RiskGauge({ score, tier }: { score: number; tier: string }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function AiAuditEngine() {
+export default function AiAuditEngine({ initialProjectId }: { initialProjectId?: string | null } = {}) {
+  const searchParams = useSearchParams();
+  const queryProjectId = searchParams ? searchParams.get("projectId") : null;
+  const activeTargetId = initialProjectId || queryProjectId;
+
+  // Extra projects fetched directly (e.g. deep-linked from Dashboard)
+  const [extraProjects, setExtraProjects] = useState<Project[]>([]);
+
+  // Live Database Projects Roster from MongoDB
+  const { projects: dbProjects } = useProjects({ limit: 10000 });
+  const projectsList = useMemo(() => {
+    const map = new Map<string, Project>();
+    extraProjects.forEach((p) => map.set(p.id, p));
+    if (dbProjects && dbProjects.length > 0) {
+      dbProjects.forEach((p) => {
+        if (!map.has(p.id)) map.set(p.id, p);
+      });
+    } else {
+      PROJECTS.forEach((p) => {
+        if (!map.has(p.id)) map.set(p.id, p);
+      });
+    }
+    return Array.from(map.values());
+  }, [dbProjects, extraProjects]);
+
   // Navigation & Mode States
   const [activeTab, setActiveTab] = useState("studio");
   const [searchProject, setSearchProject] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [stateFilter, setStateFilter] = useState("All");
+  const [districtFilter, setDistrictFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(80);
+
+  // Dynamic States and Districts derived from projects list
+  const availableStates = useMemo(() => {
+    const set = new Set<string>();
+    projectsList.forEach((p) => {
+      if (p.state) set.add(p.state);
+    });
+    return Array.from(set).sort();
+  }, [projectsList]);
+
+  const availableDistricts = useMemo(() => {
+    const set = new Set<string>();
+    projectsList.forEach((p) => {
+      if (stateFilter === "All" || p.state?.toLowerCase() === stateFilter.toLowerCase()) {
+        if (p.district) set.add(p.district);
+      }
+    });
+    return Array.from(set).sort();
+  }, [projectsList, stateFilter]);
+
+  const availableCategories = useMemo(() => {
+    const set = new Set<string>();
+    projectsList.forEach((p) => {
+      if (p.category) set.add(p.category);
+    });
+    return Array.from(set).sort();
+  }, [projectsList]);
   
   // Selected Website Project for Studio Mode
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(PROJECTS[0]?.id || "");
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(() => {
+    if (activeTargetId) return activeTargetId;
+    return projectsList[0]?.id || PROJECTS[0]?.id || "";
+  });
+
   const selectedProject = useMemo(() => {
-    return PROJECTS.find((p) => p.id === selectedProjectId) || PROJECTS[0];
-  }, [selectedProjectId]);
+    return (
+      projectsList.find((p) => p.id === selectedProjectId) ||
+      PROJECTS.find((p) => p.id === selectedProjectId) ||
+      projectsList[0] ||
+      PROJECTS[0]
+    );
+  }, [projectsList, selectedProjectId]);
 
   // Editable Form for Studio Project (allowing officer to adjust real-time inspection inputs)
-  const [studioForm, setStudioForm] = useState<Partial<Project>>({ ...PROJECTS[0] });
+  const [studioForm, setStudioForm] = useState<Partial<Project>>({ ...selectedProject });
 
   // Update studio form whenever a new project is picked
   useEffect(() => {
     if (selectedProject) {
+      // Don't overwrite form with fallback project if actively loading deep-linked target
+      if (activeTargetId && selectedProject.id !== activeTargetId && auditedTargetRef.current !== activeTargetId) {
+        return;
+      }
       setStudioForm({ ...selectedProject });
       setResult(null);
     }
-  }, [selectedProject]);
+  }, [selectedProject, activeTargetId]);
 
   // Results State
   const [result, setResult] = useState<WorkAuditResponse | null>(null);
@@ -276,38 +347,80 @@ export default function AiAuditEngine() {
       .catch(() => setBackendOnline(false));
   };
 
-  // Run Live Audit on Studio Project
-  const handleStudioAudit = async () => {
+  // Run Live Audit on Studio Project (reusable)
+  const executeAudit = useCallback(async (projectData?: Partial<Project>) => {
+    const data = projectData || studioForm;
     setLoading(true);
     setError(null);
     try {
       const auditPayload: Partial<Project> = {
-        ...studioForm,
-        // Guarantee proper types
-        sanctionedAmount: Number(studioForm.sanctionedAmount || 0),
-        expenditure: Number(studioForm.expenditure || 0),
-        inspections: Number(studioForm.inspections || 0),
-        photos: Number(studioForm.photos || 0),
-        photoLocationMatch: studioForm.photoLocationMatch !== false,
-        similarWorkCount500m: Number(studioForm.similarWorkCount500m || 0),
-        ucSubmitted: studioForm.ucSubmitted ?? false,
-        assetCreated: studioForm.assetCreated ?? false,
+        ...data,
+        sanctionedAmount: Number(data.sanctionedAmount || 0),
+        expenditure: Number(data.expenditure || 0),
+        inspections: Number(data.inspections || 0),
+        photos: Number(data.photos || 0),
+        photoLocationMatch: data.photoLocationMatch !== false,
+        similarWorkCount500m: Number(data.similarWorkCount500m || 0),
+        ucSubmitted: data.ucSubmitted ?? false,
+        assetCreated: data.assetCreated ?? false,
+        sanctionDate: data.sanctionDate || "2024-01-15",
+        expectedCompletion: data.expectedCompletion || "2024-06-30",
       };
       const res = await auditWebsiteProject(auditPayload);
       setResult(res);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Inference failed. Is the FastAPI backend running on port 8000?");
+      setError(e instanceof Error ? e.message : "Inference failed. Is the ML backend online?");
     } finally {
       setLoading(false);
     }
+  }, [studioForm]);
+
+  const handleStudioAudit = () => {
+    executeAudit(studioForm);
   };
+
+  // Auto-audit whenever activeTargetId changes (e.g. from Dashboard Detailed Status)
+  const auditedTargetRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (activeTargetId && auditedTargetRef.current !== activeTargetId) {
+      const found = projectsList.find(
+        (p) =>
+          p.id.toLowerCase() === activeTargetId.toLowerCase() ||
+          p.id.toLowerCase().includes(activeTargetId.toLowerCase()) ||
+          p.workOrderNo?.toLowerCase() === activeTargetId.toLowerCase()
+      );
+      if (found) {
+        auditedTargetRef.current = activeTargetId;
+        setSelectedProjectId(found.id);
+        setStudioForm({ ...found });
+        setActiveTab("studio");
+        executeAudit(found);
+      } else {
+        // Fetch single project directly by ID from API route
+        fetch(`/api/projects/${encodeURIComponent(activeTargetId)}`)
+          .then((res) => (res.ok ? res.json() : null))
+          .then((json) => {
+            if (json?.success && json?.data) {
+              auditedTargetRef.current = activeTargetId;
+              setExtraProjects((prev) => [json.data, ...prev.filter((x) => x.id !== json.data.id)]);
+              setSelectedProjectId(json.data.id);
+              setStudioForm({ ...json.data });
+              setActiveTab("studio");
+              executeAudit(json.data);
+            }
+          })
+          .catch((err) => console.warn("Failed to fetch target project for audit:", err));
+      }
+    }
+  }, [activeTargetId, projectsList, executeAudit]);
 
   // Run Batch Audit across All Website Projects
   const handleAuditAllProjects = async () => {
     setBatchLoading(true);
     setError(null);
     try {
-      const res = await auditWebsiteProjectsBatch(PROJECTS);
+      const targetBatch = projectsList.slice(0, 100);
+      const res = await auditWebsiteProjectsBatch(targetBatch);
       setBatchResults(res);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Batch audit failed");
@@ -352,17 +465,29 @@ export default function AiAuditEngine() {
 
   // Filtered Projects for Studio Selector
   const filteredProjects = useMemo(() => {
-    return PROJECTS.filter((p) => {
+    const q = searchProject.trim().toLowerCase();
+    return projectsList.filter((p) => {
       const matchesSearch =
-        p.name.toLowerCase().includes(searchProject.toLowerCase()) ||
-        p.id.toLowerCase().includes(searchProject.toLowerCase()) ||
-        p.district.toLowerCase().includes(searchProject.toLowerCase()) ||
-        p.state.toLowerCase().includes(searchProject.toLowerCase()) ||
-        (p.contractor && p.contractor.toLowerCase().includes(searchProject.toLowerCase()));
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.id.toLowerCase().includes(q) ||
+        p.district.toLowerCase().includes(q) ||
+        p.state.toLowerCase().includes(q) ||
+        (p.contractor && p.contractor.toLowerCase().includes(q)) ||
+        (p.mpName && p.mpName.toLowerCase().includes(q));
+
+      const matchesState = stateFilter === "All" || p.state?.toLowerCase() === stateFilter.toLowerCase();
+      const matchesDistrict = districtFilter === "All" || p.district?.toLowerCase() === districtFilter.toLowerCase();
       const matchesCat = categoryFilter === "All" || p.category === categoryFilter;
-      return matchesSearch && matchesCat;
+      const matchesStatus =
+        statusFilter === "All" ||
+        (statusFilter === "risk"
+          ? (p.riskScore && p.riskScore > 50) || p.riskLevel === "High" || p.riskLevel === "Critical"
+          : p.status === statusFilter);
+
+      return matchesSearch && matchesState && matchesDistrict && matchesCat && matchesStatus;
     });
-  }, [searchProject, categoryFilter]);
+  }, [projectsList, searchProject, stateFilter, districtFilter, categoryFilter, statusFilter]);
 
   // Derived Radar & Bar Data
   const radarData = result
@@ -401,7 +526,7 @@ export default function AiAuditEngine() {
   const exportBatchToExcel = () => {
     if (!batchResults) return;
     const rows = batchResults.results.map((r) => {
-      const matched = PROJECTS.find((p) => p.id === r.work_id);
+      const matched = projectsList.find((p) => p.id === r.work_id);
       return {
         "Work ID": r.work_id,
         "Project Name": matched?.name || "N/A",
@@ -428,7 +553,7 @@ export default function AiAuditEngine() {
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "ML_Audit_Matrix");
-    XLSX.writeFile(wb, "MPLADS_SATHI_AI_Audit_Dossier.xlsx");
+    XLSX.writeFile(wb, "NIDHI_RAKSHAK_AI_Audit_Dossier.xlsx");
   };
 
   return (
@@ -441,9 +566,9 @@ export default function AiAuditEngine() {
               <IconBrain className="size-6" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">AI Audit Engine & Intelligence Hub</h1>
+              <h1 className="text-2xl font-bold tracking-tight">NIDHI-RAKSHAK AI Audit Engine</h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Official ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
+                Official NIDHI-RAKSHAK ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
               </p>
             </div>
           </div>
@@ -523,74 +648,140 @@ export default function AiAuditEngine() {
         <TabsContent value="studio" className="space-y-6 mt-5 w-full">
           {/* Step 1: Select Website Project Banner */}
           <Card className="w-full border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5 shadow-sm rounded-2xl">
-            <CardHeader className="pb-5">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2.5">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs px-2.5 py-0.5 rounded-full font-semibold">
                       STEP 1
                     </Badge>
                     <CardTitle className="text-xl font-bold tracking-tight">
                       Select Website Project to Audit
                     </CardTitle>
+                    <Badge variant="secondary" className="text-xs font-normal">
+                      {filteredProjects.length} Projects Available
+                    </Badge>
                   </div>
-                  <CardDescription className="text-sm mt-1.5 leading-relaxed">
-                    Pick any active public works project from the national MPLADS database. All parameters load automatically in native ₹ Lakhs format.
-                  </CardDescription>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="relative w-full sm:w-72">
-                    <IconSearch className="absolute left-3 top-3 size-4 text-muted-foreground" />
+                <CardDescription className="text-sm leading-relaxed">
+                  Pick any active public works project from the national NIDHI-RAKSHAK database. All parameters load automatically in native ₹ Lakhs format.
+                </CardDescription>
+
+                {/* Filter Controls Bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-1">
+                  <div className="relative">
+                    <IconSearch className="absolute left-3 top-2.5 size-3.5 text-muted-foreground" />
                     <Input
-                      placeholder="Search ID, title, state, MP..."
+                      placeholder="Search title, ID, MP..."
                       value={searchProject}
                       onChange={(e) => setSearchProject(e.target.value)}
-                      className="h-10 pl-10 text-sm bg-card"
+                      className="h-9 pl-9 text-xs bg-card"
                     />
                   </div>
+
+                  <Select value={stateFilter} onValueChange={(val) => { setStateFilter(val || "All"); setDistrictFilter("All"); }}>
+                    <SelectTrigger className="h-9 text-xs bg-card">
+                      <SelectValue placeholder="All States" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      <SelectItem value="All" className="text-xs">All States</SelectItem>
+                      {availableStates.map((s) => (
+                        <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={districtFilter} onValueChange={(val) => setDistrictFilter(val || "All")}>
+                    <SelectTrigger className="h-9 text-xs bg-card">
+                      <SelectValue placeholder="All Districts" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      <SelectItem value="All" className="text-xs">All Districts</SelectItem>
+                      {availableDistricts.map((d) => (
+                        <SelectItem key={d} value={d} className="text-xs">{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "All")}>
+                    <SelectTrigger className="h-9 text-xs bg-card">
+                      <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All" className="text-xs">All Status</SelectItem>
+                      <SelectItem value="Ongoing" className="text-xs">Ongoing</SelectItem>
+                      <SelectItem value="Completed" className="text-xs">Completed</SelectItem>
+                      <SelectItem value="Delayed" className="text-xs">Delayed</SelectItem>
+                      <SelectItem value="risk" className="text-xs">High Risk</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={categoryFilter} onValueChange={(val) => setCategoryFilter(val || "All")}>
+                    <SelectTrigger className="h-9 text-xs bg-card">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      <SelectItem value="All" className="text-xs">All Categories</SelectItem>
+                      {availableCategories.map((c) => (
+                        <SelectItem key={c} value={c} className="text-xs">{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-2">
-              {/* Quick Select Project Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 max-h-72 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-                {filteredProjects.slice(0, 15).map((p) => {
-                  const isSelected = p.id === selectedProjectId;
-                  return (
-                    <button
-                      key={p.id}
-                      onClick={() => setSelectedProjectId(p.id)}
-                      className={`text-left p-4 rounded-xl border-2 transition-all flex flex-col justify-between min-h-[120px] ${
-                        isSelected
-                          ? "border-primary bg-primary/10 shadow-md ring-2 ring-primary/20"
-                          : "border-border bg-card hover:bg-muted/40 hover:border-primary/40 hover:shadow-sm"
-                      }`}
-                    >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="font-mono text-[11px] text-muted-foreground">{p.id}</span>
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 shrink-0">
-                            {p.category}
-                          </Badge>
-                        </div>
-                        <p className="font-bold text-sm text-foreground line-clamp-2 leading-tight">{p.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {p.district}, {p.state}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">MP: {p.mpName}</p>
-                      </div>
-                      <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border/50 text-xs">
-                        <span className="font-semibold text-foreground">
-                          {fmtLakhs(p.sanctionedAmount)}
-                        </span>
-                        <span className="text-muted-foreground text-[11px]">
-                          Spent {fmtLakhs(p.expenditure)}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+            <CardContent className="pt-1">
+              {/* Quick Select Project Cards - Minimized to Project Name and Cost info */}
+              {filteredProjects.length === 0 ? (
+                <div className="py-10 text-center text-muted-foreground text-xs space-y-1">
+                  <p className="font-medium">No projects found matching the current filters.</p>
+                  <p>Try resetting filters or searching with a different keyword.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 max-h-80 overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                    {filteredProjects.slice(0, visibleCount).map((p) => {
+                      const isSelected = p.id === selectedProjectId;
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => setSelectedProjectId(p.id)}
+                          className={`text-left p-3 rounded-xl border transition-all flex flex-col justify-between min-h-[76px] ${
+                            isSelected
+                              ? "border-primary bg-primary/10 shadow-sm ring-1 ring-primary/40"
+                              : "border-border/70 bg-card hover:bg-muted/40 hover:border-primary/40 hover:shadow-xs"
+                          }`}
+                        >
+                          <p className="font-semibold text-xs text-foreground line-clamp-2 leading-snug">
+                            {p.name}
+                          </p>
+                          <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-border/40 text-[11px]">
+                            <span className="font-semibold text-foreground">
+                              {fmtLakhs(p.sanctionedAmount)}
+                            </span>
+                            <span className="text-muted-foreground text-[10.5px]">
+                              Spent {fmtLakhs(p.expenditure)}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {filteredProjects.length > visibleCount && (
+                    <div className="flex justify-center mt-3 pt-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setVisibleCount((prev) => prev + 80)}
+                        className="text-xs h-8 gap-1 font-medium"
+                      >
+                        Load More ({filteredProjects.length - visibleCount} remaining)
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
 
@@ -807,7 +998,7 @@ export default function AiAuditEngine() {
                               }
                               className="h-8 text-xs font-semibold"
                             />
-                            <p className="text-[10px] text-muted-foreground">National MPLADS Portal upload proof</p>
+                            <p className="text-[10px] text-muted-foreground">National NIDHI-RAKSHAK Portal upload proof</p>
                           </div>
                         </div>
 
@@ -1055,6 +1246,9 @@ export default function AiAuditEngine() {
                     </div>
                   </div>
 
+                  {/* ── DeepBot AI NLP Audit Synthesis (Plain English Interpretation) ── */}
+                  <AiNlpAuditSection project={selectedProject} result={result} />
+
                   {/* ── 3. Visual Charts (Spacious Radar + Bar Chart) ── */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Radar Chart (Enlarged Height: 320px) */}
@@ -1221,137 +1415,181 @@ export default function AiAuditEngine() {
             <CardContent className="space-y-6">
               {batchResults ? (
                 <>
-                  {/* Summary Metrics & Pie Chart */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div className="p-4 rounded-xl border bg-card space-y-1">
+                  {/* Summary Metric Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="p-3.5 rounded-xl border bg-card/60 backdrop-blur-sm space-y-1">
                       <span className="text-xs text-muted-foreground">Total Projects Audited</span>
-                      <p className="text-2xl font-extrabold">{batchResults.total_audited}</p>
-                      <span className="text-[10px] text-muted-foreground">100% evaluated by ML</span>
-                    </div>
-                    <div className="p-4 rounded-xl border border-red-500/20 bg-red-500/5 space-y-1">
-                      <span className="text-xs text-red-600 font-medium">High & Critical Risks</span>
-                      <p className="text-2xl font-extrabold text-red-600">
-                        {batchResults.high_or_critical_count}
+                      <p className="text-2xl font-extrabold text-foreground">
+                        {batchResults.total_audited}
                       </p>
-                      <span className="text-[10px] text-muted-foreground">Requires mandatory district audit</span>
                     </div>
-                    <div className="p-4 rounded-xl border bg-card space-y-1">
-                      <span className="text-xs text-muted-foreground">Average Risk Score</span>
-                      <p className="text-2xl font-extrabold">
-                        {(
-                          batchResults.results.reduce((acc, r) => acc + r.composite_risk_score, 0) /
-                          batchResults.results.length
-                        ).toFixed(1)}
-                        <span className="text-xs font-normal text-muted-foreground"> / 100</span>
+                    <div className="p-3.5 rounded-xl border bg-emerald-500/10 border-emerald-500/30 space-y-1">
+                      <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Low Risk</span>
+                      <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
+                        {batchResults.results.filter((r) => r.risk_tier === "LOW").length}
                       </p>
-                      <span className="text-[10px] text-muted-foreground">National portfolio index</span>
                     </div>
-                    <div className="p-4 rounded-xl border bg-card flex items-center justify-between">
-                      <div className="space-y-1">
-                        <span className="text-xs text-muted-foreground">Risk Tier Ratio</span>
-                        <div className="flex items-center gap-1.5 text-[10px]">
-                          <span className="size-2 rounded-full bg-emerald-500" /> Low
-                          <span className="size-2 rounded-full bg-amber-500" /> Mod
-                          <span className="size-2 rounded-full bg-orange-500" /> High
-                          <span className="size-2 rounded-full bg-red-500" /> Crit
-                        </div>
-                      </div>
-                      <div className="size-16">
+                    <div className="p-3.5 rounded-xl border bg-amber-500/10 border-amber-500/30 space-y-1">
+                      <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">Moderate Risk</span>
+                      <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">
+                        {batchResults.results.filter((r) => r.risk_tier === "MODERATE").length}
+                      </p>
+                    </div>
+                    <div className="p-3.5 rounded-xl border bg-red-500/10 border-red-500/30 space-y-1">
+                      <span className="text-xs text-red-600 dark:text-red-400 font-medium">Critical Risk</span>
+                      <p className="text-2xl font-extrabold text-red-600 dark:text-red-400">
+                        {batchResults.results.filter((r) => r.risk_tier === "CRITICAL").length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Distribution Charts */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Card className="border bg-card/50">
+                      <CardHeader className="pb-1 pt-3 px-4">
+                        <CardTitle className="text-xs font-semibold">Tier Distribution</CardTitle>
+                      </CardHeader>
+                      <CardContent className="h-44 p-2">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
                               data={batchTierData}
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={38}
+                              outerRadius={65}
+                              paddingAngle={3}
                               dataKey="value"
-                              innerRadius={16}
-                              outerRadius={28}
-                              strokeWidth={1}
                             >
-                              {batchTierData.map((_, idx) => (
-                                <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
+                              {batchTierData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                               ))}
                             </Pie>
+                            <Tooltip contentStyle={{ fontSize: "11px", borderRadius: "8px" }} />
+                            <Legend wrapperStyle={{ fontSize: "10px" }} />
                           </PieChart>
                         </ResponsiveContainer>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border bg-card/50">
+                      <CardHeader className="pb-1 pt-3 px-4">
+                        <CardTitle className="text-xs font-semibold">Risk Distribution Summary</CardTitle>
+                      </CardHeader>
+                      <CardContent className="h-44 p-4 flex flex-col justify-center space-y-2.5">
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">High/Critical Risk Ratio</span>
+                            <span className="font-bold text-red-500">
+                              {(
+                                (batchResults.high_or_critical_count /
+                                  Math.max(1, batchResults.total_audited)) *
+                                100
+                              ).toFixed(1)}
+                              %
+                            </span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                            <div
+                              className="bg-red-500 h-full rounded-full transition-all"
+                              style={{
+                                width: `${(
+                                  (batchResults.high_or_critical_count /
+                                    Math.max(1, batchResults.total_audited)) *
+                                  100
+                                ).toFixed(0)}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <p className="text-[11px] text-muted-foreground leading-relaxed pt-1">
+                          Batch inference finished for {batchResults.total_audited} projects.
+                          Evaluated against calibrated ML isolation and XGBoost decision surfaces.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Filterable Table */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold flex items-center gap-1.5">
+                        <IconFilter className="size-3.5 text-primary" />
+                        Individual Risk Ledger ({filteredBatchResults.length} works)
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Filter Tier:</span>
+                        <Select value={batchFilterTier} onValueChange={(val) => val && setBatchFilterTier(val)}>
+                          <SelectTrigger className="h-7 w-28 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ALL">All Tiers</SelectItem>
+                            <SelectItem value="LOW">Low</SelectItem>
+                            <SelectItem value="MODERATE">Moderate</SelectItem>
+                            <SelectItem value="HIGH">High</SelectItem>
+                            <SelectItem value="CRITICAL">Critical</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Filter Tier Tabs */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground font-medium">Filter by Tier:</span>
-                      {(["ALL", "LOW", "MODERATE", "HIGH", "CRITICAL"] as const).map((tier) => (
-                        <Button
-                          key={tier}
-                          variant={batchFilterTier === tier ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setBatchFilterTier(tier)}
-                          className="h-7 text-xs px-2.5"
-                        >
-                          {tier}
-                        </Button>
-                      ))}
+                    <div className="border rounded-xl overflow-hidden shadow-sm">
+                      <Table>
+                        <TableHeader className="bg-muted/50">
+                          <TableRow>
+                            <TableHead className="w-28 text-xs">Work ID</TableHead>
+                            <TableHead className="text-xs">Project Details</TableHead>
+                            <TableHead className="text-xs">Risk Score</TableHead>
+                            <TableHead className="text-xs">Tier</TableHead>
+                            <TableHead className="text-xs">Archetype</TableHead>
+                            <TableHead className="text-xs">Governance Mandate</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredBatchResults.map((r) => {
+                            const matched = projectsList.find((p) => p.id === r.work_id);
+                            const tc = tierColor(r.risk_tier);
+                            return (
+                              <TableRow key={r.work_id} className="hover:bg-muted/30">
+                                <TableCell className="font-mono text-xs font-semibold">{r.work_id}</TableCell>
+                                <TableCell>
+                                  <div className="space-y-0.5">
+                                    <p className="font-medium text-xs text-foreground line-clamp-1">
+                                      {matched?.name || "Public Works Project"}
+                                    </p>
+                                    <p className="text-[10px] text-muted-foreground">
+                                      {matched?.district}, {matched?.state} • {matched?.category} •{" "}
+                                      {fmtLakhs(matched?.sanctionedAmount || 0)}
+                                    </p>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <span className={`text-xs font-extrabold ${tc.text}`}>
+                                    {r.composite_risk_score.toFixed(1)}
+                                  </span>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge className={`${tc.bg} ${tc.text} ${tc.border} border text-[10px] px-2 py-0`}>
+                                    {r.risk_tier}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2 text-xs font-medium">
+                                    <ArchetypeIcon archetype={r.predicted_archetype} className="size-4" />
+                                    <span className="capitalize">{ARCHETYPE_LABELS[r.predicted_archetype]?.label || r.predicted_archetype.replace("_", " ")}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-xs text-muted-foreground max-w-xs truncate">
+                                  {r.governance_action}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
                     </div>
-                    <span className="text-xs text-muted-foreground">
-                      Showing {filteredBatchResults.length} of {batchResults.total_audited} works
-                    </span>
-                  </div>
-
-                  {/* Batch Results Table */}
-                  <div className="rounded-xl border overflow-hidden">
-                    <Table>
-                      <TableHeader className="bg-muted/50">
-                        <TableRow>
-                          <TableHead className="w-28 text-xs">Work ID</TableHead>
-                          <TableHead className="text-xs">Project Details</TableHead>
-                          <TableHead className="text-xs">Risk Score</TableHead>
-                          <TableHead className="text-xs">Tier</TableHead>
-                          <TableHead className="text-xs">Archetype</TableHead>
-                          <TableHead className="text-xs">Governance Mandate</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredBatchResults.map((r) => {
-                          const matched = PROJECTS.find((p) => p.id === r.work_id);
-                          const tc = tierColor(r.risk_tier);
-                          return (
-                            <TableRow key={r.work_id} className="hover:bg-muted/30">
-                              <TableCell className="font-mono text-xs font-semibold">{r.work_id}</TableCell>
-                              <TableCell>
-                                <div className="space-y-0.5">
-                                  <p className="font-medium text-xs text-foreground line-clamp-1">
-                                    {matched?.name || "Public Works Project"}
-                                  </p>
-                                  <p className="text-[10px] text-muted-foreground">
-                                    {matched?.district}, {matched?.state} • {matched?.category} •{" "}
-                                    {fmtLakhs(matched?.sanctionedAmount || 0)}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <span className={`text-xs font-extrabold ${tc.text}`}>
-                                  {r.composite_risk_score.toFixed(1)}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <Badge className={`${tc.bg} ${tc.text} ${tc.border} border text-[10px] px-2 py-0`}>
-                                  {r.risk_tier}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-2 text-xs font-medium">
-                                  <ArchetypeIcon archetype={r.predicted_archetype} className="size-4" />
-                                  <span className="capitalize">{ARCHETYPE_LABELS[r.predicted_archetype]?.label || r.predicted_archetype.replace("_", " ")}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="text-xs text-muted-foreground max-w-xs truncate">
-                                {r.governance_action}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
                   </div>
                 </>
               ) : (
@@ -1361,7 +1599,7 @@ export default function AiAuditEngine() {
                   </div>
                   <h4 className="font-bold text-base">National Database Batch Audit Ready</h4>
                   <p className="text-xs text-muted-foreground max-w-md">
-                    Click the button above to run real-time inference on all {PROJECTS.length} website projects simultaneously.
+                    Click the button above to run real-time inference on all {projectsList.length} website projects simultaneously.
                     The system will compute risk scores, archetypes, and component weights in milliseconds.
                   </p>
                   <Button onClick={handleAuditAllProjects} disabled={batchLoading} className="font-bold gap-2">
@@ -1519,7 +1757,7 @@ export default function AiAuditEngine() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-bold flex items-center gap-2">
                 <IconSparkles className="size-5 text-primary" />
-                MPLADS-SATHI AI Governance Model Architecture
+                NIDHI-RAKSHAK AI Governance Model Architecture
               </CardTitle>
               <CardDescription className="text-xs">
                 Specifications formulated in accordance with MoSPI guidelines and CAG Public Works audit compliance standards.

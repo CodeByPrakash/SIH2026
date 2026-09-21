@@ -21,13 +21,13 @@ export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
     verificationCategory: "CONFLICT_DETECTED",
     observationSentiment: "NEGATIVE",
     officialRecordClaim:
-      "Official Record — MPLADS SATHI Database: Project status is marked as 'Completed' with 100% physical progress. Sanctioned Amount: ₹48.5L, Expenditure: ₹51.2L. Contractor: M/s Shiv Construction Co.",
+      "Official Record — NIDHI-RAKSHAK Database: Project status is marked as 'Completed' with 100% physical progress. Sanctioned Amount: ₹48.5L, Expenditure: ₹51.2L. Contractor: M/s Shiv Construction Co.",
     citizenObservation:
       'Citizen Evidence (Photo) at Gram Panchayat Rampur, Lucknow, UP: "CC Road in Gram Panchayat Rampur remains unpaved with gravel heaps blocking traffic. Work halted 3 weeks ago despite completion sign."',
     fieldDiscrepancy:
       "Physical Completion Discrepancy: Record status is 'Completed' (100%), but citizen evidence indicates unfinished or halted construction.",
     explanation:
-      "AI cross-check identified a significant discrepancy between the recorded completion status in the MPLADS SATHI database and the ground observation submitted by the citizen. Field inspection is necessary to verify asset creation.",
+      "AI cross-check identified a significant discrepancy between the recorded completion status in the NIDHI-RAKSHAK database and the ground observation submitted by the citizen. Field inspection is necessary to verify asset creation.",
     recommendedAction:
       "Initiate physical audit by District Nodal Officer and request contractor status report.",
     additionalEvidenceRequired: [
@@ -56,7 +56,7 @@ export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
     verificationCategory: "POTENTIAL_CONFLICT",
     observationSentiment: "MIXED",
     officialRecordClaim:
-      "Official Record — MPLADS SATHI Database: Project status is marked as 'In Progress' with 73% physical progress. Sanctioned Amount: ₹85.0L, Expenditure: ₹62.5L. Contractor: M/s Arogya Builders Pvt Ltd.",
+      "Official Record — NIDHI-RAKSHAK Database: Project status is marked as 'In Progress' with 73% physical progress. Sanctioned Amount: ₹85.0L, Expenditure: ₹62.5L. Contractor: M/s Arogya Builders Pvt Ltd.",
     citizenObservation:
       'Citizen Evidence (Physical Observation) at Mohanlalganj, Lucknow, UP: "Primary Health Centre building structural work complete, but water tank motor and medical equipment remain uninstalled."',
     fieldDiscrepancy:
@@ -90,7 +90,7 @@ export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
     verificationCategory: "CONSISTENT",
     observationSentiment: "POSITIVE",
     officialRecordClaim:
-      "Official Record — MPLADS SATHI Database: Project status is marked as 'In Progress' with 45% physical progress. Sanctioned Amount: ₹32.0L.",
+      "Official Record — NIDHI-RAKSHAK Database: Project status is marked as 'In Progress' with 45% physical progress. Sanctioned Amount: ₹32.0L.",
     citizenObservation:
       'Citizen Evidence (Photo) at Kolaras, Shivpuri, MP: "Solar street light poles erected along village main junction as scheduled."',
     fieldDiscrepancy: "None detected. Citizen observation aligns with reported project milestones.",
@@ -118,7 +118,7 @@ export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
     verificationCategory: "INSUFFICIENT_EVIDENCE",
     observationSentiment: "INSUFFICIENT_INFORMATION",
     officialRecordClaim:
-      "Official Record — MPLADS SATHI Database: Project status is marked as 'In Progress' with 30% physical progress.",
+      "Official Record — NIDHI-RAKSHAK Database: Project status is marked as 'In Progress' with 30% physical progress.",
     citizenObservation:
       'Citizen Evidence (Photo) at Barmer, Rajasthan: "Distant view of construction area taken from highway."',
     fieldDiscrepancy: "Low granularity of evidence input",

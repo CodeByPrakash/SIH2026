@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Layout from "@/components/Layout";
 import Dashboard from "@/components/Dashboard";
 import ProjectExplorer from "@/components/ProjectExplorer";
@@ -112,6 +112,9 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
 
   const currentUser: User = user;
 
+  const searchParams = useSearchParams();
+  const paramProjectId = searchParams ? searchParams.get("projectId") : null;
+
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard":
@@ -139,7 +142,7 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
       case "crosscheck":
         return <GeoPhotoCrossCheckUSP />;
       case "ai-audit":
-        return <AiAuditEngine />;
+        return <AiAuditEngine initialProjectId={paramProjectId} />;
       default:
         return <Dashboard user={currentUser} onNavigate={handleNavigate} />;
     }

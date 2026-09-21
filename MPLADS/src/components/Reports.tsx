@@ -109,7 +109,7 @@ export default function Reports({ user }: Props) {
                 Reports & Analytics
               </h1>
               <p className="text-xs text-muted-foreground md:text-sm">
-                National MPLADS reporting engine · Export-ready dossiers · Decision intelligence
+                National NIDHI-RAKSHAK reporting engine · Export-ready dossiers · Decision intelligence
               </p>
             </div>
           </div>
@@ -641,7 +641,7 @@ export default function Reports({ user }: Props) {
                   Projects by Category
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Sector-wise breakdown of sanctioned MPLADS infrastructure
+                  Sector-wise breakdown of sanctioned NIDHI-RAKSHAK infrastructure
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -826,7 +826,7 @@ export default function Reports({ user }: Props) {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <CardTitle className="text-base font-semibold">
-                    State-wise MPLADS Performance Ledger
+                    State-wise NIDHI-RAKSHAK Performance Ledger
                   </CardTitle>
                   <CardDescription className="text-xs">
                     Comprehensive audit ledger across sanctioned funds, completion ratios, and delayed works
