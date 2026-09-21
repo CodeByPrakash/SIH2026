@@ -340,7 +340,13 @@ function UserNavFooter({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive cursor-pointer"
-              onClick={onLogout}
+              onClick={(e) => {
+                e.preventDefault();
+                onLogout();
+              }}
+              onSelect={() => {
+                onLogout();
+              }}
             >
               <IconLogout className="size-4 mr-2" />
               Log out

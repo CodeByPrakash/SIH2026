@@ -64,10 +64,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     try {
       localStorage.removeItem("mplads_user");
+      sessionStorage.removeItem("mplads_user");
     } catch {
       // ignore
     }
-    router.push("/login");
+    router.replace("/login");
   };
 
   return (

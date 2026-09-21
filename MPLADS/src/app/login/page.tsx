@@ -11,7 +11,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.push(`/dashboard/${user.role.toLowerCase()}`);
+      router.replace(`/dashboard/${user.role.toLowerCase()}`);
     }
   }, [user, isLoading, router]);
 
