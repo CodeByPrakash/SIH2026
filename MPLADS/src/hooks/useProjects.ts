@@ -4,21 +4,33 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import type { Project } from "@/types";
 import { PROJECTS as FALLBACK_PROJECTS } from "@/data/mpladsData";
 
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface UseProjectsOptions {
   district?: string;
   state?: string;
   constituency?: string;
   status?: string;
   limit?: number;
+  page?: number;
+  search?: string;
 }
 
 // Global Module-level SWR Cache to share across all components without network thrashing
 interface CacheEntry {
   data: Project[];
+  pagination?: PaginationMeta;
   timestamp: number;
 }
 const clientCache = new Map<string, CacheEntry>();
-const inFlightRequests = new Map<string, Promise<Project[]>>();
+const inFlightRequests = new Map<string, Promise<{ data: Project[]; pagination?: PaginationMeta }>>();
 const CLIENT_CACHE_TTL_MS = 30 * 1000; // 30 seconds
 
 function buildKey(options?: UseProjectsOptions): string {
@@ -28,6 +40,8 @@ function buildKey(options?: UseProjectsOptions): string {
     options?.constituency?.trim().toLowerCase() || "",
     options?.status || "",
     options?.limit || "",
+    options?.page || "",
+    options?.search?.trim().toLowerCase() || "",
   ].join("|");
 }
 
@@ -41,6 +55,9 @@ export function useProjects(options?: UseProjectsOptions) {
   const [projects, setProjects] = useState<Project[]>(
     isCacheFresh && cachedEntry ? cachedEntry.data : FALLBACK_PROJECTS
   );
+  const [pagination, setPagination] = useState<PaginationMeta | undefined>(
+    cachedEntry?.pagination
+  );
   const [isLoading, setIsLoading] = useState<boolean>(!isCacheFresh);
   const [isLive, setIsLive] = useState<boolean>(Boolean(cachedEntry));
   const [lastUpdated, setLastUpdated] = useState<Date | null>(
@@ -52,6 +69,8 @@ export function useProjects(options?: UseProjectsOptions) {
   const constituency = options?.constituency;
   const status = options?.status;
   const limit = options?.limit;
+  const page = options?.page;
+  const search = options?.search;
 
   const fetchProjects = useCallback(
     async (silent = false, force = false): Promise<Project[]> => {
@@ -61,6 +80,8 @@ export function useProjects(options?: UseProjectsOptions) {
         constituency?.trim().toLowerCase() || "",
         status || "",
         limit || "",
+        page || "",
+        search?.trim().toLowerCase() || "",
       ].join("|");
 
       // Check client cache if not forced
@@ -68,6 +89,7 @@ export function useProjects(options?: UseProjectsOptions) {
         const entry = clientCache.get(currentKey)!;
         if (Date.now() - entry.timestamp < CLIENT_CACHE_TTL_MS) {
           setProjects(entry.data);
+          if (entry.pagination) setPagination(entry.pagination);
           setIsLive(true);
           setLastUpdated(new Date(entry.timestamp));
           if (!silent) setIsLoading(false);
@@ -78,12 +100,13 @@ export function useProjects(options?: UseProjectsOptions) {
       // In-flight deduplication: return existing promise if already requesting same params
       if (!force && inFlightRequests.has(currentKey)) {
         try {
-          const data = await inFlightRequests.get(currentKey)!;
-          setProjects(data);
+          const resObj = await inFlightRequests.get(currentKey)!;
+          setProjects(resObj.data);
+          if (resObj.pagination) setPagination(resObj.pagination);
           setIsLive(true);
           setLastUpdated(new Date());
           if (!silent) setIsLoading(false);
-          return data;
+          return resObj.data;
         } catch {
           // fallback to fetching directly
         }
@@ -98,6 +121,8 @@ export function useProjects(options?: UseProjectsOptions) {
         if (constituency) params.set("constituency", constituency);
         if (status) params.set("status", status);
         if (limit) params.set("limit", String(limit));
+        if (page) params.set("page", String(page));
+        if (search) params.set("search", search);
         if (force) params.set("force", "true");
 
         const url = params.toString() ? `/api/projects?${params.toString()}` : "/api/projects";
@@ -110,24 +135,29 @@ export function useProjects(options?: UseProjectsOptions) {
         }
 
         const json = await res.json();
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        if (json.success && Array.isArray(json.data)) {
+          const fetchedProjects = json.data as Project[];
+          const fetchedPagination = json.pagination as PaginationMeta | undefined;
+
           clientCache.set(currentKey, {
-            data: json.data,
+            data: fetchedProjects,
+            pagination: fetchedPagination,
             timestamp: Date.now(),
           });
-          return json.data as Project[];
+          return { data: fetchedProjects, pagination: fetchedPagination };
         }
-        return projects;
+        return { data: projects, pagination };
       })();
 
       inFlightRequests.set(currentKey, requestPromise);
 
       try {
         const result = await requestPromise;
-        setProjects(result);
+        setProjects(result.data);
+        if (result.pagination) setPagination(result.pagination);
         setIsLive(true);
         setLastUpdated(new Date());
-        return result;
+        return result.data;
       } catch (err) {
         console.warn("useProjects request failed, retaining current data:", err);
         return projects;
@@ -136,7 +166,7 @@ export function useProjects(options?: UseProjectsOptions) {
         if (!silent) setIsLoading(false);
       }
     },
-    [district, state, constituency, status, limit, projects]
+    [district, state, constituency, status, limit, page, search, projects, pagination]
   );
 
   const fetchRef = useRef(fetchProjects);
@@ -190,6 +220,7 @@ export function useProjects(options?: UseProjectsOptions) {
 
   return {
     projects,
+    pagination,
     isLoading,
     isLive,
     lastUpdated,

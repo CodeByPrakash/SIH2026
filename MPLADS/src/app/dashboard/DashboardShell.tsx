@@ -41,10 +41,12 @@ interface DashboardShellProps {
   activeSection?: Page;
 }
 
-export default function DashboardShell({ role, activeSection }: DashboardShellProps) {
+function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
   const { user, login, logout, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const paramProjectId = searchParams ? searchParams.get("projectId") : null;
 
   // Protect route & handle role switching for authenticated users
   useEffect(() => {
@@ -112,9 +114,6 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
 
   const currentUser: User = user;
 
-  const searchParams = useSearchParams();
-  const paramProjectId = searchParams ? searchParams.get("projectId") : null;
-
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard":
@@ -161,5 +160,13 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
       </Layout>
       <AICopilot onNavigate={handleNavigate} user={currentUser} />
     </>
+  );
+}
+
+export default function DashboardShell(props: DashboardShellProps) {
+  return (
+    <React.Suspense fallback={null}>
+      <DashboardShellContent {...props} />
+    </React.Suspense>
   );
 }

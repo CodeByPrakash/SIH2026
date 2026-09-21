@@ -21,7 +21,28 @@ export interface ProjectFilterOptions {
   status?: string;
   riskLevel?: string;
   limit?: number;
+  page?: number;
+  search?: string;
   forceRefresh?: boolean;
+  lightweight?: boolean;
+}
+
+export interface PaginationMetadata {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface PaginatedProjectsResult {
+  projects: Project[];
+  pagination: PaginationMetadata;
+}
+
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function mapDocumentToProject(d: IProjectDocument): Project {
@@ -56,6 +77,8 @@ function mapDocumentToProject(d: IProjectDocument): Project {
     workOrderNo: d.workOrderNo || "",
     agreementDate: d.agreementDate,
     payments: d.payments || [],
+    createdAt: (d as any).createdAt,
+    updatedAt: (d as any).updatedAt,
   };
 }
 
@@ -63,6 +86,133 @@ let lastQueryFromCache = false;
 
 export function isLastQueryFromCache(): boolean {
   return lastQueryFromCache;
+}
+
+export async function getPaginatedProjects(
+  filters?: ProjectFilterOptions
+): Promise<PaginatedProjectsResult> {
+  const page = Math.max(1, filters?.page || 1);
+  const limit = Math.max(1, Math.min(100, filters?.limit || 10));
+  const skip = (page - 1) * limit;
+
+  try {
+    const conn = await dbConnect();
+    if (conn) {
+      const query: Record<string, any> = {};
+      if (filters?.district) {
+        query.district = { $regex: new RegExp(`^${escapeRegex(filters.district.trim())}$`, "i") };
+      }
+      if (filters?.state) {
+        query.state = { $regex: new RegExp(`^${escapeRegex(filters.state.trim())}$`, "i") };
+      }
+      if (filters?.constituency) {
+        query.constituency = { $regex: new RegExp(`^${escapeRegex(filters.constituency.trim())}$`, "i") };
+      }
+      if (filters?.status) {
+        query.status = filters.status;
+      }
+      if (filters?.riskLevel) {
+        query.riskLevel = filters.riskLevel;
+      }
+      if (filters?.search && filters.search.trim()) {
+        const s = escapeRegex(filters.search.trim());
+        const searchRegex = new RegExp(s, "i");
+        query.$or = [
+          { id: searchRegex },
+          { name: searchRegex },
+          { district: searchRegex },
+          { state: searchRegex },
+          { constituency: searchRegex },
+          { category: searchRegex },
+        ];
+      }
+
+      const total = await ProjectModel.countDocuments(query);
+      const totalPages = Math.max(1, Math.ceil(total / limit));
+
+      let queryBuilder = ProjectModel.find(query)
+        .sort({ updatedAt: -1, createdAt: -1, _id: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      if (filters?.lightweight) {
+        queryBuilder = queryBuilder.select(
+          "id name category subCategory state district constituency status progress riskLevel riskScore updatedAt createdAt"
+        );
+      }
+
+      const docs = await queryBuilder.lean<IProjectDocument[]>();
+
+      if (docs) {
+        const mapped = docs.map(mapDocumentToProject);
+        for (const p of mapped) {
+          if (!idIndex.has(p.id)) {
+            idIndex.set(p.id, p);
+          }
+        }
+        return {
+          projects: mapped,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+          },
+        };
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching paginated projects from DB:", err);
+  }
+
+  // Fallback to memory store
+  let fallbackList = [...memoryProjectsStore];
+  if (filters?.district) {
+    fallbackList = fallbackList.filter(
+      (p) => p.district.toLowerCase() === filters.district!.trim().toLowerCase()
+    );
+  }
+  if (filters?.state) {
+    fallbackList = fallbackList.filter(
+      (p) => p.state.toLowerCase() === filters.state!.trim().toLowerCase()
+    );
+  }
+  if (filters?.status) {
+    fallbackList = fallbackList.filter((p) => p.status === filters.status);
+  }
+  if (filters?.riskLevel) {
+    fallbackList = fallbackList.filter((p) => p.riskLevel === filters.riskLevel);
+  }
+  if (filters?.search && filters.search.trim()) {
+    const term = filters.search.trim().toLowerCase();
+    fallbackList = fallbackList.filter(
+      (p) =>
+        p.id.toLowerCase().includes(term) ||
+        p.name.toLowerCase().includes(term) ||
+        p.district.toLowerCase().includes(term) ||
+        p.state.toLowerCase().includes(term) ||
+        p.constituency.toLowerCase().includes(term) ||
+        p.category.toLowerCase().includes(term)
+    );
+  }
+
+  const total = fallbackList.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const pagedList = fallbackList.slice(skip, skip + limit);
+
+  return {
+    projects: pagedList,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    },
+  };
 }
 
 export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Project[]> {
@@ -74,6 +224,8 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
     filters?.status || "",
     filters?.riskLevel || "",
     filters?.limit || "",
+    filters?.page || "",
+    filters?.search || "",
   ].join("|");
 
   // Check In-Memory Query Cache
@@ -86,6 +238,11 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
   }
 
   lastQueryFromCache = false;
+
+  if (filters?.page !== undefined || filters?.search !== undefined) {
+    const paginated = await getPaginatedProjects(filters);
+    return paginated.projects;
+  }
 
   try {
     const conn = await dbConnect();
