@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { STATES_DATA, PROJECTS } from "../data/mpladsData";
-import type { StateData } from "../types";
+import type { StateData, User } from "../types";
 import {
   Card,
   CardHeader,
@@ -75,6 +75,19 @@ export const STATE_CODE_TO_NAME: Record<string, string> = {
   INUT: "Uttarakhand",
   INWB: "West Bengal",
 };
+
+interface SimpleMapsStateSpecific {
+  name: string;
+  color?: string;
+  hover_color?: string;
+  description?: string;
+  zoomable?: string;
+}
+
+interface SimpleMapsCountryMapData {
+  main_settings: Record<string, any>;
+  state_specific: Record<string, SimpleMapsStateSpecific>;
+}
 
 const STATE_NAME_TO_CODE: Record<string, string> = Object.entries(
   STATE_CODE_TO_NAME
@@ -203,9 +216,15 @@ declare global {
   }
 }
 
-export default function GISView() {
+interface GISViewProps {
+  user?: User;
+}
+
+export default function GISView({ user }: GISViewProps = {}) {
   const [layerIdx, setLayerIdx] = useState(0);
-  const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [selectedState, setSelectedState] = useState<string | null>(
+    user?.state || null
+  );
   const [showClusters, setShowClusters] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -215,17 +234,28 @@ export default function GISView() {
 
   // Selected state data
   const selectedStateData = useMemo(() => {
-    if (!selectedState) return null;
-    return stateByName.get(selectedState.toLowerCase()) || null;
-  }, [selectedState]);
+    const targetState = selectedState || (user?.role === "State" ? user.state : null);
+    if (!targetState) return null;
+    return stateByName.get(targetState.toLowerCase()) || null;
+  }, [selectedState, user]);
 
-  // Projects in selected state
+  // Projects in selected state / district
   const stateProjects = useMemo(() => {
-    if (!selectedState) return [];
-    return PROJECTS.filter(
-      (p) => p.state.toLowerCase() === selectedState.toLowerCase()
-    );
-  }, [selectedState]);
+    let list = PROJECTS;
+    if (user?.role === "District" && user.district) {
+      return list.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+    }
+    if (user?.role === "MP") {
+      return list.filter(
+        (p) =>
+          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+      );
+    }
+    const targetState = selectedState || (user?.role === "State" ? user.state : null);
+    if (!targetState) return [];
+    return list.filter((p) => p.state.toLowerCase() === targetState.toLowerCase());
+  }, [selectedState, user]);
 
   // Ranked states for sidebar leaderboard
   const rankedStates = useMemo(() => {

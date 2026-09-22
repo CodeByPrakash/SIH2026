@@ -3,9 +3,14 @@
 import * as React from "react";
 import { useState, useMemo } from "react";
 import * as XLSX from "xlsx";
-import type { Project } from "../types";
+import type { Project, User } from "../types";
 import { PROJECTS } from "../data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
+
+interface ProjectExplorerProps {
+  user?: User;
+  onNavigate?: (page: string) => void;
+}
 import {
   Table,
   TableHeader,
@@ -62,6 +67,10 @@ import {
   IconFilter,
   IconSparkles,
   IconCube,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
 } from "@tabler/icons-react";
 
 const STATUSES = ["All", "Completed", "In Progress", "Delayed", "On Hold", "Not Started"] as const;
@@ -201,21 +210,75 @@ function RiskScorePill({ score, level }: { score: number; level: string }) {
   );
 }
 
-export default function ProjectExplorer() {
-  const { projects, isLive, lastUpdated, updateProjectStatus } = useProjects();
+export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerProps = {}) {
+  const isMinistry = !user || user.role === "Ministry";
+  const isState = user?.role === "State";
+  const isDistrict = user?.role === "District";
+  const isMP = user?.role === "MP";
+  const isCitizen = user?.role === "Citizen";
+
+  const { projects: allProjects, isLive, lastUpdated, updateProjectStatus } = useProjects({
+    state: isState ? user?.state : undefined,
+    district: isDistrict ? user?.district : undefined,
+    constituency: isMP ? user?.constituency : undefined,
+  });
+
+  // Base list scoped strictly to role permissions
+  const roleScopedProjects = useMemo(() => {
+    if (!user || isMinistry) return allProjects;
+    if (isState && user.state) {
+      // State sees all districts in their state
+      return allProjects.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+    }
+    if (isDistrict && user.district) {
+      // District sees ONLY their particular district
+      return allProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+    }
+    if (isMP) {
+      return allProjects.filter(
+        (p) =>
+          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+      );
+    }
+    if (isCitizen) {
+      if (user.district) {
+        const match = allProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+        if (match.length > 0) return match;
+      }
+      return allProjects;
+    }
+    return allProjects;
+  }, [allProjects, user, isMinistry, isState, isDistrict, isMP, isCitizen]);
+
   const [status, setStatus] = useState<string>("All");
   const [category, setCategory] = useState<string>("All");
-  const [state, setState] = useState<string>("All");
+  const [state, setState] = useState<string>(
+    (isState && user?.state) || (isDistrict && user?.state) ? user!.state! : "All"
+  );
+  const [district, setDistrict] = useState<string>(
+    isDistrict && user?.district ? user!.district! : "All"
+  );
   const [search, setSearch] = useState<string>("");
   const [sortBy, setSortBy] = useState<"riskScore" | "sanctionedAmount" | "progress" | "name">("riskScore");
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  const availableDistricts = useMemo(() => {
+    let pool = roleScopedProjects;
+    if (state !== "All") {
+      pool = pool.filter((p) => p.state.toLowerCase() === state.toLowerCase());
+    }
+    const dists = Array.from(new Set(pool.map((p) => p.district).filter(Boolean))).sort();
+    return ["All", ...dists];
+  }, [roleScopedProjects, state]);
+
   const filtered = useMemo(() => {
-    return projects.filter((p) => {
+    return roleScopedProjects.filter((p) => {
       const matchStatus = status === "All" || p.status === status;
       const matchCategory = category === "All" || p.category === category;
-      const matchState = state === "All" || p.state === state;
+      const matchState = state === "All" || p.state.toLowerCase() === state.toLowerCase();
+      const matchDistrict = district === "All" || p.district.toLowerCase() === district.toLowerCase();
       const q = search.trim().toLowerCase();
       const matchSearch =
         !q ||
@@ -226,32 +289,86 @@ export default function ProjectExplorer() {
         p.mpName.toLowerCase().includes(q) ||
         (p.contractor && p.contractor.toLowerCase().includes(q));
 
-      return matchStatus && matchCategory && matchState && matchSearch;
+      return matchStatus && matchCategory && matchState && matchDistrict && matchSearch;
     }).sort((a, b) => {
       if (sortBy === "name") {
         return a.name.localeCompare(b.name);
       }
       return b[sortBy] - a[sortBy];
     });
-  }, [projects, status, category, state, search, sortBy]);
+  }, [roleScopedProjects, status, category, state, district, search, sortBy]);
 
   const stats = useMemo(() => {
     return {
-      total: projects.length,
-      completed: projects.filter((p) => p.status === "Completed").length,
-      inProgress: projects.filter((p) => p.status === "In Progress").length,
-      delayed: projects.filter((p) => p.status === "Delayed").length,
-      onHold: projects.filter((p) => p.status === "On Hold").length,
+      total: roleScopedProjects.length,
+      completed: roleScopedProjects.filter((p) => p.status === "Completed").length,
+      inProgress: roleScopedProjects.filter((p) => p.status === "In Progress").length,
+      delayed: roleScopedProjects.filter((p) => p.status === "Delayed").length,
+      onHold: roleScopedProjects.filter((p) => p.status === "On Hold").length,
     };
-  }, [projects]);
+  }, [roleScopedProjects]);
 
-  const hasActiveFilters = status !== "All" || category !== "All" || state !== "All" || search !== "";
+  const hasActiveFilters =
+    status !== "All" ||
+    category !== "All" ||
+    (!isState && !isDistrict && state !== "All") ||
+    (!isDistrict && district !== "All") ||
+    search !== "";
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(15);
+  const listContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // Reset to page 1 whenever search, status, category, state, district, or sort changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [status, category, state, district, search, sortBy]);
+
+  const totalProjects = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(totalProjects / pageSize));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const paginatedProjects = useMemo(() => {
+    const start = (safeCurrentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, safeCurrentPage, pageSize]);
+
+  const startIndex = totalProjects === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(safeCurrentPage * pageSize, totalProjects);
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const pages: number[] = [];
+    pages.push(1);
+    if (safeCurrentPage > 3) {
+      pages.push(-1); // ellipsis
+    }
+    const start = Math.max(2, safeCurrentPage - 1);
+    const end = Math.min(totalPages - 1, safeCurrentPage + 1);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    if (safeCurrentPage < totalPages - 2) {
+      pages.push(-1); // ellipsis
+    }
+    pages.push(totalPages);
+    return pages;
+  }, [totalPages, safeCurrentPage]);
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    listContainerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const resetFilters = () => {
     setStatus("All");
     setCategory("All");
-    setState("All");
+    setState((isState && user?.state) || (isDistrict && user?.state) ? user!.state! : "All");
+    setDistrict(isDistrict && user?.district ? user!.district! : "All");
     setSearch("");
+    setCurrentPage(1);
   };
 
   const handleExport = () => {
@@ -292,10 +409,23 @@ export default function ProjectExplorer() {
       {/* ── Header ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
               Project Explorer
             </h1>
+            {user && (
+              <Badge variant="outline" className="text-[11px] font-medium border-primary/30 text-primary bg-primary/5">
+                {isMinistry
+                  ? "National Scope (All States & Districts)"
+                  : isState
+                  ? `State Scope: ${user.state} (All Districts)`
+                  : isDistrict
+                  ? `District Scope: ${user.district} Authority`
+                  : isMP
+                  ? `Constituency Scope: ${user.constituency}`
+                  : "Public Citizen View"}
+              </Badge>
+            )}
             <span
               className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                 isLive
@@ -353,7 +483,7 @@ export default function ProjectExplorer() {
         <CardContent className="p-3.5 md:p-4 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5">
             {/* Search Input */}
-            <div className="relative sm:col-span-2 lg:col-span-4">
+            <div className="relative sm:col-span-2 lg:col-span-3">
               <IconSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input
                 value={search}
@@ -374,7 +504,14 @@ export default function ProjectExplorer() {
 
             {/* State Select */}
             <div className="lg:col-span-2">
-              <Select value={state} onValueChange={(val) => setState(val || "All")}>
+              <Select
+                value={state}
+                onValueChange={(val) => {
+                  setState(val || "All");
+                  setDistrict("All");
+                }}
+                disabled={isState || isDistrict}
+              >
                 <SelectTrigger className="w-full h-8 text-xs">
                   <SelectValue placeholder="State: All" />
                 </SelectTrigger>
@@ -382,6 +519,26 @@ export default function ProjectExplorer() {
                   {STATES.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s === "All" ? "All States" : s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* District Select */}
+            <div className="lg:col-span-2">
+              <Select
+                value={district}
+                onValueChange={(val) => setDistrict(val || "All")}
+                disabled={isDistrict}
+              >
+                <SelectTrigger className="w-full h-8 text-xs">
+                  <SelectValue placeholder="District: All" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableDistricts.map((d) => (
+                    <SelectItem key={d} value={d}>
+                      {d === "All" ? (isState ? `All Districts (${user?.state})` : "All Districts") : d}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -504,244 +661,358 @@ export default function ProjectExplorer() {
       </Card>
 
       {/* ── Table / Cards View ── */}
-      {viewMode === "table" ? (
-        <Card className="overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent bg-muted/40 text-muted-foreground">
-                  <TableHead className="w-[320px] text-xs font-semibold uppercase tracking-wider">
-                    Project
-                  </TableHead>
-                  <TableHead className="w-[180px] text-xs font-semibold uppercase tracking-wider">
-                    State / District
-                  </TableHead>
-                  <TableHead className="w-[140px] text-xs font-semibold uppercase tracking-wider">
-                    Category
-                  </TableHead>
-                  <TableHead className="w-[130px] text-right text-xs font-semibold uppercase tracking-wider">
-                    Amount
-                  </TableHead>
-                  <TableHead className="w-[160px] text-xs font-semibold uppercase tracking-wider">
-                    Progress
-                  </TableHead>
-                  <TableHead className="w-[120px] text-center text-xs font-semibold uppercase tracking-wider">
-                    Status
-                  </TableHead>
-                  <TableHead className="w-[80px] text-center text-xs font-semibold uppercase tracking-wider">
-                    Risk
-                  </TableHead>
-                  <TableHead className="w-[80px] text-right text-xs font-semibold uppercase tracking-wider">
-                    Action
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="h-36 text-center text-muted-foreground text-sm">
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <IconFilter className="size-7 text-muted-foreground/50" />
-                        <div>No projects matching current search and filters</div>
-                        <Button variant="outline" size="sm" onClick={resetFilters} className="text-xs mt-1">
-                          Clear Filters
-                        </Button>
-                      </div>
-                    </TableCell>
+      <div ref={listContainerRef} className="space-y-4">
+        {viewMode === "table" ? (
+          <Card className="overflow-hidden shadow-xs">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent bg-muted/40 text-muted-foreground">
+                    <TableHead className="w-[320px] text-xs font-semibold uppercase tracking-wider">
+                      Project
+                    </TableHead>
+                    <TableHead className="w-[180px] text-xs font-semibold uppercase tracking-wider">
+                      State / District
+                    </TableHead>
+                    <TableHead className="w-[140px] text-xs font-semibold uppercase tracking-wider">
+                      Category
+                    </TableHead>
+                    <TableHead className="w-[130px] text-right text-xs font-semibold uppercase tracking-wider">
+                      Amount
+                    </TableHead>
+                    <TableHead className="w-[160px] text-xs font-semibold uppercase tracking-wider">
+                      Progress
+                    </TableHead>
+                    <TableHead className="w-[120px] text-center text-xs font-semibold uppercase tracking-wider">
+                      Status
+                    </TableHead>
+                    {!isCitizen && (
+                      <TableHead className="w-[80px] text-center text-xs font-semibold uppercase tracking-wider">
+                        Risk
+                      </TableHead>
+                    )}
+                    <TableHead className="w-[80px] text-right text-xs font-semibold uppercase tracking-wider">
+                      Action
+                    </TableHead>
                   </TableRow>
-                ) : (
-                  filtered.map((p) => {
-                    const overrun = p.expenditure > p.sanctionedAmount;
-                    const overrunPct = overrun
-                      ? (((p.expenditure - p.sanctionedAmount) / p.sanctionedAmount) * 100).toFixed(1)
-                      : null;
-
-                    return (
-                      <TableRow
-                        key={p.id}
-                        onClick={() => setSelectedProject(p)}
-                        className="cursor-pointer transition-colors hover:bg-muted/40 group"
-                      >
-                        {/* Project Info */}
-                        <TableCell className="align-middle py-3">
-                          <div className="font-medium text-foreground text-sm leading-snug line-clamp-1 group-hover:text-primary transition-colors">
-                            {p.name}
-                          </div>
-                          <div className="text-[11px] font-mono text-muted-foreground mt-0.5">
-                            {p.id}
-                          </div>
-                        </TableCell>
-
-                        {/* State / District */}
-                        <TableCell className="align-middle py-3">
-                          <div className="text-xs font-medium text-foreground">{p.state}</div>
-                          <div className="text-[11px] text-muted-foreground">{p.district}</div>
-                        </TableCell>
-
-                        {/* Category */}
-                        <TableCell className="align-middle py-3">
-                          <Badge variant="secondary" className="text-[11px] font-normal px-2 py-0.5">
-                            {p.category.split(" ")[0]}
-                          </Badge>
-                        </TableCell>
-
-                        {/* Amount & Overrun */}
-                        <TableCell className="align-middle py-3 text-right">
-                          <div className="font-mono text-xs font-semibold text-foreground tabular-nums">
-                            {fmt(p.sanctionedAmount)}
-                          </div>
-                          {overrun && (
-                            <div className="text-[10px] font-mono font-medium text-destructive mt-0.5">
-                              +{overrunPct}% overrun
-                            </div>
-                          )}
-                        </TableCell>
-
-                        {/* Progress Bar */}
-                        <TableCell className="align-middle py-3">
-                          <div className="flex items-center gap-2.5">
-                            <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden min-w-[60px]">
-                              <div
-                                className={`h-full rounded-full transition-all ${
-                                  p.progress === 100
-                                    ? "bg-emerald-500"
-                                    : p.status === "Delayed"
-                                    ? "bg-destructive"
-                                    : "bg-primary"
-                                }`}
-                                style={{ width: `${p.progress}%` }}
-                              />
-                            </div>
-                            <span className="font-mono text-xs text-muted-foreground tabular-nums w-8 text-right">
-                              {p.progress}%
-                            </span>
-                          </div>
-                        </TableCell>
-
-                        {/* Status */}
-                        <TableCell className="align-middle py-3 text-center">
-                          <StatusBadge status={p.status} />
-                        </TableCell>
-
-                        {/* Risk */}
-                        <TableCell className="align-middle py-3 text-center">
-                          <RiskScorePill score={p.riskScore} level={p.riskLevel} />
-                        </TableCell>
-
-                        {/* Action */}
-                        <TableCell className="align-middle py-3 text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            className="text-muted-foreground group-hover:text-foreground"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedProject(p);
-                            }}
-                          >
-                            <IconEye className="size-4" />
-                            <span className="sr-only">Inspect project</span>
+                </TableHeader>
+                <TableBody>
+                  {filtered.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="h-36 text-center text-muted-foreground text-sm">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <IconFilter className="size-7 text-muted-foreground/50" />
+                          <div>No projects matching current search and filters</div>
+                          <Button variant="outline" size="sm" onClick={resetFilters} className="text-xs mt-1">
+                            Clear Filters
                           </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </Card>
-      ) : (
-        /* ── Cards View ── */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.length === 0 ? (
-            <div className="col-span-full py-16 text-center text-muted-foreground text-sm">
-              <IconFilter className="size-8 mx-auto mb-2 text-muted-foreground/50" />
-              <div>No projects matching current criteria</div>
-              <Button variant="outline" size="sm" onClick={resetFilters} className="text-xs mt-2">
-                Clear Filters
-              </Button>
-            </div>
-          ) : (
-            filtered.map((p) => (
-              <Card
-                key={p.id}
-                onClick={() => setSelectedProject(p)}
-                className="cursor-pointer transition-all hover:shadow-md hover:border-primary/40 group flex flex-col justify-between"
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[11px] font-mono text-muted-foreground truncate">
-                      {p.id}
-                    </span>
-                    <RiskBadge level={p.riskLevel} score={p.riskScore} />
-                  </div>
-                  <CardTitle className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                    {p.name}
-                  </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground">
-                    {p.district}, {p.state} · {p.mpName}
-                  </CardDescription>
-                </CardHeader>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedProjects.map((p) => {
+                      const overrun = p.expenditure > p.sanctionedAmount;
+                      const overrunPct = overrun
+                        ? (((p.expenditure - p.sanctionedAmount) / p.sanctionedAmount) * 100).toFixed(1)
+                        : null;
 
-                <CardContent className="space-y-3 py-2">
-                  {/* Progress Bar */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                      <span>Physical Progress</span>
-                      <span className="font-mono font-medium text-foreground">{p.progress}%</span>
-                    </div>
-                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${
-                          p.status === "Delayed"
-                            ? "bg-destructive"
-                            : p.progress === 100
-                            ? "bg-emerald-500"
-                            : "bg-primary"
-                        }`}
-                        style={{ width: `${p.progress}%` }}
-                      />
-                    </div>
-                  </div>
+                      return (
+                        <TableRow
+                          key={p.id}
+                          onClick={() => setSelectedProject(p)}
+                          className="cursor-pointer transition-colors hover:bg-muted/40 group"
+                        >
+                          {/* Project Info */}
+                          <TableCell className="align-middle py-3">
+                            <div className="font-medium text-foreground text-sm leading-snug line-clamp-1 group-hover:text-primary transition-colors">
+                              {p.name}
+                            </div>
+                            <div className="text-[11px] font-mono text-muted-foreground mt-0.5">
+                              {p.id}
+                            </div>
+                          </TableCell>
 
-                  {/* Financial & Status Row */}
-                  <div className="flex items-center justify-between pt-1">
-                    <StatusBadge status={p.status} />
-                    <div className="text-right">
-                      <div className="font-mono text-xs font-semibold text-foreground">
-                        {fmt(p.sanctionedAmount)}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground">Sanctioned</div>
-                    </div>
-                  </div>
+                          {/* State / District */}
+                          <TableCell className="align-middle py-3">
+                            <div className="text-xs font-medium text-foreground">{p.state}</div>
+                            <div className="text-[11px] text-muted-foreground">{p.district}</div>
+                          </TableCell>
 
-                  {/* Risk flags callout if present */}
-                  {p.riskFlags.length > 0 && (
-                    <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-2 text-[11px] text-destructive space-y-0.5">
-                      <div className="font-semibold flex items-center gap-1">
-                        <IconAlertTriangle className="size-3" />
-                        {p.riskFlags.length} risk flag{p.riskFlags.length > 1 ? "s" : ""}
-                      </div>
-                      <div className="line-clamp-1 text-[11px] text-muted-foreground">
-                        {p.riskFlags[0]}
-                      </div>
-                    </div>
+                          {/* Category */}
+                          <TableCell className="align-middle py-3">
+                            <Badge variant="secondary" className="text-[11px] font-normal px-2 py-0.5">
+                              {p.category.split(" ")[0]}
+                            </Badge>
+                          </TableCell>
+
+                          {/* Amount & Overrun */}
+                          <TableCell className="align-middle py-3 text-right">
+                            <div className="font-mono text-xs font-semibold text-foreground tabular-nums">
+                              {fmt(p.sanctionedAmount)}
+                            </div>
+                            {overrun && (
+                              <div className="text-[10px] font-mono font-medium text-destructive mt-0.5">
+                                +{overrunPct}% overrun
+                              </div>
+                            )}
+                          </TableCell>
+
+                          {/* Progress Bar */}
+                          <TableCell className="align-middle py-3">
+                            <div className="flex items-center gap-2.5">
+                              <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden min-w-[60px]">
+                                <div
+                                  className={`h-full rounded-full transition-all ${
+                                    p.progress === 100
+                                      ? "bg-emerald-500"
+                                      : p.status === "Delayed"
+                                      ? "bg-destructive"
+                                      : "bg-primary"
+                                  }`}
+                                  style={{ width: `${p.progress}%` }}
+                                />
+                              </div>
+                              <span className="font-mono text-xs text-muted-foreground tabular-nums w-8 text-right">
+                                {p.progress}%
+                              </span>
+                            </div>
+                          </TableCell>
+
+                          {/* Status */}
+                          <TableCell className="align-middle py-3 text-center">
+                            <StatusBadge status={p.status} />
+                          </TableCell>
+
+                          {/* Risk */}
+                          {!isCitizen && (
+                            <TableCell className="align-middle py-3 text-center">
+                              <RiskScorePill score={p.riskScore} level={p.riskLevel} />
+                            </TableCell>
+                          )}
+
+                          {/* Action */}
+                          <TableCell className="align-middle py-3 text-right">
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              className="text-muted-foreground group-hover:text-foreground"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedProject(p);
+                              }}
+                            >
+                              <IconEye className="size-4" />
+                              <span className="sr-only">Inspect project</span>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   )}
-                </CardContent>
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        ) : (
+          /* ── Cards View ── */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.length === 0 ? (
+              <div className="col-span-full py-16 text-center text-muted-foreground text-sm">
+                <IconFilter className="size-8 mx-auto mb-2 text-muted-foreground/50" />
+                <div>No projects matching current criteria</div>
+                <Button variant="outline" size="sm" onClick={resetFilters} className="text-xs mt-2">
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              paginatedProjects.map((p) => (
+                <Card
+                  key={p.id}
+                  onClick={() => setSelectedProject(p)}
+                  className="cursor-pointer transition-all hover:shadow-md hover:border-primary/40 group flex flex-col justify-between"
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[11px] font-mono text-muted-foreground truncate">
+                        {p.id}
+                      </span>
+                      {!isCitizen && <RiskBadge level={p.riskLevel} score={p.riskScore} />}
+                    </div>
+                    <CardTitle className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                      {p.name}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      {p.district}, {p.state} · {p.mpName}
+                    </CardDescription>
+                  </CardHeader>
 
-                <CardFooter className="pt-2 border-t text-xs text-muted-foreground flex items-center justify-between">
-                  <span>{p.category.split(" ")[0]}</span>
-                  <span className="text-primary font-medium flex items-center gap-1 group-hover:underline">
-                    View dossier
-                    <IconEye className="size-3" />
-                  </span>
-                </CardFooter>
-              </Card>
-            ))
-          )}
-        </div>
-      )}
+                  <CardContent className="space-y-3 py-2">
+                    {/* Progress Bar */}
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span>Physical Progress</span>
+                        <span className="font-mono font-medium text-foreground">{p.progress}%</span>
+                      </div>
+                      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            p.status === "Delayed"
+                              ? "bg-destructive"
+                              : p.progress === 100
+                              ? "bg-emerald-500"
+                              : "bg-primary"
+                          }`}
+                          style={{ width: `${p.progress}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Financial & Status Row */}
+                    <div className="flex items-center justify-between pt-1">
+                      <StatusBadge status={p.status} />
+                      <div className="text-right">
+                        <div className="font-mono text-xs font-semibold text-foreground">
+                          {fmt(p.sanctionedAmount)}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">Sanctioned</div>
+                      </div>
+                    </div>
+
+                    {/* Risk flags callout if present */}
+                    {!isCitizen && p.riskFlags.length > 0 && (
+                      <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-2 text-[11px] text-destructive space-y-0.5">
+                        <div className="font-semibold flex items-center gap-1">
+                          <IconAlertTriangle className="size-3" />
+                          {p.riskFlags.length} risk flag{p.riskFlags.length > 1 ? "s" : ""}
+                        </div>
+                        <div className="line-clamp-1 text-[11px] text-muted-foreground">
+                          {p.riskFlags[0]}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="pt-2 border-t text-xs text-muted-foreground flex items-center justify-between">
+                    <span>{p.category.split(" ")[0]}</span>
+                    <span className="text-primary font-medium flex items-center gap-1 group-hover:underline">
+                      View dossier
+                      <IconEye className="size-3" />
+                    </span>
+                  </CardFooter>
+                </Card>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* ── Pagination Bar ── */}
+        {filtered.length > 0 && (
+          <Card className="p-3 shadow-xs bg-card/60 backdrop-blur-xs">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3">
+                <span>
+                  Showing <strong className="text-foreground font-semibold">{startIndex}</strong> to{" "}
+                  <strong className="text-foreground font-semibold">{endIndex}</strong> of{" "}
+                  <strong className="text-foreground font-semibold">{totalProjects}</strong> projects
+                </span>
+                <div className="flex items-center gap-1.5 ml-0 sm:ml-2 border-l pl-3 border-border/60">
+                  <span className="text-[11px]">Rows per page:</span>
+                  <Select
+                    value={String(pageSize)}
+                    onValueChange={(val) => {
+                      setPageSize(Number(val));
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="h-7 w-[70px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="15">15</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  disabled={safeCurrentPage <= 1}
+                  onClick={() => handlePageChange(1)}
+                  title="First page"
+                >
+                  <IconChevronsLeft className="size-3.5" />
+                  <span className="sr-only">First page</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2 text-xs gap-1"
+                  disabled={safeCurrentPage <= 1}
+                  onClick={() => handlePageChange(Math.max(1, safeCurrentPage - 1))}
+                >
+                  <IconChevronLeft className="size-3.5" />
+                  Prev
+                </Button>
+
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1 mx-1">
+                  {pageNumbers.map((pNum, idx) => {
+                    if (pNum === -1) {
+                      return (
+                        <span key={`ellipsis-${idx}`} className="px-1 text-muted-foreground font-mono">
+                          ...
+                        </span>
+                      );
+                    }
+                    return (
+                      <Button
+                        key={pNum}
+                        variant={safeCurrentPage === pNum ? "default" : "outline"}
+                        size="sm"
+                        className={`h-7 min-w-7 px-2 text-xs font-medium ${
+                          safeCurrentPage === pNum ? "pointer-events-none shadow-xs font-semibold" : ""
+                        }`}
+                        onClick={() => handlePageChange(pNum)}
+                      >
+                        {pNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2 text-xs gap-1"
+                  disabled={safeCurrentPage >= totalPages}
+                  onClick={() => handlePageChange(Math.min(totalPages, safeCurrentPage + 1))}
+                >
+                  Next
+                  <IconChevronRight className="size-3.5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  disabled={safeCurrentPage >= totalPages}
+                  onClick={() => handlePageChange(totalPages)}
+                  title="Last page"
+                >
+                  <IconChevronsRight className="size-3.5" />
+                  <span className="sr-only">Last page</span>
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+      </div>
 
       {/* ── Project Inspection Dossier Sheet ── */}
       <Sheet

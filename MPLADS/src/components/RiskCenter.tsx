@@ -15,7 +15,8 @@ import {
   CartesianGrid,
 } from "recharts";
 import { RISK_FLAGS, PROJECTS } from "../data/mpladsData";
-import type { RiskFlag } from "../types";
+import type { RiskFlag, User } from "../types";
+import { useMemo } from "react";
 import {
   Card,
   CardHeader,
@@ -387,35 +388,77 @@ function RiskDetailPanel({
   );
 }
 
-export default function RiskCenter() {
+interface RiskCenterProps {
+  user?: User;
+}
+
+export default function RiskCenter({ user }: RiskCenterProps = {}) {
   const [selectedFlag, setSelectedFlag] = useState<RiskFlag | null>(null);
   const [filterSeverity, setFilterSeverity] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
   const [activeTab, setActiveTab] = useState<"flags" | "analytics" | "predictive">("flags");
 
-  const filtered = RISK_FLAGS.filter(
+  const roleRiskFlags = useMemo(() => {
+    if (!user || user.role === "Ministry") return RISK_FLAGS;
+    if (user.role === "Citizen") return [];
+
+    return RISK_FLAGS.filter((f) => {
+      const proj = PROJECTS.find((p) => p.id === f.projectId);
+      if (!proj) return true;
+      if (user.role === "State" && user.state) {
+        // State sees all districts in their state
+        return proj.state.toLowerCase() === user.state.toLowerCase();
+      }
+      if (user.role === "District" && user.district) {
+        // District sees only their particular district
+        return proj.district.toLowerCase() === user.district.toLowerCase();
+      }
+      if (user.role === "MP") {
+        return (
+          (user.constituency && proj.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && proj.district.toLowerCase() === user.district.toLowerCase())
+        );
+      }
+      return true;
+    });
+  }, [user]);
+
+  const filtered = roleRiskFlags.filter(
     (f) =>
       (filterSeverity === "All" || f.severity === filterSeverity) &&
       (filterStatus === "All" || f.status === filterStatus)
   );
 
-  const criticalCount = RISK_FLAGS.filter((f) => f.severity === "Critical").length;
-  const highCount = RISK_FLAGS.filter((f) => f.severity === "High").length;
-  const openCount = RISK_FLAGS.filter((f) => f.status === "Open").length;
+  const criticalCount = roleRiskFlags.filter((f) => f.severity === "Critical").length;
+  const highCount = roleRiskFlags.filter((f) => f.severity === "High").length;
+  const openCount = roleRiskFlags.filter((f) => f.status === "Open").length;
 
   return (
     <div className="flex-1 space-y-6 p-4 md:p-6 animate-in fade-in-50 duration-200">
       {/* ── Top Header ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="flex size-9 items-center justify-center rounded-lg bg-red-500/10 text-red-600 dark:text-red-400">
               <IconShieldExclamation className="size-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
-                AI Risk Intelligence Center
-              </h1>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+                  AI Risk Intelligence Center
+                </h1>
+                {user && (
+                  <Badge variant="outline" className="text-[11px] font-medium border-primary/30 text-primary bg-primary/5">
+                    {user.role === "Ministry"
+                      ? "National Scope"
+                      : user.role === "State"
+                      ? `State Scope: ${user.state} (All Districts)`
+                      : user.role === "District"
+                      ? `District Scope: ${user.district}`
+                      : `Constituency: ${user.constituency}`}
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground md:text-sm">
                 Context-aware anomaly detection · Adaptive peer comparison · Geospatial duplication audit
               </p>

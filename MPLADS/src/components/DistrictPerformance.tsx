@@ -133,8 +133,36 @@ export default function DistrictPerformance({ user, onNavigate }: DistrictPerfor
       }
     });
 
+    // If District role, scope strictly to the particular district
+    if (user.role === "District" && user.district) {
+      const match = augmented.filter((d) => d.name.toLowerCase() === user.district!.toLowerCase());
+      if (match.length > 0) return match;
+      const dProjects = PROJECTS.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+      const total = dProjects.length || 1;
+      const completed = dProjects.filter((p) => p.status === "Completed").length;
+      const delayed = dProjects.filter((p) => p.status === "Delayed").length;
+      const inProg = dProjects.filter((p) => p.status === "In Progress").length;
+      const risk = dProjects.filter((p) => p.riskScore > 50).length;
+      const sanctioned = dProjects.reduce((sum, p) => sum + p.sanctionedAmount, 0) || 3500;
+      const exp = dProjects.reduce((sum, p) => sum + p.expenditure, 0) || 2800;
+      const util = Math.round((exp / sanctioned) * 100);
+      return [{
+        name: user.district,
+        state: currentState,
+        totalProjects: total,
+        completedProjects: completed,
+        inProgressProjects: inProg,
+        delayedProjects: delayed,
+        riskProjects: risk,
+        sanctionedAmount: Math.round(sanctioned),
+        expenditure: Math.round(exp),
+        utilizationRate: util,
+        status: util >= 85 ? "High Performing" : util >= 70 ? "Moderate" : "Lagging",
+      }];
+    }
+
     return augmented;
-  }, [currentState, user.state]);
+  }, [currentState, user.state, user.role, user.district]);
 
   // Filtered and sorted districts
   const filteredDistricts = useMemo(() => {
@@ -173,10 +201,12 @@ export default function DistrictPerformance({ user, onNavigate }: DistrictPerfor
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
-                District Performance Monitoring
+                {user.role === "District" ? `${user.district} District Performance` : "District Performance Monitoring"}
               </h1>
               <p className="text-xs text-muted-foreground md:text-sm">
-                Inter-district efficiency benchmark · {currentState} State Directorate
+                {user.role === "District"
+                  ? `Dedicated performance scorecard for ${user.district} jurisdiction`
+                  : `Inter-district efficiency benchmark · ${currentState} State Directorate (All Districts)`}
               </p>
             </div>
           </div>
@@ -185,7 +215,7 @@ export default function DistrictPerformance({ user, onNavigate }: DistrictPerfor
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="px-3 py-1 font-mono text-xs font-semibold gap-1 text-primary border-primary/30 bg-primary/5">
             <IconMapPin className="size-3.5 text-primary" />
-            {currentState} ({totalDistrictsCount} Districts)
+            {user.role === "District" ? `${user.district} District` : `${currentState} (${totalDistrictsCount} Districts)`}
           </Badge>
           <Button
             variant="outline"

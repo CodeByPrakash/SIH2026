@@ -3,7 +3,7 @@
 import * as React from "react";
 import { ALERTS } from "@/data/mpladsData";
 import { useAlerts } from "@/hooks/useAlerts";
-import type { Alert } from "@/types";
+import type { Alert, User } from "@/types";
 import {
   Card,
   CardHeader,
@@ -41,18 +41,49 @@ import {
   IconRefresh,
   IconArrowRight,
   IconFlame,
+  IconFilter,
 } from "@tabler/icons-react";
 
-export default function Alerts() {
+interface AlertsProps {
+  user?: User;
+}
+
+export default function Alerts({ user }: AlertsProps = {}) {
   const { alerts, isLive, lastUpdated, acknowledgeAlert, resolveAlert } = useAlerts();
   const [selectedAlert, setSelectedAlert] = React.useState<Alert | null>(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [filterSev, setFilterSev] = React.useState<string>("All");
   const [filterType, setFilterType] = React.useState<string>("All");
   const [filterStatus, setFilterStatus] = React.useState<string>("All");
+  const [viewScope, setViewScope] = React.useState<"role" | "all">("role");
+
+  // Filter alerts by role relevance
+  const roleAlerts = React.useMemo(() => {
+    if (!user) return alerts;
+    if (user.role === "Citizen") return [];
+
+    return alerts.filter((a) => {
+      if (a.roles && a.roles.length > 0) {
+        return a.roles.includes(user.role);
+      }
+      if (user.role === "Ministry") return true;
+      if (user.role === "MP") {
+        return !a.constituency || a.constituency === user.constituency;
+      }
+      if (user.role === "State") {
+        return !a.state || a.state === user.state;
+      }
+      if (user.role === "District") {
+        return !a.district || a.district === user.district;
+      }
+      return true;
+    });
+  }, [alerts, user]);
+
+  const baseAlerts = viewScope === "role" && user && user.role !== "Citizen" ? roleAlerts : alerts;
 
   const filtered = React.useMemo(() => {
-    return alerts.filter((a) => {
+    return baseAlerts.filter((a) => {
       const matchSearch =
         searchQuery.trim() === "" ||
         a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -67,17 +98,17 @@ export default function Alerts() {
 
       return matchSearch && matchSev && matchType && matchStatus;
     });
-  }, [alerts, searchQuery, filterSev, filterType, filterStatus]);
+  }, [baseAlerts, searchQuery, filterSev, filterType, filterStatus]);
 
   const stats = React.useMemo(() => {
     return {
-      active: alerts.filter((a) => a.status === "Active").length,
-      critical: alerts.filter((a) => a.severity === "Critical").length,
-      high: alerts.filter((a) => a.severity === "High").length,
-      medium: alerts.filter((a) => a.severity === "Medium").length,
-      low: alerts.filter((a) => a.severity === "Low").length,
+      active: baseAlerts.filter((a) => a.status === "Active").length,
+      critical: baseAlerts.filter((a) => a.severity === "Critical").length,
+      high: baseAlerts.filter((a) => a.severity === "High").length,
+      medium: baseAlerts.filter((a) => a.severity === "Medium").length,
+      low: baseAlerts.filter((a) => a.severity === "Low").length,
     };
-  }, [alerts]);
+  }, [baseAlerts]);
 
   const handleAcknowledge = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -92,18 +123,50 @@ export default function Alerts() {
     setSelectedAlert(null);
   };
 
+  if (user?.role === "Citizen") {
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4">
+        <Card className="border-border/60 shadow-sm text-center">
+          <CardHeader className="pb-3">
+            <div className="mx-auto size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+              <IconBell className="size-6" />
+            </div>
+            <CardTitle className="text-xl font-bold">Internal Risk Alerts & Triage</CardTitle>
+            <CardDescription className="text-sm">
+              Early warning risk triage and critical threshold escalation are reserved for parliamentary, ministry, and district administrative authorities.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-xs text-muted-foreground pb-6">
+            Citizens have full access to public project tracking, fund utilization statistics, and the Citizen Feedback & Grievance reporting portal.
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* ── Top Alerts Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
               Early Warning Alerts & Risk Triage
             </h1>
             <Badge variant="destructive" className="font-mono text-[10px]">
               {stats.active} ACTIVE
             </Badge>
+            {user && (
+              <Badge variant="outline" className="text-[11px] font-medium border-primary/30 text-primary bg-primary/5">
+                {user.role === "Ministry"
+                  ? "Ministry / National Scope"
+                  : user.role === "MP"
+                  ? `Constituency: ${user.constituency || "Varanasi"}`
+                  : user.role === "State"
+                  ? `State: ${user.state || "Department"}`
+                  : `District: ${user.district || "Administration"}`}
+              </Badge>
+            )}
             <span
               className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                 isLive
@@ -121,7 +184,33 @@ export default function Alerts() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {user && (
+            <div className="flex items-center rounded-lg border border-border bg-muted/40 p-0.5 text-xs">
+              <button
+                type="button"
+                onClick={() => setViewScope("role")}
+                className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+                  viewScope === "role"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                My Role Alerts ({roleAlerts.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewScope("all")}
+                className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+                  viewScope === "all"
+                    ? "bg-background text-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                All Alerts ({alerts.length})
+              </button>
+            </div>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -139,7 +228,7 @@ export default function Alerts() {
           <Button
             size="sm"
             onClick={() => {
-              alerts
+              baseAlerts
                 .filter((a) => a.status === "Active")
                 .forEach((a) => acknowledgeAlert(a.id));
             }}

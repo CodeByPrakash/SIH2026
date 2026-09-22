@@ -82,6 +82,8 @@ export interface Alert {
   projectId?: string;
   state?: string;
   district?: string;
+  constituency?: string;
+  roles?: UserRole[];
   createdAt: string;
   daysRemaining?: number;
   actionRequired: string;

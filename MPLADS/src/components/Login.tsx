@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   IconBuildingArch,
@@ -44,18 +45,18 @@ interface RoleConfig {
 
 const ROLES: RoleConfig[] = [
   {
+    id: "Ministry",
+    label: "National Authority (Ministry)",
+    subLabel: "Central MoSPI Administration",
+    icon: IconScale,
+    description: "National overview, state performance, all-India budget release & scheme vigilance",
+  },
+  {
     id: "MP",
     label: "Member of Parliament",
     subLabel: "Lok Sabha / Rajya Sabha",
     icon: IconBuildingArch,
     description: "Recommend works, track sanctions, fund allocations & constituency progress",
-  },
-  {
-    id: "District",
-    label: "District Authority",
-    subLabel: "District Collector / DM Office",
-    icon: IconBuildingCommunity,
-    description: "Administrative approval, work orders, geo-tag inspections & UC submission",
   },
   {
     id: "State",
@@ -65,11 +66,11 @@ const ROLES: RoleConfig[] = [
     description: "State-wide monitoring, fund consolidation & compliance coordination",
   },
   {
-    id: "Ministry",
-    label: "National Authority (Ministry)",
-    subLabel: "Central MoSPI Administration",
-    icon: IconScale,
-    description: "National overview, state performance, all-India budget release & scheme vigilance",
+    id: "District",
+    label: "District Authority",
+    subLabel: "District Collector / DM Office",
+    icon: IconBuildingCommunity,
+    description: "Administrative approval, work orders, geo-tag inspections & UC submission",
   },
   {
     id: "Citizen",
@@ -80,11 +81,48 @@ const ROLES: RoleConfig[] = [
   },
 ];
 
+const OFFICIAL_CREDENTIALS: Record<Exclude<UserRole, "Citizen">, {
+  officialId: string;
+  email: string;
+  designation: string;
+  department: string;
+  demoPassword: string;
+}> = {
+  Ministry: {
+    officialId: "GOI-MOSPI-HQ-01",
+    email: "ashok.kumar@nic.in",
+    designation: "Joint Secretary (MoSPI)",
+    department: "Ministry of Statistics & Programme Implementation",
+    demoPassword: "MoSPI@Gov2025#",
+  },
+  MP: {
+    officialId: "MP-LS-UP-0401",
+    email: "rajnath.singh@sansad.nic.in",
+    designation: "Member of Parliament (Lok Sabha)",
+    department: "Parliament of India (Lucknow Constituency)",
+    demoPassword: "Sansad@LokSabha#1",
+  },
+  State: {
+    officialId: "STATE-UP-PLAN-08",
+    email: "anita.verma@up.gov.in",
+    designation: "Principal Secretary (Planning)",
+    department: "State Nodal Department, Uttar Pradesh",
+    demoPassword: "StateNodal@2025!",
+  },
+  District: {
+    officialId: "DIST-DM-LKO-01",
+    email: "priya.sharma@nic.in",
+    designation: "District Collector / DM",
+    department: "District Nodal Authority, Collectorate Lucknow",
+    demoPassword: "Collector@DM2025$",
+  },
+};
+
 const ROLE_PHONES: Record<UserRole, string> = {
-  MP: "98100 12345",
-  District: "99100 12345",
-  State: "97100 12345",
   Ministry: "96100 12345",
+  MP: "98100 12345",
+  State: "97100 12345",
+  District: "99100 12345",
   Citizen: "95100 12345",
 };
 
@@ -135,17 +173,36 @@ const DigiLockerLogo = ({ className = "h-8 w-auto" }: { className?: string }) =>
 
 export default function Login({ onLogin }: LoginProps = {}) {
   const auth = useAuth();
-  const [phase, setPhase] = useState<"role" | "mobile" | "otp" | "validating">("role");
-  const [selectedRole, setSelectedRole] = useState<UserRole>("MP");
-  const [mobile, setMobile] = useState(ROLE_PHONES.MP);
+  const [phase, setPhase] = useState<"role" | "auth" | "otp" | "validating">("role");
+  const [selectedRole, setSelectedRole] = useState<UserRole>("Ministry");
+  const [officialId, setOfficialId] = useState(OFFICIAL_CREDENTIALS.Ministry.email);
+  const [officialPassword, setOfficialPassword] = useState(OFFICIAL_CREDENTIALS.Ministry.demoPassword);
+  const [showPassword, setShowPassword] = useState(false);
+  const [mobile, setMobile] = useState(ROLE_PHONES.Citizen);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpTimer, setOtpTimer] = useState(0);
   const [validationMessage, setValidationMessage] = useState("");
 
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
-    setMobile(ROLE_PHONES[role]);
-    setPhase("mobile");
+    if (role !== "Citizen") {
+      const cred = OFFICIAL_CREDENTIALS[role];
+      setOfficialId(cred.email);
+      setOfficialPassword(cred.demoPassword);
+    } else {
+      setMobile(ROLE_PHONES.Citizen);
+    }
+    setPhase("auth");
+  };
+
+  const handleOfficialLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cred = OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">];
+    setValidationMessage(`Authenticating ${cred.designation} via NIC Parichay Gateway...`);
+    setPhase("validating");
+    setTimeout(() => {
+      authenticateUser();
+    }, 1100);
   };
 
   const handleSendOtp = () => {
@@ -176,7 +233,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
   };
 
   const handleVerify = (otpArr = otp) => {
-    setValidationMessage("Verifying OTP against Aadhaar/NIC directory...");
+    setValidationMessage("Verifying OTP against Aadhaar / National Directory...");
     setPhase("validating");
     setTimeout(() => {
       authenticateUser();
@@ -193,10 +250,10 @@ export default function Login({ onLogin }: LoginProps = {}) {
 
   const authenticateUser = () => {
     let user: User;
-    if (selectedRole === "MP") user = { ...MP_USERS[0], phone: mobile };
-    else if (selectedRole === "District") user = { ...DISTRICT_USERS[0], phone: mobile };
-    else if (selectedRole === "State") user = { ...STATE_USERS[0], phone: mobile };
-    else if (selectedRole === "Ministry") user = { ...MINISTRY_USER, phone: mobile };
+    if (selectedRole === "Ministry") user = { ...MINISTRY_USER, phone: ROLE_PHONES.Ministry };
+    else if (selectedRole === "MP") user = { ...MP_USERS[0], phone: ROLE_PHONES.MP };
+    else if (selectedRole === "State") user = { ...STATE_USERS[0], phone: ROLE_PHONES.State };
+    else if (selectedRole === "District") user = { ...DISTRICT_USERS[0], phone: ROLE_PHONES.District };
     else user = { ...CITIZEN_USER, phone: mobile };
 
     if (onLogin) {
@@ -207,6 +264,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
   };
 
   const currentRoleConfig = ROLES.find((r) => r.id === selectedRole) || ROLES[0];
+  const isCitizen = selectedRole === "Citizen";
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between font-sans">
@@ -259,18 +317,18 @@ export default function Login({ onLogin }: LoginProps = {}) {
                 Role Selection
               </div>
               <div className="w-8 h-px bg-border" />
-              <div className={`flex items-center gap-1.5 ${phase === "mobile" ? "text-foreground font-semibold" : "text-muted-foreground font-medium"}`}>
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "mobile" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+              <div className={`flex items-center gap-1.5 ${phase === "auth" ? "text-foreground font-semibold" : "text-muted-foreground font-medium"}`}>
+                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "auth" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                   2
                 </span>
-                Authentication
+                {isCitizen ? "Mobile & DigiLocker" : "Official Sign In"}
               </div>
               <div className="w-8 h-px bg-border" />
               <div className={`flex items-center gap-1.5 ${phase === "otp" || phase === "validating" ? "text-foreground font-semibold" : "text-muted-foreground font-medium"}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "otp" || phase === "validating" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                   3
                 </span>
-                OTP Verification
+                {isCitizen ? "OTP Verification" : "SSO Gateway"}
               </div>
             </div>
 
@@ -288,7 +346,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     <div className="mb-4">
                       <h2 className="text-base font-bold text-foreground">Select Stakeholder Role</h2>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Choose your administrative role to access the authorized workspace.
+                        Choose your administrative or citizen portal role to proceed.
                       </p>
                     </div>
 
@@ -331,17 +389,17 @@ export default function Login({ onLogin }: LoginProps = {}) {
                         onClick={() => handleRoleSelect(selectedRole)}
                         className="w-full flex items-center justify-center gap-2 text-sm"
                       >
-                        <span>Proceed with {currentRoleConfig.label}</span>
+                        <span>Proceed as {currentRoleConfig.label}</span>
                         <IconArrowRight size={16} />
                       </Button>
                     </div>
                   </motion.div>
                 )}
 
-                {/* Phase 2: Mobile / DigiLocker Login */}
-                {phase === "mobile" && (
+                {/* Phase 2: Authentication (Differentiated for Citizen vs Officials) */}
+                {phase === "auth" && (
                   <motion.div
-                    key="step-mobile"
+                    key="step-auth"
                     initial={{ opacity: 0, x: 16 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -16 }}
@@ -349,86 +407,172 @@ export default function Login({ onLogin }: LoginProps = {}) {
                   >
                     <button
                       onClick={() => setPhase("role")}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 font-medium"
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 font-medium cursor-pointer"
                     >
                       <IconArrowLeft size={14} />
                       Change Role ({currentRoleConfig.label})
                     </button>
 
-                    <div className="mb-4">
-                      <h2 className="text-base font-bold text-foreground">Stakeholder Sign In</h2>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Log in to access records for <span className="font-semibold text-foreground">{currentRoleConfig.label}</span> ({currentRoleConfig.subLabel})
-                      </p>
-                    </div>
-
-                    {/* Mobile Number Authentication */}
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSendOtp();
-                      }}
-                      className="space-y-3"
-                    >
-                      <div className="space-y-1.5">
-                        <Label htmlFor="mobile-input" className="text-xs font-semibold text-foreground">
-                          Registered Mobile Number
-                        </Label>
-                        <div className="flex gap-2">
-                          <div className="flex items-center px-3 bg-muted border border-input rounded-md text-xs font-semibold text-foreground">
-                            +91
-                          </div>
-                          <Input
-                            id="mobile-input"
-                            type="tel"
-                            value={mobile}
-                            onChange={(e) => setMobile(e.target.value)}
-                            placeholder="Enter 10-digit mobile number"
-                            className="flex-1 font-mono text-sm"
-                            required
-                          />
+                    {isCitizen ? (
+                      /* ── Citizen View: Mobile Number + DigiLocker ── */
+                      <div>
+                        <div className="mb-4">
+                          <h2 className="text-base font-bold text-foreground">Citizen Public Access</h2>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Verify using your registered mobile number or DigiLocker National ID.
+                          </p>
                         </div>
-                        <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-1">
-                          <IconInfoCircle size={12} className="shrink-0" />
-                          A 6-digit OTP will be dispatched to this verified mobile number.
-                        </p>
-                      </div>
 
-                      <Button
-                        type="submit"
-                        disabled={mobile.trim().length < 8}
-                        className="w-full text-sm mt-2"
-                      >
-                        Get OTP
-                      </Button>
-                    </form>
+                        {/* Mobile Number Authentication */}
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSendOtp();
+                          }}
+                          className="space-y-3"
+                        >
+                          <div className="space-y-1.5">
+                            <Label htmlFor="mobile-input" className="text-xs font-semibold text-foreground">
+                              Registered Mobile Number
+                            </Label>
+                            <div className="flex gap-2">
+                              <div className="flex items-center px-3 bg-muted border border-input rounded-md text-xs font-semibold text-foreground">
+                                +91
+                              </div>
+                              <Input
+                                id="mobile-input"
+                                type="tel"
+                                value={mobile}
+                                onChange={(e) => setMobile(e.target.value)}
+                                placeholder="Enter 10-digit mobile number"
+                                className="flex-1 font-mono text-sm"
+                                required
+                              />
+                            </div>
+                            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-1">
+                              <IconInfoCircle size={12} className="shrink-0" />
+                              A 6-digit OTP will be dispatched to this verified mobile number.
+                            </p>
+                          </div>
 
-                    <div className="relative my-5">
-                      <div className="absolute inset-0 flex items-center">
-                        <Separator className="w-full bg-border" />
-                      </div>
-                      <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
-                        <span className="bg-card px-2.5 text-muted-foreground font-medium">
-                          or continue with digilocker
-                        </span>
-                      </div>
-                    </div>
+                          <Button
+                            type="submit"
+                            disabled={mobile.trim().length < 8}
+                            className="w-full text-sm mt-2"
+                          >
+                            Get OTP
+                          </Button>
+                        </form>
 
-                    {/* DigiLocker Section */}
-                    <div className="space-y-3">
-                      <button
-                        type="button"
-                        onClick={handleDigiLockerLogin}
-                        className="w-full py-3 px-4 rounded-xl bg-[#6B2024] hover:bg-[#581a1d] text-white font-semibold text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all cursor-pointer active:scale-[0.99]"
-                      >
-                        <IconUserCheck size={18} className="text-white shrink-0 stroke-[2.5]" />
-                        <span>Continue with DigiLocker</span>
-                      </button>
+                        <div className="relative my-5">
+                          <div className="absolute inset-0 flex items-center">
+                            <Separator className="w-full bg-border" />
+                          </div>
+                          <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
+                            <span className="bg-card px-2.5 text-muted-foreground font-medium">
+                              or continue with digilocker
+                            </span>
+                          </div>
+                        </div>
 
-                      <div className="flex justify-center items-center pt-1 pb-1">
-                        <DigiLockerLogo className="h-8 w-auto max-w-[200px]" />
+                        {/* DigiLocker Section */}
+                        <div className="space-y-3">
+                          <button
+                            type="button"
+                            onClick={handleDigiLockerLogin}
+                            className="w-full py-3 px-4 rounded-xl bg-[#6B2024] hover:bg-[#581a1d] text-white font-semibold text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all cursor-pointer active:scale-[0.99]"
+                          >
+                            <IconUserCheck size={18} className="text-white shrink-0 stroke-[2.5]" />
+                            <span>Continue with DigiLocker</span>
+                          </button>
+
+                          <div className="flex justify-center items-center pt-1 pb-1">
+                            <DigiLockerLogo className="h-8 w-auto max-w-[200px]" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      /* ── Official Government View: Professional Official ID & Password ── */
+                      <div>
+                        <div className="mb-4">
+                          <div className="flex items-center gap-2">
+                            <h2 className="text-base font-bold text-foreground">Official Government Sign In</h2>
+                            <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
+                              NIC SSO
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Enter official credentials authorized for <strong className="text-foreground">{currentRoleConfig.label}</strong>.
+                          </p>
+                        </div>
+
+                        <form onSubmit={handleOfficialLogin} className="space-y-3.5">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="official-id" className="text-xs font-semibold text-foreground">
+                              Government ID / Official Email
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="official-id"
+                                type="text"
+                                value={officialId}
+                                onChange={(e) => setOfficialId(e.target.value)}
+                                placeholder="e.g. officer@nic.in or GOI-ID"
+                                className="text-xs pl-3 font-mono"
+                                required
+                              />
+                            </div>
+                            <p className="text-[11px] text-muted-foreground">
+                              {OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">]?.department}
+                            </p>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <Label htmlFor="official-password" className="text-xs font-semibold text-foreground">
+                                Official Password
+                              </Label>
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="text-[11px] text-primary hover:underline cursor-pointer"
+                              >
+                                {showPassword ? "Hide" : "Show"}
+                              </button>
+                            </div>
+                            <div className="relative">
+                              <Input
+                                id="official-password"
+                                type={showPassword ? "text" : "password"}
+                                value={officialPassword}
+                                onChange={(e) => setOfficialPassword(e.target.value)}
+                                placeholder="Enter your official password"
+                                className="text-xs pl-3 font-mono"
+                                required
+                              />
+                            </div>
+                          </div>
+
+                          {/* Official Gateway Badge */}
+                          <div className="p-3 rounded-lg bg-muted/50 border border-border flex items-start gap-2.5 text-xs text-muted-foreground">
+                            <IconShieldCheck className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <div className="text-[11px] leading-relaxed">
+                              <p className="font-semibold text-foreground">NIC Parichay Single Sign-On (SSO)</p>
+                              <p>Secured with TLS 1.3 encryption and National Cert-In compliance standards.</p>
+                            </div>
+                          </div>
+
+                          <Button
+                            type="submit"
+                            disabled={!officialId.trim() || !officialPassword.trim()}
+                            className="w-full text-sm font-semibold gap-2 shadow-xs mt-1 cursor-pointer"
+                          >
+                            <span>Sign In to Official Workspace</span>
+                            <IconArrowRight size={15} />
+                          </Button>
+                        </form>
+                      </div>
+                    )}
                   </motion.div>
                 )}
 
@@ -442,8 +586,8 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     transition={{ duration: 0.22, ease: "easeInOut" }}
                   >
                     <button
-                      onClick={() => setPhase("mobile")}
-                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 font-medium"
+                      onClick={() => setPhase("auth")}
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 font-medium cursor-pointer"
                     >
                       <IconArrowLeft size={14} />
                       Back to Mobile Number
