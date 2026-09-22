@@ -181,147 +181,147 @@ export function NidhiBentoFeatures({ language }: NidhiBentoFeaturesProps) {
               </div>
 
               {/* Sub-Card Branch Connectors */}
-              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
-                
-                {/* Sub-Card 1: Duplicate Claim Detection */}
-                <Link
-                  href="/dashboard/crosscheck"
-                  className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-amber-400 hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E65100] shrink-0 group-hover/card:bg-orange-500 group-hover/card:text-white transition">
-                      <GitFork className="w-3.5 h-3.5" />
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
+                  
+                  {/* Sub-Card 1: Duplicate Claim Detection */}
+                  <Link
+                    href="/dashboard/crosscheck"
+                    className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-amber-400 hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E65100] shrink-0 group-hover/card:bg-orange-500 group-hover/card:text-white transition">
+                        <GitFork className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="flex items-center justify-between flex-1">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-amber-600 transition">
+                          {language === "hi" ? "दोहराव पहचान" : "Duplicate Claim Triage"}
+                        </h4>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-amber-600 transition shrink-0" />
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between flex-1">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-amber-600 transition">
-                        {language === "hi" ? "दोहराव पहचान" : "Duplicate Claim Triage"}
-                      </h4>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-amber-600 transition shrink-0" />
-                    </div>
-                  </div>
-                  <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
-                    {language === "hi"
-                      ? "डीप कंप्यूटर विज़न ऐतिहासिक तस्वीरों का मिलान कर फर्जी दावों को रोकता है।"
-                      : "Cross-matches historical site photographs in <1s to prevent duplicate billing."}
-                  </p>
-                </Link>
+                    <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
+                      {language === "hi"
+                        ? "डीप कंप्यूटर विज़न ऐतिहासिक तस्वीरों का मिलान कर फर्जी दावों को रोकता है।"
+                        : "Cross-matches historical site photographs in <1s to prevent duplicate billing."}
+                    </p>
+                  </Link>
 
-                {/* Sub-Card 2: ISRO Satellite GIS */}
-                <Link
-                  href="/dashboard/gis"
-                  className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-[#133E87] hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shrink-0 group-hover/card:bg-[#133E87] group-hover/card:text-white transition">
-                      <Scan className="w-3.5 h-3.5" />
+                  {/* Sub-Card 2: ISRO Satellite GIS */}
+                  <Link
+                    href="/dashboard/gis"
+                    className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-[#133E87] hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shrink-0 group-hover/card:bg-[#133E87] group-hover/card:text-white transition">
+                        <Scan className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="flex items-center justify-between flex-1">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-[#133E87] transition">
+                          {language === "hi" ? "इसरो उपग्रह जीआईएस" : "ISRO Satellite GIS"}
+                        </h4>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-[#133E87] transition shrink-0" />
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between flex-1">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-[#133E87] transition">
-                        {language === "hi" ? "इसरो उपग्रह जीआईएस" : "ISRO Satellite GIS"}
-                      </h4>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-[#133E87] transition shrink-0" />
-                    </div>
-                  </div>
-                  <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
-                    {language === "hi"
-                      ? "100% जियो-टैग्ड ईएक्सआईएफ व उपग्रह टाइमलाइन साक्ष्य सत्यापन।"
-                      : "100% EXIF GPS coordinate validation and satellite timeline tracking."}
-                  </p>
-                </Link>
+                    <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
+                      {language === "hi"
+                        ? "100% जियो-टैग्ड ईएक्सआईएफ व उपग्रह टाइमलाइन साक्ष्य सत्यापन।"
+                        : "100% EXIF GPS coordinate validation and satellite timeline tracking."}
+                    </p>
+                  </Link>
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
-
-          {/* ========================================================= */}
-          {/* RIGHT COLUMN: 3 STACKED CARDS (lg:col-span-3) */}
-          {/* ========================================================= */}
-          <div className="lg:col-span-3 flex flex-col justify-between gap-4 sm:gap-5">
-            
-            {/* Card 1: 24x7 Live Surveillance Toggle */}
-            <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
-                <div>
-                  <span className="text-xs font-bold text-slate-950 block">
-                    {language === "hi" ? "24x7 लाइव सर्विलांस" : "Live Surveillance"}
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-mono">
-                    {activeSurveillance ? "Status: ACTIVE" : "Status: PAUSED"}
-                  </span>
+            {/* ========================================================= */}
+            {/* RIGHT COLUMN: 3 STACKED CARDS (lg:col-span-3) */}
+            {/* ========================================================= */}
+            <div className="lg:col-span-3 flex flex-col justify-between gap-4 sm:gap-5">
+              
+              {/* Card 1: 24x7 Live Surveillance Toggle */}
+              <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex items-center justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                  <div>
+                    <span className="text-xs font-bold text-slate-950 block">
+                      {language === "hi" ? "24x7 लाइव सर्विलांस" : "Live Surveillance"}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      {activeSurveillance ? "Status: ACTIVE" : "Status: PAUSED"}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Toggle Switch */}
-              <button
-                type="button"
-                onClick={() => setActiveSurveillance(!activeSurveillance)}
-                className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-300 cursor-pointer flex items-center shrink-0 ${
-                  activeSurveillance ? "bg-gradient-to-r from-[#133E87] to-blue-600" : "bg-slate-300"
-                }`}
-                aria-label="Toggle live surveillance status"
-              >
-                <div
-                  className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
-                    activeSurveillance ? "translate-x-5" : "translate-x-0"
+                {/* Toggle Switch */}
+                <button
+                  type="button"
+                  onClick={() => setActiveSurveillance(!activeSurveillance)}
+                  className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-300 cursor-pointer flex items-center shrink-0 ${
+                    activeSurveillance ? "bg-gradient-to-r from-[#133E87] to-blue-600" : "bg-slate-300"
                   }`}
+                  aria-label="Toggle live surveillance status"
                 >
-                  <Sparkles className="w-2.5 h-2.5 text-[#133E87]" />
+                  <div
+                    className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-300 flex items-center justify-center ${
+                      activeSurveillance ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  >
+                    <Sparkles className="w-2.5 h-2.5 text-[#133E87]" />
+                  </div>
+                </button>
+              </div>
+
+              {/* Card 2: ₹5,000 Cr+ Fund Governance KPI */}
+              <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
+                <div>
+                  <span className="text-3xl sm:text-4xl font-black text-slate-950 font-mono tracking-tight">
+                    ₹5,000 Cr+
+                  </span>
+                  <p className="text-xs font-bold text-slate-700 mt-1 uppercase tracking-wider">
+                    {language === "hi" ? "वार्षिक सांसद निधि निगरानी" : "Annual Public Fund"}
+                  </p>
                 </div>
-              </button>
-            </div>
 
-            {/* Card 2: ₹5,000 Cr+ Fund Governance KPI */}
-            <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
-              <div>
-                <span className="text-3xl sm:text-4xl font-black text-slate-950 font-mono tracking-tight">
-                  ₹5,000 Cr+
-                </span>
-                <p className="text-xs font-bold text-slate-700 mt-1 uppercase tracking-wider">
-                  {language === "hi" ? "वार्षिक सांसद निधि निगरानी" : "Annual Public Fund"}
-                </p>
+                <div className="mt-3.5 pt-3 border-t border-slate-200">
+                  <span className="text-[10.5px] sm:text-[11px] font-mono text-[#133E87] bg-blue-50 border border-blue-200 font-bold px-2 py-0.5 rounded-md inline-block">
+                    [ 1.4 Lakh+ Assets ]
+                  </span>
+                </div>
               </div>
 
-              <div className="mt-3.5 pt-3 border-t border-slate-200">
-                <span className="text-[10.5px] sm:text-[11px] font-mono text-[#133E87] bg-blue-50 border border-blue-200 font-bold px-2 py-0.5 rounded-md inline-block">
-                  [ 1.4 Lakh+ Assets ]
-                </span>
-              </div>
-            </div>
+              {/* Card 3: Unified Interoperability & Formats */}
+              <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-mono font-bold text-slate-700 uppercase tracking-wider">
+                    {language === "hi" ? "सहज एकीकरण" : "Unified Interoperability"}
+                  </h4>
+                  <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-snug">
+                    {language === "hi"
+                      ? "ई-साक्षी, पीएफएमएस और भुवन जीआईएस के साथ 100% अनुकूल।"
+                      : "Native adapters for legacy national public fund platforms."}
+                  </p>
+                </div>
 
-            {/* Card 3: Unified Interoperability & Formats */}
-            <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs hover:border-[#133E87]/40 hover:shadow-md transition duration-300">
-              <div className="space-y-1.5">
-                <h4 className="text-xs font-mono font-bold text-slate-700 uppercase tracking-wider">
-                  {language === "hi" ? "सहज एकीकरण" : "Unified Interoperability"}
-                </h4>
-                <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-snug">
-                  {language === "hi"
-                    ? "ई-साक्षी, पीएफएमएस और भुवन जीआईएस के साथ 100% अनुकूल।"
-                    : "Native adapters for legacy national public fund platforms."}
-                </p>
-              </div>
-
-              {/* Floating Pill Badges */}
-              <div className="flex flex-wrap gap-1 mt-3 pt-2.5 border-t border-slate-200">
-                <span className="text-[9.5px] sm:text-[10px] font-mono bg-blue-50 text-[#133E87] border border-blue-200 font-bold px-2 py-0.5 rounded-full">
-                  ⚡ PFMS
-                </span>
-                <span className="text-[9.5px] sm:text-[10px] font-mono bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold px-2 py-0.5 rounded-full">
-                  🛰️ Bhuvan GIS
-                </span>
-                <span className="text-[9.5px] sm:text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded-full">
-                  🏛️ eSAKSHI
-                </span>
-                <Link
-                  href="/dashboard/3d-view"
-                  className="text-[9.5px] sm:text-[10px] font-mono bg-amber-50 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-full hover:bg-amber-100 transition flex items-center gap-1 cursor-pointer"
-                >
-                  <span>🧊 3D Twin</span>
-                  <ArrowUpRight className="w-2.5 h-2.5" />
-                </Link>
+                {/* Floating Pill Badges */}
+                <div className="flex flex-wrap gap-1 mt-3 pt-2.5 border-t border-slate-200">
+                  <span className="text-[9.5px] sm:text-[10px] font-mono bg-blue-50 text-[#133E87] border border-blue-200 font-bold px-2 py-0.5 rounded-full">
+                    ⚡ PFMS
+                  </span>
+                  <span className="text-[9.5px] sm:text-[10px] font-mono bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold px-2 py-0.5 rounded-full">
+                    🛰️ Bhuvan GIS
+                  </span>
+                  <span className="text-[9.5px] sm:text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded-full">
+                    🏛️ eSAKSHI
+                  </span>
+                  <Link
+                    href="/dashboard/3d-view"
+                    className="text-[9.5px] sm:text-[10px] font-mono bg-amber-50 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-full hover:bg-amber-100 transition flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>🧊 3D Twin</span>
+                    <ArrowUpRight className="w-2.5 h-2.5" />
+                  </Link>
               </div>
             </div>
 
