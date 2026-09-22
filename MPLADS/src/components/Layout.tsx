@@ -389,8 +389,11 @@ function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-              onClick={() => onNavigate("dashboard")}
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
+              onClick={() => {
+                window.location.href = "/";
+              }}
+              tooltip="National Public Portal"
             >
               <div className="flex aspect-square size-9 items-center justify-center rounded-lg overflow-hidden shrink-0">
                 <Image
@@ -453,6 +456,18 @@ function AppSidebar({
           <SidebarGroupLabel>Preferences</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip="National Public Portal"
+                  onClick={() => {
+                    window.location.href = "/";
+                  }}
+                  className="text-primary hover:text-primary font-medium"
+                >
+                  <IconBuildingCommunity className="size-4 shrink-0 text-primary" />
+                  <span>Public Landing Page</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip="Support & Guidelines">
                   <IconHelp className="size-4 shrink-0 text-muted-foreground" />
@@ -533,6 +548,18 @@ export default function Layout({
 
           {/* Right Header Status */}
           <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                window.location.href = "/";
+              }}
+              className="hidden lg:flex items-center gap-1.5 text-[11px] font-semibold h-8 px-2.5 text-primary border-primary/25 hover:bg-primary/5 cursor-pointer"
+            >
+              <IconBuildingCommunity className="size-3.5" />
+              <span>National Portal</span>
+            </Button>
+
             <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
               <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-medium text-foreground">PFMS Live Sync</span>

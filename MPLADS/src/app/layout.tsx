@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
@@ -13,6 +13,13 @@ const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#0B2545",
+};
 
 export const metadata: Metadata = {
   title: "NIDHI-RAKSHAK | AI Public Fund & Infrastructure Vigilance Platform",
@@ -30,8 +37,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontSans.variable} ${fontMono.variable}`}>
-      <body className="font-sans antialiased min-h-screen bg-background text-foreground">
+    <html lang="en" className={`${fontSans.variable} ${fontMono.variable} scroll-smooth`}>
+      <body className="font-sans antialiased min-h-screen bg-background text-foreground overflow-x-hidden">
         <AuthProvider>
           <TooltipProvider>
             {children}
