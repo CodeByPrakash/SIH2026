@@ -42,6 +42,7 @@ export default function RootLayout({
         <AuthProvider>
           <TooltipProvider>
             {children}
+            <div id="google_translate_element" style={{ display: "none" }} />
           </TooltipProvider>
         </AuthProvider>
       </body>
