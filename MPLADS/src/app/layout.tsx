@@ -43,34 +43,8 @@ export default function RootLayout({
         <AuthProvider>
           <TooltipProvider>
             {children}
-            {/* Google Translate Hidden Mount Container */}
-            <div id="google_translate_element" aria-hidden="true" />
           </TooltipProvider>
         </AuthProvider>
-
-        {/* Global Google Translate Initialization */}
-        <Script
-          id="google-translate-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.googleTranslateElementInit = function() {
-                if (window.google && window.google.translate) {
-                  new window.google.translate.TranslateElement({
-                    pageLanguage: 'en',
-                    includedLanguages: 'en,hi,bn,te,mr,ta,gu,kn,ml,pa,or,as,ur,sa,mai,doi,bho,ne,kok,mni-Mtei,sd,lus',
-                    autoDisplay: false
-                  }, 'google_translate_element');
-                }
-              };
-            `,
-          }}
-        />
-        <Script
-          id="google-translate-script"
-          strategy="afterInteractive"
-          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        />
       </body>
     </html>
   );

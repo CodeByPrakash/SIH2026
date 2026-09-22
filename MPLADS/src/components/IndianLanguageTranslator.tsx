@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   IconLanguage,
   IconCheck,
@@ -9,6 +9,7 @@ import {
   IconChevronDown,
   IconWorld,
   IconRefresh,
+  IconLoader2,
 } from "@tabler/icons-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -33,7 +34,7 @@ export const INDIAN_LANGUAGES: IndianLanguage[] = [
   { code: "ml", name: "Malayalam", nativeName: "മലയാളം", region: "Kerala, Lakshadweep", script: "Malayalam", popular: true },
   { code: "pa", name: "Punjabi", nativeName: "ਪੰਜਾਬੀ", region: "Punjab, Delhi, Haryana", script: "Gurmukhi", popular: true },
   { code: "or", name: "Odia", nativeName: "ଓଡ଼ିଆ", region: "Odisha", script: "Odia", popular: true },
-  { code: "as", name: "Assamese", nativeName: "অसमীয়া", region: "Assam, North-East", script: "Bengali-Assamese", popular: true },
+  { code: "as", name: "Assamese", nativeName: "অসমীয়া", region: "Assam, North-East", script: "Bengali-Assamese", popular: true },
   { code: "ur", name: "Urdu", nativeName: "اردو", region: "Jammu & Kashmir, Telangana, UP", script: "Perso-Arabic", popular: true },
   { code: "sa", name: "Sanskrit", nativeName: "संस्कृतम्", region: "Classical / Pan-India", script: "Devanagari" },
   { code: "mai", name: "Maithili", nativeName: "मैथिली", region: "Bihar, Jharkhand", script: "Devanagari" },
@@ -46,24 +47,11 @@ export const INDIAN_LANGUAGES: IndianLanguage[] = [
   { code: "lus", name: "Mizo", nativeName: "Mizo ṭawng", region: "Mizoram", script: "Latin" },
 ];
 
-declare global {
-  interface Window {
-    google?: {
-      translate?: {
-        TranslateElement: new (
-          options: {
-            pageLanguage: string;
-            includedLanguages: string;
-            autoDisplay: boolean;
-            layout?: number;
-          },
-          elementId: string
-        ) => void;
-      };
-    };
-    googleTranslateElementInit?: () => void;
-  }
-}
+// Global translation cache shared across components in the current tab session
+const clientTranslationDictionary: Record<string, Record<string, string>> = {};
+
+// Track original text on DOM nodes using a WeakMap to avoid DOM leaks
+const originalNodeTextMap = new WeakMap<Node, string>();
 
 interface IndianLanguageTranslatorProps {
   variant?: "pill" | "button" | "compact";
@@ -77,75 +65,263 @@ export default function IndianLanguageTranslator({
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [currentLang, setCurrentLang] = useState<string>("en");
-  const [isTranslating, setIsTranslating] = useState(false);
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const mutationObserverRef = useRef<MutationObserver | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Helper to set googtrans cookies across paths and domains
-  const setGoogleTranslateCookie = (langCode: string) => {
-    const hostname = window.location.hostname;
-    const cookie1 = `/en/${langCode}`;
-    const cookie2 = `/auto/${langCode}`;
+  // Load cached translations from sessionStorage on mount
+  useEffect(() => {
+    try {
+      INDIAN_LANGUAGES.forEach((lang) => {
+        if (lang.code !== "en") {
+          const cached = sessionStorage.getItem(`bhasha_cache_${lang.code}`);
+          if (cached) {
+            clientTranslationDictionary[lang.code] = {
+              ...(clientTranslationDictionary[lang.code] || {}),
+              ...JSON.parse(cached),
+            };
+          }
+        }
+      });
+    } catch {
+      // sessionStorage unavailable
+    }
+  }, []);
 
-    const domains = ["", `domain=${hostname};`];
-    if (hostname.includes(".")) {
-      const parts = hostname.split(".");
-      if (parts.length >= 2) {
-        const rootDomain = "." + parts.slice(-2).join(".");
-        domains.push(`domain=${rootDomain};`);
+  // Check if a DOM node should be translated
+  const shouldTranslateNode = (node: Node): boolean => {
+    const parent = node.parentElement;
+    if (!parent) return false;
+
+    const tag = parent.tagName.toLowerCase();
+    if (
+      tag === "script" ||
+      tag === "style" ||
+      tag === "noscript" ||
+      tag === "svg" ||
+      tag === "code" ||
+      tag === "pre" ||
+      tag === "input" ||
+      tag === "textarea" ||
+      tag === "select" ||
+      tag === "option"
+    ) {
+      return false;
+    }
+
+    if (
+      parent.closest(".notranslate") ||
+      parent.closest("[data-no-translate]") ||
+      parent.closest("button[data-language-picker]")
+    ) {
+      return false;
+    }
+
+    const text = node.nodeValue?.trim();
+    if (!text || text.length <= 1) return false;
+
+    // Skip pure numbers, currency values, dates, percentages, IDs
+    if (/^[0-9₹$€,.\-/:%#+()|•\s]+$/.test(text)) return false;
+    if (text.startsWith("PROJ-") || text.startsWith("MPLADS/")) return false;
+
+    return true;
+  };
+
+  // Core DOM translation function
+  const translateDOM = useCallback(async (targetLang: string) => {
+    if (typeof document === "undefined") return;
+
+    // Reset to English immediately
+    if (targetLang === "en") {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node: Node | null = walker.nextNode();
+      while (node) {
+        if (originalNodeTextMap.has(node)) {
+          const original = originalNodeTextMap.get(node);
+          if (original && node.nodeValue !== original) {
+            node.nodeValue = original;
+          }
+        }
+        node = walker.nextNode();
+      }
+      return;
+    }
+
+    const dict = clientTranslationDictionary[targetLang] || {};
+    const textNodesToTranslate: { node: Node; original: string }[] = [];
+    const uncachedTextsSet = new Set<string>();
+
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let currentNode: Node | null = walker.nextNode();
+
+    while (currentNode) {
+      if (shouldTranslateNode(currentNode)) {
+        // Record original English text
+        let original = originalNodeTextMap.get(currentNode);
+        if (!original) {
+          original = currentNode.nodeValue || "";
+          originalNodeTextMap.set(currentNode, original);
+        }
+
+        const trimmedOriginal = original.trim();
+        if (trimmedOriginal) {
+          textNodesToTranslate.push({ node: currentNode, original: trimmedOriginal });
+
+          if (!dict[trimmedOriginal]) {
+            uncachedTextsSet.add(trimmedOriginal);
+          }
+        }
+      }
+      currentNode = walker.nextNode();
+    }
+
+    // Apply any translations already available in dictionary immediately (0ms)
+    textNodesToTranslate.forEach(({ node, original }) => {
+      if (dict[original] && node.nodeValue !== dict[original]) {
+        // Preserve surrounding whitespace
+        const fullOriginal = originalNodeTextMap.get(node) || "";
+        const leading = fullOriginal.match(/^\s*/)?.[0] || "";
+        const trailing = fullOriginal.match(/\s*$/)?.[0] || "";
+        node.nodeValue = leading + dict[original] + trailing;
+      }
+    });
+
+    const uncachedArray = Array.from(uncachedTextsSet);
+
+    // If all text is already cached, we're done!
+    if (uncachedArray.length === 0) {
+      setIsTranslating(false);
+      return;
+    }
+
+    // Otherwise, fetch translations in optimized chunks
+    setIsTranslating(true);
+    const chunkSize = 35;
+
+    for (let i = 0; i < uncachedArray.length; i += chunkSize) {
+      const batch = uncachedArray.slice(i, i + chunkSize);
+      try {
+        const res = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ texts: batch, targetLang }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.translations && typeof data.translations === "object") {
+            Object.assign(dict, data.translations);
+            clientTranslationDictionary[targetLang] = dict;
+
+            // Save to sessionStorage
+            try {
+              sessionStorage.setItem(`bhasha_cache_${targetLang}`, JSON.stringify(dict));
+            } catch {
+              // quota exceeded or private mode
+            }
+
+            // Update DOM with new translations
+            textNodesToTranslate.forEach(({ node, original }) => {
+              if (dict[original] && node.nodeValue !== dict[original]) {
+                const fullOriginal = originalNodeTextMap.get(node) || "";
+                const leading = fullOriginal.match(/^\s*/)?.[0] || "";
+                const trailing = fullOriginal.match(/\s*$/)?.[0] || "";
+                node.nodeValue = leading + dict[original] + trailing;
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("DOM translation fetch batch error:", err);
       }
     }
 
-    domains.forEach((dom) => {
-      document.cookie = `googtrans=${cookie1}; path=/; ${dom}`;
-      document.cookie = `googtrans=${cookie2}; path=/; ${dom}`;
-    });
+    setIsTranslating(false);
+  }, []);
+
+  // Language selection handler
+  const handleSelectLanguage = (langCode: string) => {
+    setCurrentLang(langCode);
+    localStorage.setItem("preferred_indian_lang", langCode);
+    setIsOpen(false);
+
+    // Notify other components
+    window.dispatchEvent(
+      new CustomEvent("indian-language-change", { detail: { langCode } })
+    );
+
+    // Perform seamless in-place DOM translation without reloading page
+    translateDOM(langCode);
   };
 
-  const clearGoogleTranslateCookie = () => {
-    const hostname = window.location.hostname;
-    const domains = ["", `domain=${hostname};`];
-    if (hostname.includes(".")) {
-      const parts = hostname.split(".");
-      if (parts.length >= 2) {
-        const rootDomain = "." + parts.slice(-2).join(".");
-        domains.push(`domain=${rootDomain};`);
-      }
-    }
-
-    domains.forEach((dom) => {
-      document.cookie = `googtrans=/en/en; path=/; ${dom}`;
-      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; ${dom}`;
-    });
+  const handleResetEnglish = () => {
+    handleSelectLanguage("en");
   };
 
-  const triggerTranslateCombo = (langCode: string) => {
-    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-    if (select) {
-      select.value = langCode;
-      select.dispatchEvent(new Event("change"));
-      return true;
-    }
-    return false;
-  };
-
-  // Check saved language on mount and apply if needed
+  // Sync with global language changes & handle initial preferred language
   useEffect(() => {
     const saved = localStorage.getItem("preferred_indian_lang") || "en";
     setCurrentLang(saved);
 
-    if (saved && saved !== "en") {
-      setGoogleTranslateCookie(saved);
-      // Attempt triggering combo if already loaded
-      setTimeout(() => {
-        triggerTranslateCombo(saved);
-      }, 500);
-      setTimeout(() => {
-        triggerTranslateCombo(saved);
-      }, 1500);
+    if (saved !== "en") {
+      // Delay slightly for initial React render tree to mount
+      const timer = setTimeout(() => {
+        translateDOM(saved);
+      }, 350);
+      return () => clearTimeout(timer);
     }
+  }, [translateDOM]);
+
+  // Listen for language change events from other translator instances
+  useEffect(() => {
+    const handleGlobalLangChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ langCode: string }>;
+      if (customEvent.detail?.langCode) {
+        setCurrentLang(customEvent.detail.langCode);
+      }
+    };
+
+    window.addEventListener("indian-language-change", handleGlobalLangChange);
+    return () => {
+      window.removeEventListener("indian-language-change", handleGlobalLangChange);
+    };
   }, []);
 
-  // Close modal when clicking outside
+  // MutationObserver: translate dynamically loaded projects or new content automatically
+  useEffect(() => {
+    if (currentLang === "en") return;
+
+    if (mutationObserverRef.current) {
+      mutationObserverRef.current.disconnect();
+    }
+
+    mutationObserverRef.current = new MutationObserver(() => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        translateDOM(currentLang);
+      }, 300);
+    });
+
+    mutationObserverRef.current.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: false,
+    });
+
+    return () => {
+      if (mutationObserverRef.current) {
+        mutationObserverRef.current.disconnect();
+      }
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [currentLang, translateDOM]);
+
+  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -161,31 +337,6 @@ export default function IndianLanguageTranslator({
   const activeLanguageObj =
     INDIAN_LANGUAGES.find((l) => l.code === currentLang) || INDIAN_LANGUAGES[0];
 
-  const handleSelectLanguage = (langCode: string) => {
-    setIsTranslating(true);
-    setCurrentLang(langCode);
-    localStorage.setItem("preferred_indian_lang", langCode);
-    setIsOpen(false);
-
-    if (langCode === "en") {
-      clearGoogleTranslateCookie();
-    } else {
-      setGoogleTranslateCookie(langCode);
-    }
-
-    // Try triggering in-memory Google Translate combo if available
-    triggerTranslateCombo(langCode);
-
-    // Refresh page with active googtrans cookie for comprehensive full-page translation
-    setTimeout(() => {
-      window.location.reload();
-    }, 120);
-  };
-
-  const handleResetEnglish = () => {
-    handleSelectLanguage("en");
-  };
-
   const filteredLanguages = INDIAN_LANGUAGES.filter(
     (l) =>
       l.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -194,17 +345,22 @@ export default function IndianLanguageTranslator({
   );
 
   return (
-    <div className={`relative inline-block ${className}`} ref={modalRef}>
+    <div className={`relative inline-block notranslate ${className}`} ref={modalRef} data-no-translate="true">
       {/* ── Trigger Button ── */}
       {variant === "compact" ? (
         <button
           type="button"
+          data-language-picker="true"
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border border-border bg-background hover:bg-muted text-foreground transition-colors cursor-pointer select-none"
           title="Translate to Indian Languages"
           aria-label="Translate to Indian Languages"
         >
-          <IconLanguage className="size-3.5 text-primary" />
+          {isTranslating ? (
+            <IconLoader2 className="size-3.5 text-primary animate-spin" />
+          ) : (
+            <IconLanguage className="size-3.5 text-primary" />
+          )}
           <span className="font-semibold text-[11px]">{activeLanguageObj.nativeName}</span>
           <span className="text-[10px]">🇮🇳</span>
           <IconChevronDown className="size-3 text-muted-foreground" />
@@ -212,11 +368,16 @@ export default function IndianLanguageTranslator({
       ) : variant === "button" ? (
         <button
           type="button"
+          data-language-picker="true"
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-semibold transition-all cursor-pointer select-none"
           title="India Multilingual Translation"
         >
-          <IconLanguage className="size-4" />
+          {isTranslating ? (
+            <IconLoader2 className="size-4 animate-spin" />
+          ) : (
+            <IconLanguage className="size-4" />
+          )}
           <span className="truncate">{activeLanguageObj.nativeName}</span>
           <span className="text-xs">🇮🇳</span>
           <IconChevronDown className="size-3.5 opacity-70" />
@@ -225,14 +386,20 @@ export default function IndianLanguageTranslator({
         /* Default Pill Variant (Top Navbar / Header) */
         <button
           type="button"
+          data-language-picker="true"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all duration-200 cursor-pointer select-none ${currentLang !== "en"
-            ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold shadow-2xs"
-            : "border-border bg-card hover:bg-muted text-foreground"
-            }`}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all duration-200 cursor-pointer select-none ${
+            currentLang !== "en"
+              ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold shadow-2xs"
+              : "border-border bg-card hover:bg-muted text-foreground"
+          }`}
           title="Bhasha Translation — Official Indian Languages"
         >
-          <IconLanguage className="size-3.5 text-primary shrink-0" />
+          {isTranslating ? (
+            <IconLoader2 className="size-3.5 text-primary animate-spin shrink-0" />
+          ) : (
+            <IconLanguage className="size-3.5 text-primary shrink-0" />
+          )}
           <span className="font-semibold text-[11px] tracking-tight truncate max-w-[85px] sm:max-w-none">
             {activeLanguageObj.nativeName}
           </span>
@@ -319,10 +486,11 @@ export default function IndianLanguageTranslator({
                       key={lang.code}
                       type="button"
                       onClick={() => handleSelectLanguage(lang.code)}
-                      className={`px-2 py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer ${isSelected
-                        ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
-                        : "bg-background border-border/60 hover:bg-muted text-foreground"
-                        }`}
+                      className={`px-2 py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer ${
+                        isSelected
+                          ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
+                          : "bg-background border-border/60 hover:bg-muted text-foreground"
+                      }`}
                     >
                       <div className="text-[11px] font-semibold truncate leading-tight">
                         {lang.nativeName}
@@ -351,14 +519,20 @@ export default function IndianLanguageTranslator({
                     key={lang.code}
                     type="button"
                     onClick={() => handleSelectLanguage(lang.code)}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group ${isSelected
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-muted text-foreground"
-                      }`}
+                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group ${
+                      isSelected
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "hover:bg-muted text-foreground"
+                    }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`size-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-foreground"
-                        }`}>
+                      <div
+                        className={`size-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
+                          isSelected
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground group-hover:text-foreground"
+                        }`}
+                      >
                         {lang.nativeName.slice(0, 1)}
                       </div>
                       <div className="min-w-0">
@@ -396,11 +570,20 @@ export default function IndianLanguageTranslator({
           {/* Footer note */}
           <div className="p-2.5 bg-muted/40 border-t border-border/70 flex items-center justify-between text-[10px] text-muted-foreground px-3">
             <span>Official Bhasha of Republic of India</span>
-            {isTranslating && (
-              <span className="text-primary font-medium animate-pulse flex items-center gap-1">
-                Translating page...
+            {isTranslating ? (
+              <span className="text-primary font-medium flex items-center gap-1">
+                <IconLoader2 className="size-3 animate-spin" />
+                Translating...
               </span>
-            )}
+            ) : currentLang !== "en" ? (
+              <button
+                type="button"
+                onClick={handleResetEnglish}
+                className="text-primary hover:underline font-medium cursor-pointer"
+              >
+                Reset English
+              </button>
+            ) : null}
           </div>
         </div>
       )}
