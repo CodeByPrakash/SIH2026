@@ -179,6 +179,13 @@ export async function getPaginatedProjects(
       (p) => p.state.toLowerCase() === filters.state!.trim().toLowerCase()
     );
   }
+  if (filters?.constituency) {
+    fallbackList = fallbackList.filter(
+      (p) =>
+        (p.constituency && p.constituency.toLowerCase() === filters.constituency!.trim().toLowerCase()) ||
+        p.district.toLowerCase() === filters.constituency!.trim().toLowerCase()
+    );
+  }
   if (filters?.status) {
     fallbackList = fallbackList.filter((p) => p.status === filters.status);
   }
@@ -304,6 +311,13 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
   if (filters?.state) {
     fallbackList = fallbackList.filter(
       (p) => p.state.toLowerCase() === filters.state!.trim().toLowerCase()
+    );
+  }
+  if (filters?.constituency) {
+    fallbackList = fallbackList.filter(
+      (p) =>
+        (p.constituency && p.constituency.toLowerCase() === filters.constituency!.trim().toLowerCase()) ||
+        p.district.toLowerCase() === filters.constituency!.trim().toLowerCase()
     );
   }
   if (filters?.status) {

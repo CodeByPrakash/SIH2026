@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import type { User, UserRole } from "@/types";
-import { ALERTS } from "@/data/mpladsData";
+import { ALERTS, getAlertsForRole } from "@/data/mpladsData";
 import {
   SidebarProvider,
   Sidebar,
@@ -916,7 +916,7 @@ function AppSidebar({
         ))}
 
         {/* System / Utilities */}
-        <SidebarGroup className="mt-auto">
+        {/* <SidebarGroup className="mt-auto">
           <SidebarGroupLabel>Preferences</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -945,7 +945,7 @@ function AppSidebar({
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
       </SidebarContent>
 
       {/* ── Footer / User Profile ── */}
@@ -981,8 +981,8 @@ export default function Layout({
   const location = user.constituency || user.district || user.state || user.role;
 
   const activeAlertsList = React.useMemo(() => {
-    return ALERTS.filter((a) => a.status === "Active");
-  }, []);
+    return getAlertsForRole(user.role, user).filter((a) => a.status === "Active");
+  }, [user]);
 
   return (
     <SidebarProvider className="h-screen overflow-hidden">

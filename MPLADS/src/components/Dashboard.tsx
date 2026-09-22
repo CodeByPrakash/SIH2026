@@ -32,6 +32,7 @@ import {
   FUND_HISTORY,
   PROJECTS,
   ALERTS,
+  getAlertsForRole,
 } from "@/data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
 import {
@@ -1229,6 +1230,7 @@ function CitizenProjectDetailsPanel({
 export default function Dashboard({ user, onNavigate }: Props) {
   const isMinistry = user.role === "Ministry";
   const isMP = user.role === "MP";
+  const isState = user.role === "State";
   const isDistrict = user.role === "District";
   const isCitizen = user.role === "Citizen";
 
@@ -1285,22 +1287,27 @@ export default function Dashboard({ user, onNavigate }: Props) {
 
   const showProjects = React.useMemo(() => {
     if (user.role === "MP") {
-      const match = liveProjects.filter(
+      return liveProjects.filter(
         (p) =>
           (user.constituency && p.constituency?.toLowerCase() === user.constituency?.toLowerCase()) ||
           (user.district && p.district?.toLowerCase() === user.district?.toLowerCase())
       );
-      return match.length > 0 ? match : liveProjects;
     }
     if (user.role === "District") {
-      const match = liveProjects.filter(
+      return liveProjects.filter(
         (p) => user.district && p.district?.toLowerCase() === user.district?.toLowerCase()
       );
-      return match.length > 0 ? match : liveProjects;
     }
     if (user.role === "State") {
-      const match = liveProjects.filter(
+      return liveProjects.filter(
         (p) => user.state && p.state?.toLowerCase() === user.state?.toLowerCase()
+      );
+    }
+    if (user.role === "Citizen") {
+      const match = liveProjects.filter(
+        (p) =>
+          (user.district && p.district?.toLowerCase() === user.district?.toLowerCase()) ||
+          (user.state && p.state?.toLowerCase() === user.state?.toLowerCase())
       );
       return match.length > 0 ? match : liveProjects;
     }
@@ -1320,7 +1327,9 @@ export default function Dashboard({ user, onNavigate }: Props) {
   const totalPages = Math.max(1, Math.ceil(filteredProjects.length / pageSize));
   const pagedProjects = filteredProjects.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const activeAlerts = ALERTS.filter((a) => a.status === "Active").slice(0, 4);
+  const activeAlerts = React.useMemo(() => {
+    return getAlertsForRole(user.role, user).filter((a) => a.status === "Active").slice(0, 4);
+  }, [user]);
 
   const filteredMonthlyExpenditure = React.useMemo(() => {
     if (timePeriod === "h1") return MONTHLY_EXPENDITURE.slice(0, 6);
@@ -1333,11 +1342,47 @@ export default function Dashboard({ user, onNavigate }: Props) {
     return { year: f.year, utilizationRate: utilRate, completionRate: Math.min(100, Math.round(utilRate * 0.92 + (idx > 2 ? 6 : 2))), allocated: Math.round(f.allocated / 100), utilized: Math.round(f.utilized / 100) };
   }), []);
 
-  const stateBarData = React.useMemo(() => STATES_DATA.map((s) => ({
-    state: s.state.replace("Pradesh", "P.").replace("Bengal", "B."),
-    totalFunds: Math.round(s.totalFunds / 100),
-    utilizedFunds: Math.round(s.utilizedFunds / 100),
-  })), []);
+  const stateBarData = React.useMemo(() => {
+    if (isState && user.state) {
+      // Show District breakdown for this state (State can see all districts)
+      const stateProjects = liveProjects.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+      const districts = Array.from(new Set(stateProjects.map((p) => p.district).filter(Boolean)));
+      if (districts.length > 0) {
+        return districts.map((dist) => {
+          const dProjects = stateProjects.filter((p) => p.district.toLowerCase() === dist.toLowerCase());
+          const total = dProjects.reduce((s, p) => s + p.sanctionedAmount, 0);
+          const utilized = dProjects.reduce((s, p) => s + p.expenditure, 0);
+          return {
+            state: dist,
+            totalFunds: Math.round(total),
+            utilizedFunds: Math.round(utilized),
+          };
+        });
+      }
+    }
+    if (isDistrict && user.district) {
+      // Show category breakdown in this particular district
+      const distProjects = liveProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+      const cats = Array.from(new Set(distProjects.map((p) => p.category).filter(Boolean)));
+      if (cats.length > 0) {
+        return cats.map((cat) => {
+          const cProjects = distProjects.filter((p) => p.category === cat);
+          const total = cProjects.reduce((s, p) => s + p.sanctionedAmount, 0);
+          const utilized = cProjects.reduce((s, p) => s + p.expenditure, 0);
+          return {
+            state: cat.split(" ")[0],
+            totalFunds: Math.round(total),
+            utilizedFunds: Math.round(utilized),
+          };
+        });
+      }
+    }
+    return STATES_DATA.map((s) => ({
+      state: s.state.replace("Pradesh", "P.").replace("Bengal", "B."),
+      totalFunds: Math.round(s.totalFunds / 100),
+      utilizedFunds: Math.round(s.utilizedFunds / 100),
+    }));
+  }, [isState, isDistrict, user.state, user.district, liveProjects]);
 
   const totalSectorCount = CATEGORY_DISTRIBUTION.reduce((s, c) => s + c.value, 0);
 
@@ -1590,11 +1635,18 @@ export default function Dashboard({ user, onNavigate }: Props) {
         { label: "Disbursed Funds", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: "Direct ground disbursements", footer: "87.4% fund deployment", trend: "+8.2%", isPositive: true },
         { label: "Active Risk Alerts", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "High/Critical inspection triggers", footer: "Requires MP review", trend: "Urgent", isPositive: false },
       ]
+    : isState
+    ? [
+        { label: "State Works (All Districts)", value: String(showProjects.length), sub: `${user.state} state directory`, footer: "All constituent districts", trend: "+6.8%", isPositive: true },
+        { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} state completion rate`, footer: "Statewide progress", trend: "+4.1%", isPositive: true },
+        { label: "State Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `Across ${new Set(showProjects.map((p) => p.district)).size || 1} districts`, footer: "State fund deployment", trend: "+5.3%", isPositive: true },
+        { label: "State Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Statewide anomaly flags", footer: "State vigilance review", trend: "Active", isPositive: false },
+      ]
     : [
-        { label: "Total Projects", value: isDistrict ? "482" : "1,847", sub: `Jurisdiction: ${user.district || user.state}`, footer: "Tracked in real-time", trend: "+8.2%", isPositive: true },
-        { label: "Completed Works", value: isDistrict ? "314" : "1,204", sub: "65.2% milestone completion", footer: "Meets SLA expectation", trend: "+4.1%", isPositive: true },
-        { label: "Fund Utilization", value: "75.0%", sub: "₹6,180 Cr of ₹8,240 Cr deployed", footer: "Q2 target trajectory", trend: "+2.1%", isPositive: true },
-        { label: "Risk Flags", value: isDistrict ? "24" : "94", sub: "Open for verification", footer: "Under field audit", trend: "+12.5%", isPositive: false },
+        { label: "District Works", value: String(showProjects.length), sub: `Jurisdiction: ${user.district}`, footer: "Tracked in real-time", trend: "+8.2%", isPositive: true },
+        { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} milestone completion`, footer: "Meets SLA expectation", trend: "+4.1%", isPositive: true },
+        { label: "District Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `In ${user.district} district`, footer: "Ground deployment", trend: "+2.1%", isPositive: true },
+        { label: "District Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Open for verification", footer: "Under field audit", trend: "In Review", isPositive: false },
       ];
 
   return (
@@ -2026,7 +2078,13 @@ export default function Dashboard({ user, onNavigate }: Props) {
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <div className="flex items-center gap-2">
-                <CardTitle className="text-base font-semibold">State Fund Sanctioned vs Utilized</CardTitle>
+                <CardTitle className="text-base font-semibold">
+                  {isState
+                    ? `${user.state} Districts: Fund Sanctioned vs Utilized`
+                    : isDistrict
+                    ? `${user.district} Sectoral Expenditure (₹ Lakh)`
+                    : "State Fund Sanctioned vs Utilized"}
+                </CardTitle>
                 <Badge variant="outline" className="text-[10px] font-mono"><IconChartBar className="size-3 mr-1" /> Bar Chart</Badge>
               </div>
               <CardDescription className="text-xs">Capital allocations against verified ground expenditures (₹ Cr)</CardDescription>

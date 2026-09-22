@@ -45,6 +45,24 @@ function buildKey(options?: UseProjectsOptions): string {
   ].join("|");
 }
 
+function getInitialProjects(options?: UseProjectsOptions): Project[] {
+  if (!options) return FALLBACK_PROJECTS;
+  let list = FALLBACK_PROJECTS;
+  if (options.district) {
+    const d = options.district.trim().toLowerCase();
+    list = list.filter((p) => p.district.toLowerCase() === d);
+  } else if (options.state) {
+    const s = options.state.trim().toLowerCase();
+    list = list.filter((p) => p.state.toLowerCase() === s);
+  } else if (options.constituency) {
+    const c = options.constituency.trim().toLowerCase();
+    list = list.filter(
+      (p) => (p.constituency && p.constituency.toLowerCase() === c) || p.district.toLowerCase() === c
+    );
+  }
+  return list;
+}
+
 export function useProjects(options?: UseProjectsOptions) {
   const cacheKey = buildKey(options);
 
@@ -53,7 +71,7 @@ export function useProjects(options?: UseProjectsOptions) {
   const isCacheFresh = cachedEntry && Date.now() - cachedEntry.timestamp < CLIENT_CACHE_TTL_MS;
 
   const [projects, setProjects] = useState<Project[]>(
-    isCacheFresh && cachedEntry ? cachedEntry.data : FALLBACK_PROJECTS
+    isCacheFresh && cachedEntry ? cachedEntry.data : getInitialProjects(options)
   );
   const [pagination, setPagination] = useState<PaginationMeta | undefined>(
     cachedEntry?.pagination

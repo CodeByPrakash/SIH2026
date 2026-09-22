@@ -12,6 +12,7 @@ import {
   Legend,
 } from "recharts";
 import { PROJECTS } from "../data/mpladsData";
+import type { User } from "../types";
 import {
   Card,
   CardHeader,
@@ -172,25 +173,51 @@ const TIMELINE_ITEMS = [
   },
 ];
 
-export default function Compliance() {
+interface ComplianceProps {
+  user?: User;
+}
+
+export default function Compliance({ user }: ComplianceProps = {}) {
   const [activeTab, setActiveTab] = useState<
     "overview" | "uc" | "rules" | "timeline"
   >("overview");
   const [ucSearch, setUcSearch] = useState("");
 
-  const ucPending = PROJECTS.filter(
+  const relevantProjects = useMemo(() => {
+    if (!user || user.role === "Ministry") return PROJECTS;
+    if (user.role === "State" && user.state) {
+      const s = user.state.toLowerCase();
+      return PROJECTS.filter((p) => p.state.toLowerCase() === s);
+    }
+    if (user.role === "District" && user.district) {
+      const d = user.district.toLowerCase();
+      return PROJECTS.filter((p) => p.district.toLowerCase() === d);
+    }
+    if (user.role === "MP") {
+      const c = user.constituency?.toLowerCase();
+      const d = user.district?.toLowerCase();
+      return PROJECTS.filter(
+        (p) =>
+          (c && p.constituency?.toLowerCase() === c) ||
+          (d && p.district.toLowerCase() === d)
+      );
+    }
+    return PROJECTS;
+  }, [user]);
+
+  const ucPending = relevantProjects.filter(
     (p) => p.status === "Completed" && !p.ucSubmitted
   ).length;
-  const tpiDue = PROJECTS.filter(
+  const tpiDue = relevantProjects.filter(
     (p) => p.inspections < 3 && p.status === "In Progress"
   ).length;
-  const photoGap = PROJECTS.filter((p) => p.photos < 10).length;
-  const assetPending = PROJECTS.filter(
+  const photoGap = relevantProjects.filter((p) => p.photos < 10).length;
+  const assetPending = relevantProjects.filter(
     (p) => p.status === "Completed" && !p.assetCreated
   ).length;
 
   const filteredPendingUcProjects = useMemo(() => {
-    const list = PROJECTS.filter(
+    const list = relevantProjects.filter(
       (p) => p.status === "Completed" && !p.ucSubmitted
     );
     if (!ucSearch.trim()) return list;
@@ -198,9 +225,10 @@ export default function Compliance() {
       (p) =>
         p.name.toLowerCase().includes(ucSearch.toLowerCase()) ||
         p.state.toLowerCase().includes(ucSearch.toLowerCase()) ||
+        p.district.toLowerCase().includes(ucSearch.toLowerCase()) ||
         p.id.toLowerCase().includes(ucSearch.toLowerCase())
     );
-  }, [ucSearch]);
+  }, [relevantProjects, ucSearch]);
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {

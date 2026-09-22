@@ -24,6 +24,10 @@ import {
   IconShieldCheck,
   IconUser,
   IconFileCertificate,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
 } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 
@@ -68,6 +72,25 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
       return matchesSearch && matchesCat && matchesStatus;
     });
   }, [projectList, searchTerm, selectedCategory, selectedStatus]);
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(12);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedStatus]);
+
+  const totalProjects = filteredProjects.length;
+  const totalPages = Math.max(1, Math.ceil(totalProjects / pageSize));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const paginatedProjects = useMemo(() => {
+    const start = (safeCurrentPage - 1) * pageSize;
+    return filteredProjects.slice(start, start + pageSize);
+  }, [filteredProjects, safeCurrentPage, pageSize]);
+
+  const startIndex = totalProjects === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(safeCurrentPage * pageSize, totalProjects);
 
   // Export disclosure table to Excel
   const handleExport = () => {
@@ -253,7 +276,7 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
 
       {/* ── Project Cards Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredProjects.map((p) => (
+        {paginatedProjects.map((p) => (
           <div
             key={p.id}
             className="bg-card border border-border/70 hover:border-primary/50 transition-all rounded-xl p-4 shadow-sm flex flex-col justify-between group"
@@ -351,6 +374,53 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
           </div>
         ))}
       </div>
+
+      {/* ── Pagination Bar ── */}
+      {filteredProjects.length > 0 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-card border border-border/70 rounded-xl text-xs text-muted-foreground">
+          <span>
+            Showing <strong className="text-foreground font-semibold">{startIndex}</strong> to{" "}
+            <strong className="text-foreground font-semibold">{endIndex}</strong> of{" "}
+            <strong className="text-foreground font-semibold">{totalProjects}</strong> records
+          </span>
+
+          <div className="flex items-center gap-1">
+            <button
+              disabled={safeCurrentPage <= 1}
+              onClick={() => setCurrentPage(1)}
+              className="p-1.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              title="First page"
+            >
+              <IconChevronsLeft className="size-3.5" />
+            </button>
+            <button
+              disabled={safeCurrentPage <= 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed text-xs flex items-center gap-1 transition-colors"
+            >
+              <IconChevronLeft className="size-3.5" /> Prev
+            </button>
+            <span className="px-2 font-mono text-xs text-foreground font-medium">
+              Page {safeCurrentPage} of {totalPages}
+            </span>
+            <button
+              disabled={safeCurrentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="px-2.5 py-1.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed text-xs flex items-center gap-1 transition-colors"
+            >
+              Next <IconChevronRight className="size-3.5" />
+            </button>
+            <button
+              disabled={safeCurrentPage >= totalPages}
+              onClick={() => setCurrentPage(totalPages)}
+              className="p-1.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              title="Last page"
+            >
+              <IconChevronsRight className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {filteredProjects.length === 0 && (
         <div className="text-center py-16 bg-card border border-border/70 rounded-2xl">

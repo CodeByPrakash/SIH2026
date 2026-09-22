@@ -24,7 +24,7 @@ import CitizenFeedback from "@/components/CitizenFeedback";
 import ProjectInformation from "@/components/ProjectInformation";
 import HelpGuidelines from "@/components/HelpGuidelines";
 import FieldVerification from "@/components/FieldVerification";
-import { ALERTS, MP_USERS, DISTRICT_USERS, STATE_USERS, MINISTRY_USER, CITIZEN_USER } from "@/data/mpladsData";
+import { ALERTS, getAlertsForRole, MP_USERS, DISTRICT_USERS, STATE_USERS, MINISTRY_USER, CITIZEN_USER } from "@/data/mpladsData";
 import type { User, UserRole } from "@/types";
 
 type Page =
@@ -84,7 +84,12 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
     }
   }, [role, user, isLoading, login, router]);
 
-  const activeAlerts = ALERTS.filter((a) => a.status === "Active").length;
+  const roleAlerts = React.useMemo(() => {
+    if (!user) return [];
+    return getAlertsForRole(user.role, user);
+  }, [user]);
+
+  const activeAlerts = roleAlerts.filter((a) => a.status === "Active").length;
 
   // Derive current page from path or prop
   let currentPage: Page = activeSection || "dashboard";
@@ -146,7 +151,7 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
       case "dashboard":
         return <Dashboard user={currentUser} onNavigate={handleNavigate} />;
       case "projects":
-        return <ProjectExplorer />;
+        return <ProjectExplorer user={currentUser} onNavigate={handleNavigate} />;
       case "3d-view":
         return (
           <Project3DView
@@ -155,13 +160,13 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
           />
         );
       case "risk":
-        return <RiskCenter />;
+        return <RiskCenter user={currentUser} />;
       case "alerts":
-        return <Alerts />;
+        return <Alerts user={currentUser} />;
       case "compliance":
-        return <Compliance />;
+        return <Compliance user={currentUser} />;
       case "gis":
-        return <GISView />;
+        return <GISView user={currentUser} />;
       case "district-performance":
         return <DistrictPerformance user={currentUser} onNavigate={handleNavigate} />;
       case "state-performance":
