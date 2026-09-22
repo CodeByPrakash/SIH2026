@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import type { UserRole, User } from "../types";
 import {
   MP_USERS,
@@ -87,14 +88,16 @@ const ROLE_PHONES: Record<UserRole, string> = {
   Citizen: "95100 12345",
 };
 
-// Official State Emblem of India representation (Clean vector)
+// Official NIDHI-RAKSHAK Logo
 const StateEmblem = () => (
-  <svg viewBox="0 0 100 120" className="w-8 h-10 text-foreground" fill="currentColor">
-    <path d="M50 5 C52 5 54 7 54 10 L54 18 C58 19 62 22 65 26 C68 22 72 19 76 18 L76 10 C76 7 78 5 80 5 C82 5 84 7 84 10 L84 25 C84 32 80 38 74 42 C76 46 76 50 75 55 C73 63 67 70 58 73 L58 82 L70 82 C72 82 74 84 74 86 C74 88 72 90 70 90 L30 90 C28 90 26 88 26 86 C26 84 28 82 30 82 L42 82 L42 73 C33 70 27 63 25 55 C24 50 24 46 26 42 C20 38 16 32 16 25 L16 10 C16 7 18 5 20 5 C22 5 24 7 24 10 L24 18 C28 19 32 22 35 26 C38 22 42 19 46 18 L46 10 C46 7 48 5 50 5 Z M50 22 C45 22 41 26 41 31 C41 36 45 40 50 40 C55 40 59 36 59 31 C59 26 55 22 50 22 Z M50 88 C54.4 88 58 91.6 58 96 C58 100.4 54.4 104 50 104 C45.6 104 42 100.4 42 96 C42 91.6 45.6 88 50 88 Z" opacity="0.9" />
-    <circle cx="50" cy="96" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    <line x1="20" y1="108" x2="80" y2="108" stroke="currentColor" strokeWidth="2.5" />
-    <text x="50" y="117" fontSize="7" fontWeight="bold" textAnchor="middle" fill="currentColor" letterSpacing="1">सत्यमेव जयते</text>
-  </svg>
+  <Image
+    src="/logo.png"
+    alt="NIDHI-RAKSHAK Logo"
+    width={48}
+    height={48}
+    className="size-11 object-contain drop-shadow-xs"
+    priority
+  />
 );
 
 // Official DigiLocker Full Logo SVG
