@@ -80,41 +80,68 @@ export default function IndianLanguageTranslator({
   const [isTranslating, setIsTranslating] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // Initialize and load Google Translate Script
+  // Helper to set googtrans cookies across paths and domains
+  const setGoogleTranslateCookie = (langCode: string) => {
+    const hostname = window.location.hostname;
+    const cookie1 = `/en/${langCode}`;
+    const cookie2 = `/auto/${langCode}`;
+
+    const domains = ["", `domain=${hostname};`];
+    if (hostname.includes(".")) {
+      const parts = hostname.split(".");
+      if (parts.length >= 2) {
+        const rootDomain = "." + parts.slice(-2).join(".");
+        domains.push(`domain=${rootDomain};`);
+      }
+    }
+
+    domains.forEach((dom) => {
+      document.cookie = `googtrans=${cookie1}; path=/; ${dom}`;
+      document.cookie = `googtrans=${cookie2}; path=/; ${dom}`;
+    });
+  };
+
+  const clearGoogleTranslateCookie = () => {
+    const hostname = window.location.hostname;
+    const domains = ["", `domain=${hostname};`];
+    if (hostname.includes(".")) {
+      const parts = hostname.split(".");
+      if (parts.length >= 2) {
+        const rootDomain = "." + parts.slice(-2).join(".");
+        domains.push(`domain=${rootDomain};`);
+      }
+    }
+
+    domains.forEach((dom) => {
+      document.cookie = `googtrans=/en/en; path=/; ${dom}`;
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; ${dom}`;
+    });
+  };
+
+  const triggerTranslateCombo = (langCode: string) => {
+    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event("change"));
+      return true;
+    }
+    return false;
+  };
+
+  // Check saved language on mount and apply if needed
   useEffect(() => {
-    // Read saved language from cookie or localStorage
     const saved = localStorage.getItem("preferred_indian_lang") || "en";
     setCurrentLang(saved);
 
-    // Ensure google_translate_element div exists in document body
-    if (!document.getElementById("google_translate_element")) {
-      const gDiv = document.createElement("div");
-      gDiv.id = "google_translate_element";
-      gDiv.style.display = "none";
-      document.body.appendChild(gDiv);
-    }
-
-    // Set callback
-    window.googleTranslateElementInit = () => {
-      if (window.google?.translate?.TranslateElement) {
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: "en",
-            includedLanguages: INDIAN_LANGUAGES.map((l) => l.code).join(","),
-            autoDisplay: false,
-          },
-          "google_translate_element"
-        );
-      }
-    };
-
-    // Inject Google Translate script if not already added
-    if (!document.getElementById("google-translate-script")) {
-      const script = document.createElement("script");
-      script.id = "google-translate-script";
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      document.head.appendChild(script);
+    if (saved && saved !== "en") {
+      setGoogleTranslateCookie(saved);
+      // Attempt triggering combo if already loaded
+      setTimeout(() => {
+        triggerTranslateCombo(saved);
+      }, 500);
+      setTimeout(() => {
+        triggerTranslateCombo(saved);
+      }, 1500);
     }
   }, []);
 
@@ -140,32 +167,19 @@ export default function IndianLanguageTranslator({
     localStorage.setItem("preferred_indian_lang", langCode);
     setIsOpen(false);
 
-    // Update googtrans cookies
-    const cookieVal = `/auto/${langCode}`;
-    const hostname = window.location.hostname;
-
-    document.cookie = `googtrans=${cookieVal}; path=/;`;
-    document.cookie = `googtrans=${cookieVal}; path=/; domain=${hostname};`;
-    if (hostname.includes(".")) {
-      const parts = hostname.split(".");
-      if (parts.length >= 2) {
-        const rootDomain = parts.slice(-2).join(".");
-        document.cookie = `googtrans=${cookieVal}; path=/; domain=.${rootDomain};`;
-      }
-    }
-
-    // Attempt to trigger the Google Translate combo box directly
-    const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-    if (select) {
-      select.value = langCode;
-      select.dispatchEvent(new Event("change"));
-      setTimeout(() => setIsTranslating(false), 800);
+    if (langCode === "en") {
+      clearGoogleTranslateCookie();
     } else {
-      // Reload page to let the cookie take full effect across DOM
-      setTimeout(() => {
-        window.location.reload();
-      }, 150);
+      setGoogleTranslateCookie(langCode);
     }
+
+    // Try triggering in-memory Google Translate combo if available
+    triggerTranslateCombo(langCode);
+
+    // Refresh page with active googtrans cookie for comprehensive full-page translation
+    setTimeout(() => {
+      window.location.reload();
+    }, 120);
   };
 
   const handleResetEnglish = () => {
@@ -212,11 +226,10 @@ export default function IndianLanguageTranslator({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all duration-200 cursor-pointer select-none ${
-            currentLang !== "en"
-              ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold shadow-2xs"
-              : "border-border bg-card hover:bg-muted text-foreground"
-          }`}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium transition-all duration-200 cursor-pointer select-none ${currentLang !== "en"
+            ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold shadow-2xs"
+            : "border-border bg-card hover:bg-muted text-foreground"
+            }`}
           title="Bhasha Translation — Official Indian Languages"
         >
           <IconLanguage className="size-3.5 text-primary shrink-0" />
@@ -306,11 +319,10 @@ export default function IndianLanguageTranslator({
                       key={lang.code}
                       type="button"
                       onClick={() => handleSelectLanguage(lang.code)}
-                      className={`px-2 py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer ${
-                        isSelected
-                          ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
-                          : "bg-background border-border/60 hover:bg-muted text-foreground"
-                      }`}
+                      className={`px-2 py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer ${isSelected
+                        ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
+                        : "bg-background border-border/60 hover:bg-muted text-foreground"
+                        }`}
                     >
                       <div className="text-[11px] font-semibold truncate leading-tight">
                         {lang.nativeName}
@@ -339,16 +351,14 @@ export default function IndianLanguageTranslator({
                     key={lang.code}
                     type="button"
                     onClick={() => handleSelectLanguage(lang.code)}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group ${
-                      isSelected
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
+                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group ${isSelected
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "hover:bg-muted text-foreground"
+                      }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className={`size-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${
-                        isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-foreground"
-                      }`}>
+                      <div className={`size-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 ${isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground group-hover:text-foreground"
+                        }`}>
                         {lang.nativeName.slice(0, 1)}
                       </div>
                       <div className="min-w-0">
