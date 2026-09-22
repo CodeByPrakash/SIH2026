@@ -66,6 +66,7 @@ import {
   IconScale,
   IconPhoto,
   IconBrain,
+  IconCube,
 } from "@tabler/icons-react";
 
 type Page =
@@ -81,7 +82,8 @@ type Page =
   | "evidence"
   | "simulation"
   | "crosscheck"
-  | "ai-audit";
+  | "ai-audit"
+  | "3d-view";
 
 interface LayoutProps {
   user: User;
@@ -127,6 +129,12 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
       label: "Projects & Works",
       sub: "All Projects & Progress",
       icon: IconBuildingCommunity,
+    },
+    {
+      id: "3d-view",
+      label: "3D Digital Twin",
+      sub: "3D Layouts & Viewpoints",
+      icon: IconCube,
     },
     {
       id: "gis",

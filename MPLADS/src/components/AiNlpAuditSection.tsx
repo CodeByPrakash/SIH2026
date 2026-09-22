@@ -1,24 +1,19 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   IconBrain,
   IconSparkles,
   IconRefresh,
-  IconSend,
   IconCopy,
   IconCheck,
   IconAlertTriangle,
-  IconShieldCheck,
   IconLoader2,
   IconChevronRight,
-  IconMessageDots,
-  IconInfoCircle,
 } from "@tabler/icons-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import type { Project, User } from "../types";
 import type { WorkAuditResponse } from "@/lib/auditApi";
 import { ARCHETYPE_LABELS, tierColor } from "@/lib/auditApi";
@@ -187,12 +182,6 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Interactive follow-up chat
-  const [chatMessages, setChatMessages] = useState<Array<{ id: string; role: "user" | "bot"; text: string }>>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [chatLoading, setChatLoading] = useState(false);
-  const chatScrollRef = useRef<HTMLDivElement>(null);
-
   // When project changes, check if we already have a generated synthesis for it (do NOT auto-fetch)
   useEffect(() => {
     const projectId = project?.id;
@@ -202,10 +191,9 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
       setSynthesis(null);
     }
     setError(null);
-    setChatMessages([]);
   }, [project?.id, synthesisMap]);
 
-  // On-demand fetch plain-English synthesis triggered by user button click
+  // On-demand fetch plain-English executive summary triggered by user button click
   const fetchSynthesis = useCallback(async () => {
     if (!result || !project) return;
     setLoading(true);
@@ -216,7 +204,7 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: `Provide an executive, plain-English synthesis of the machine learning audit for project "${project.name}" (${result.work_id || project.id}). Explain what Model 1 (XGBoost binary), Model 2 (multiclass anomaly archetype), Model 3 (Isolation Forest outlier score), and the Risk Fusion score mean in simpler terms for a District Collector and MP. Outline key risk drivers and statutory governance actions under NIDHI-RAKSHAK rules.`,
+          message: `Provide an executive, concise summary audit for project "${project.name}" (${result.work_id || project.id}). Focus on real-world importance information: fund expenditure vs sanctioned cost, completion timeline and delays, site inspections, geo-tagged photos, and statutory governance actions under NIDHI-RAKSHAK rules.`,
           currentRoute: "/dashboard/ai-audit",
           auditContext: {
             project,
@@ -237,17 +225,17 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
 
       const data = await res.json().catch(() => null);
 
-      if (res.ok && data?.success && data?.data?.message) {
-        const replyText = data.data.message;
+      if (res.ok && data?.success && (data?.data?.message || data?.reply)) {
+        const replyText = data.data?.message || data.reply;
         setSynthesis(replyText);
         if (project.id) {
           setSynthesisMap((prev) => ({ ...prev, [project.id]: replyText }));
         }
       } else {
-        setError(data?.message || "Could not generate DeepBot NLP synthesis.");
+        setError(data?.message || "Could not generate Nidhi-saathi summary report.");
       }
     } catch (err: any) {
-      setError(err?.message || "Failed to communicate with DeepBot backend.");
+      setError(err?.message || "Failed to communicate with Nidhi-saathi backend.");
     } finally {
       setLoading(false);
     }
@@ -258,82 +246,6 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
     navigator.clipboard.writeText(synthesis);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSendMessage = async (queryText?: string) => {
-    const textToSend = queryText || inputMessage.trim();
-    if (!textToSend || chatLoading) return;
-
-    const userMsg = {
-      id: String(Date.now()),
-      role: "user" as const,
-      text: textToSend,
-    };
-
-    setChatMessages((prev) => [...prev, userMsg]);
-    setInputMessage("");
-    setChatLoading(true);
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: textToSend,
-          currentRoute: "/dashboard/ai-audit",
-          auditContext: {
-            project,
-            auditResult: result,
-          },
-          mode: "audit_explanation",
-          user: currentUser
-            ? {
-              name: currentUser.name,
-              role: currentUser.role,
-              constituency: currentUser.constituency,
-              state: currentUser.state,
-              district: currentUser.district,
-            }
-            : null,
-        }),
-      });
-
-      const data = await res.json().catch(() => null);
-
-      if (res.ok && data?.success && data?.data?.message) {
-        setChatMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now() + 1),
-            role: "bot" as const,
-            text: data.data.message,
-          },
-        ]);
-      } else {
-        setChatMessages((prev) => [
-          ...prev,
-          {
-            id: String(Date.now() + 1),
-            role: "bot" as const,
-            text: data?.message || "DeepBot service returned an error. Please try again.",
-          },
-        ]);
-      }
-    } catch {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now() + 1),
-          role: "bot" as const,
-          text: "Network error connecting to DeepBot backend.",
-        },
-      ]);
-    } finally {
-      setChatLoading(false);
-      setTimeout(() => {
-        chatScrollRef.current?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
   };
 
   const tc = tierColor(result.risk_tier);
@@ -353,11 +265,11 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
                 NIDHI-SAATHI &bull; NLP Audit Intelligence
               </CardTitle>
               <Badge variant="outline" className="text-[10px] font-bold bg-violet-500/10 text-violet-700 border-violet-500/30 px-2 py-0.5">
-                AI LLM
+                Executive Briefing
               </Badge>
             </div>
             <CardDescription className="text-xs text-muted-foreground leading-relaxed pl-10">
-              Plain-English translation of XGBoost models, Isolation Forest outliers, and statutory Risk Fusion scores for District Authorities.
+              Executive AI summary translating fund utilization, milestone delays, site inspections, and geofence compliance for District Authorities.
             </CardDescription>
           </div>
 
@@ -391,37 +303,37 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
               ) : (
                 <IconBrain className="size-3.5" />
               )}
-              <span>{loading ? "Synthesizing..." : synthesis ? "Regenerate" : "Generate Intelligence"}</span>
+              <span>{loading ? "Synthesizing..." : synthesis ? "Regenerate" : "Generate Summary"}</span>
             </Button>
           </div>
         </div>
 
-        {/* ── 4 Architecture Breakdown Badges ── */}
+        {/* ── 4 Executive Indicator Breakdown Badges ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 mt-3 border-t border-border/60 text-xs">
           <div className="p-2.5 rounded-xl bg-card border border-border/70 space-y-0.5">
-            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Model 1: XGBoost Binary</div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Anomaly Assessment</div>
             <div className="font-extrabold text-foreground flex items-center gap-1 text-xs">
               <span className={`size-2 rounded-full ${result.is_anomalous ? "bg-red-500" : "bg-emerald-500"}`} />
-              {(result.anomaly_probability * 100).toFixed(1)}% {result.is_anomalous ? "Anomalous" : "Clean"}
+              {(result.anomaly_probability * 100).toFixed(1)}% {result.is_anomalous ? "Flagged for Review" : "Clean"}
             </div>
           </div>
 
           <div className="p-2.5 rounded-xl bg-card border border-border/70 space-y-0.5">
-            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Model 2: Archetype</div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Identified Risk Pattern</div>
             <div className="font-extrabold text-foreground truncate text-xs">
-              {archetypeInfo?.label || result.predicted_archetype} ({(result.archetype_confidence * 100).toFixed(0)}%)
+              {archetypeInfo?.label || result.predicted_archetype}
             </div>
           </div>
 
           <div className="p-2.5 rounded-xl bg-card border border-border/70 space-y-0.5">
-            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Model 3: Isolation Forest</div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Outlier & Deviation Index</div>
             <div className="font-extrabold text-foreground text-xs">
-              {result.component_breakdown?.c2_isolation_outlier?.toFixed(1) ?? "36.3"} / 100 Outlier Score
+              {result.component_breakdown?.c2_isolation_outlier?.toFixed(1) ?? "36.3"} / 100 Deviation
             </div>
           </div>
 
           <div className="p-2.5 rounded-xl bg-card border border-border/70 space-y-0.5">
-            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Risk Fusion Composite</div>
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Composite Risk Rating</div>
             <div className={`font-extrabold text-xs ${tc.text || "text-foreground"}`}>
               {result.composite_risk_score} / 100 &bull; {result.risk_tier} Tier
             </div>
@@ -429,7 +341,7 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
         </div>
       </CardHeader>
 
-      {/* ── Main NLP Report Body ── */}
+      {/* ── Main NLP Executive Report Body ── */}
       <CardContent className="p-5 space-y-4">
         {loading ? (
           <div className="py-12 flex flex-col items-center justify-center text-center space-y-3">
@@ -437,9 +349,9 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
               <IconLoader2 className="size-6 animate-spin text-violet-600" />
             </div>
             <div className="space-y-1 max-w-md">
-              <h4 className="text-sm font-bold text-foreground">Generating Plain-English AI Synthesis...</h4>
+              <h4 className="text-sm font-bold text-foreground">Generating Executive Audit Summary...</h4>
               <p className="text-xs text-muted-foreground">
-                DeepBot is evaluating XGBoost anomaly probabilities, Isolation Forest novelty scores, and statutory penalty weights under NIDHI-RAKSHAK guidelines.
+                NIDHI-SAATHI is evaluating expenditure velocity, milestone timelines, and site verification evidence under statutory guidelines.
               </p>
             </div>
           </div>
@@ -447,15 +359,15 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
           <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400 space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold">
               <IconAlertTriangle className="size-4 text-red-600" />
-              <span>DeepBot NLP Synthesis Error</span>
+              <span>NIDHI-SAATHI Audit Report Error</span>
             </div>
             <p className="leading-relaxed">{error}</p>
             <Button size="sm" variant="outline" onClick={fetchSynthesis} className="h-7 text-xs mt-1">
-              Retry Synthesis
+              Retry Generation
             </Button>
           </div>
         ) : synthesis ? (
-          <div className="prose prose-sm dark:prose-invert max-w-none text-xs">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-xs leading-relaxed bg-muted/20 border border-border/60 rounded-xl p-4">
             <FormattedMarkdown text={synthesis} />
           </div>
         ) : (
@@ -466,10 +378,10 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
             </div>
             <div className="max-w-lg space-y-1.5">
               <h4 className="text-base font-bold text-foreground">
-                NIDHI-SAATHI &bull; NLP Audit Intelligence
+                NIDHI-SAATHI &bull; Executive Audit Summary
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Click the button below to generate an on-demand executive briefing for <strong className="text-foreground">{project.name}</strong> ({project.id}). DeepBot will interpret XGBoost binary anomaly probabilities, Isolation Forest outlier scores, and statutory penalty drivers into plain-English governance directives.
+                Click the button below to generate an on-demand executive summary for <strong className="text-foreground">{project.name}</strong> ({project.id}). NIDHI-SAATHI analyzes fund expenditure velocity, completion delays, and physical inspection evidence into actionable governance directives.
               </p>
             </div>
             <Button
@@ -479,95 +391,8 @@ export default function AiNlpAuditSection({ project, result, currentUser }: AiNl
               className="h-10 px-6 text-xs font-semibold gap-2 bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 hover:from-violet-700 hover:via-indigo-700 hover:to-blue-700 text-white shadow-md shadow-violet-500/25 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <IconSparkles className="size-4" />
-              <span>Generate AI Audit Intelligence</span>
+              <span>Generate Summary Report</span>
             </Button>
-          </div>
-        )}
-
-        {/* ── Interactive DeepBot Follow-Up Chat (Available once synthesis is generated) ── */}
-        {synthesis && (
-          <div className="mt-6 pt-5 border-t border-border/80 space-y-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-foreground flex items-center gap-1.5 uppercase tracking-wider">
-                <IconMessageDots className="size-4 text-violet-500" />
-                Ask DeepBot About This Project Audit
-              </span>
-              <span className="text-[10px] text-muted-foreground">Strict fine-tuned audit reasoning</span>
-            </div>
-
-            {/* Quick Suggestion Pills */}
-            <div className="flex flex-wrap gap-1.5">
-              {[
-                { label: "💡 Explain in Layman's Terms", q: "Can you explain this machine learning audit in simple layman terms for non-technical citizens?" },
-                { label: `🔍 Why ${archetypeInfo?.label || result.predicted_archetype}?`, q: `Why did the XGBoost Archetype Classifier categorize this project as ${result.predicted_archetype}? What specific data triggered this?` },
-                { label: "🌲 Isolation Forest Details", q: "What does the Isolation Forest score indicate for this project, and does it suggest novel or zero-day fraud?" },
-                { label: "⚖️ DC Action Directives", q: "What exact statutory steps should the District Collector and District Nodal Officer take right now based on this risk tier?" },
-                { label: "💰 Remediate Risk Flags", q: "What corrective measures can the executing agency or MP take to resolve these audit flags and restore project compliance?" },
-              ].map((pill, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleSendMessage(pill.q)}
-                  disabled={chatLoading}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full border border-border/80 bg-muted/30 hover:bg-violet-500/10 hover:border-violet-500/30 hover:text-violet-700 transition-all text-muted-foreground text-left"
-                >
-                  {pill.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Chat History */}
-            {chatMessages.length > 0 && (
-              <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1 rounded-xl bg-muted/20 border border-border/60 p-3 scrollbar-thin">
-                {chatMessages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}
-                  >
-                    <div
-                      className={`max-w-[90%] p-3 rounded-2xl text-xs leading-relaxed ${msg.role === "user"
-                        ? "bg-violet-600 text-white rounded-br-xs"
-                        : "bg-card border border-border shadow-2xs rounded-bl-xs text-foreground"
-                        }`}
-                    >
-                      <FormattedMarkdown text={msg.text} />
-                    </div>
-                  </div>
-                ))}
-                {chatLoading && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground p-2">
-                    <IconLoader2 className="size-3.5 animate-spin text-violet-500" />
-                    <span>DeepBot is reasoning over project ML parameters...</span>
-                  </div>
-                )}
-                <div ref={chatScrollRef} />
-              </div>
-            )}
-
-            {/* Input Box */}
-            <div className="flex items-center gap-2">
-              <Input
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                placeholder={`Ask DeepBot anything about ${project.id} (e.g. why is delay penalized, what about GPS match?)...`}
-                disabled={chatLoading}
-                className="h-9 text-xs bg-card"
-              />
-              <Button
-                size="sm"
-                onClick={() => handleSendMessage()}
-                disabled={chatLoading || !inputMessage.trim()}
-                className="h-9 px-4 gap-1.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold shrink-0"
-              >
-                {chatLoading ? <IconLoader2 className="size-3.5 animate-spin" /> : <IconSend className="size-3.5" />}
-                <span className="hidden sm:inline">Ask</span>
-              </Button>
-            </div>
           </div>
         )}
       </CardContent>

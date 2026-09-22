@@ -61,6 +61,7 @@ import {
   IconRefresh,
   IconFilter,
   IconSparkles,
+  IconCube,
 } from "@tabler/icons-react";
 
 const STATUSES = ["All", "Completed", "In Progress", "Delayed", "On Hold", "Not Started"] as const;
@@ -1013,6 +1014,20 @@ export default function ProjectExplorer() {
                 </div>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        window.location.href = `/dashboard/3d-view?projectId=${selectedProject.id}`;
+                      }
+                    }}
+                    className="gap-1.5 text-xs border-cyan-500/40 text-cyan-700 dark:text-cyan-400 hover:bg-cyan-500/10"
+                  >
+                    <IconCube className="size-3.5" />
+                    3D Digital Twin
+                  </Button>
+
                   <Button
                     size="sm"
                     onClick={() => {

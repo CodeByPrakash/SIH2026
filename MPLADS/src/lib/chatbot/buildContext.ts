@@ -31,6 +31,49 @@ export async function buildContext({
   mode = "general",
   history,
 }: BuildContextOptions): Promise<string> {
+  // ── High-Speed Focused Path for NLP Audit Intelligence ─────────────────────
+  // Skips heavy database queries and delivers a concise, real-world summary without ML model jargon
+  if (mode === "audit_explanation" && auditContext) {
+    const p = auditContext.project || {};
+    const r = auditContext.auditResult || {};
+    const derived = r.derived_metrics || {};
+
+    const projectCost = p.sanctionedAmount ?? p.cost ?? "N/A";
+    const projectSpent = p.expenditure ?? "N/A";
+    const inspections = p.inspections ?? 0;
+    const photos = p.photos ?? 0;
+    const gpsMatch = p.photoLocationMatch !== false ? "Verified within 500m geofence" : "Location Mismatch (>500m discrepancy)";
+    const delay = derived.delay_days !== undefined ? `${Math.round(derived.delay_days)} days` : (p.delayDays ? `${p.delayDays} days` : "On Schedule");
+    const riskDrivers = (r.risk_drivers || []).filter(Boolean);
+
+    return `=== NIDHI-RAKSHAK EXECUTIVE AUDIT BRIEFING ===
+You are an executive audit advisor for the NIDHI-RAKSHAK Governance System.
+Provide a concise, high-impact executive audit summary (around 120-150 words) for public administrators (District Collector, Hon'ble MP).
+
+STRICT INSTRUCTIONS:
+1. DO NOT mention technical machine learning names or model architectures (e.g. NEVER say "XGBoost", "Isolation Forest", "Model 1", "Binary Classifier", "Multiclass Archetype", "novelty scores", "softprob").
+2. Focus strictly on REAL-WORLD IMPORTANCE INFORMATION:
+   - Financial execution (Sanctioned vs Spent, fund efficiency).
+   - Execution timeline & delays.
+   - Physical evidence compliance (Site inspections completed, geo-tagged photos, GPS location verification).
+   - Immediate administrative directive for the District Authority.
+3. Structure your response in 3 concise bulleted sections:
+   - 📌 **Audit Verdict**: 1 sentence summary on risk level (${r.risk_tier || "Standard"} Risk, Composite Risk Score: ${r.composite_risk_score ?? "N/A"}/100).
+   - 🔍 **Key Findings**: 2-3 short bullets covering delay, expenditure, and inspection/GPS status.
+   - ⚖️ **Action Directive**: 1-2 specific administrative steps for field verification or fund release.
+
+PROJECT DATA:
+- Project: ${p.name || "N/A"} (${r.work_id || p.id || "N/A"})
+- Category / Sector: ${p.category || "General"}
+- Location: ${p.district || "N/A"}, ${p.state || "N/A"} (Constituency: ${p.constituency || "N/A"})
+- Sanctioned Amount: ₹${projectCost} Lakhs | Actual Expenditure: ₹${projectSpent} Lakhs
+- Timeline Status: ${p.status || "In Progress"} (Delay: ${delay})
+- Physical Evidence: ${inspections} Inspections, ${photos} Geo-tagged Photos
+- GPS Geofence: ${gpsMatch}
+- Primary Risk Indicators: ${riskDrivers.length > 0 ? riskDrivers.join("; ") : "No critical risk anomalies identified"}
+- Action Recommended: ${r.governance_action || "Standard monitoring"}`;
+  }
+
   const q = message.toLowerCase();
 
   // Determine current page info
