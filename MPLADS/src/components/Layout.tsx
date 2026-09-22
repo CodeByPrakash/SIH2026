@@ -115,12 +115,12 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
         role === "MP"
           ? "My Constituency"
           : role === "District"
-          ? "District Overview"
-          : role === "State"
-          ? "State Dashboard"
-          : role === "Ministry"
-          ? "National Overview"
-          : "Overview",
+            ? "District Overview"
+            : role === "State"
+              ? "State Dashboard"
+              : role === "Ministry"
+                ? "National Overview"
+                : "Overview",
       sub: "Overview & Key Insights",
       icon: IconLayoutDashboard,
     },
@@ -557,7 +557,7 @@ export default function Layout({
               className="hidden lg:flex items-center gap-1.5 text-[11px] font-semibold h-8 px-2.5 text-primary border-primary/25 hover:bg-primary/5 cursor-pointer"
             >
               <IconBuildingCommunity className="size-3.5" />
-              <span>National Portal</span>
+              <span>Nidhirakshak Portal</span>
             </Button>
 
             <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
@@ -643,9 +643,8 @@ export default function Layout({
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <Badge
                         variant={isCrit ? "destructive" : "outline"}
-                        className={`text-[10px] uppercase font-bold px-1.5 py-0 ${
-                          isHigh ? "border-amber-500/50 text-amber-600 bg-amber-500/10" : ""
-                        }`}
+                        className={`text-[10px] uppercase font-bold px-1.5 py-0 ${isHigh ? "border-amber-500/50 text-amber-600 bg-amber-500/10" : ""
+                          }`}
                       >
                         {alert.severity}
                       </Badge>
