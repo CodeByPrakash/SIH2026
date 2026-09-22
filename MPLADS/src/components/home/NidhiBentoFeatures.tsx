@@ -184,38 +184,50 @@ export function NidhiBentoFeatures({ language }: NidhiBentoFeaturesProps) {
               <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
                 
                 {/* Sub-Card 1: Duplicate Claim Detection */}
-                <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-amber-400 hover:shadow-xs transition duration-300 shadow-2xs">
+                <Link
+                  href="/dashboard/crosscheck"
+                  className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-amber-400 hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E65100] shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-200 flex items-center justify-center text-[#E65100] shrink-0 group-hover/card:bg-orange-500 group-hover/card:text-white transition">
                       <GitFork className="w-3.5 h-3.5" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight">
-                      {language === "hi" ? "दोहराव पहचान" : "Duplicate Claim Triage"}
-                    </h4>
+                    <div className="flex items-center justify-between flex-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-amber-600 transition">
+                        {language === "hi" ? "दोहराव पहचान" : "Duplicate Claim Triage"}
+                      </h4>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-amber-600 transition shrink-0" />
+                    </div>
                   </div>
                   <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
                     {language === "hi"
                       ? "डीप कंप्यूटर विज़न ऐतिहासिक तस्वीरों का मिलान कर फर्जी दावों को रोकता है।"
                       : "Cross-matches historical site photographs in <1s to prevent duplicate billing."}
                   </p>
-                </div>
+                </Link>
 
                 {/* Sub-Card 2: ISRO Satellite GIS */}
-                <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-[#133E87] hover:shadow-xs transition duration-300 shadow-2xs">
+                <Link
+                  href="/dashboard/gis"
+                  className="bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 flex flex-col gap-1.5 sm:gap-2 hover:border-[#133E87] hover:shadow-xs transition duration-300 shadow-2xs group/card cursor-pointer"
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-[#133E87] shrink-0 group-hover/card:bg-[#133E87] group-hover/card:text-white transition">
                       <Scan className="w-3.5 h-3.5" />
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight">
-                      {language === "hi" ? "इसरो उपग्रह जीआईएस" : "ISRO Satellite GIS"}
-                    </h4>
+                    <div className="flex items-center justify-between flex-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-950 leading-tight group-hover/card:text-[#133E87] transition">
+                        {language === "hi" ? "इसरो उपग्रह जीआईएस" : "ISRO Satellite GIS"}
+                      </h4>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover/card:text-[#133E87] transition shrink-0" />
+                    </div>
                   </div>
                   <p className="text-[11px] sm:text-[11.5px] text-slate-600 leading-normal">
                     {language === "hi"
                       ? "100% जियो-टैग्ड ईएक्सआईएफ व उपग्रह टाइमलाइन साक्ष्य सत्यापन।"
                       : "100% EXIF GPS coordinate validation and satellite timeline tracking."}
                   </p>
-                </div>
+                </Link>
 
               </div>
 
@@ -303,6 +315,13 @@ export function NidhiBentoFeatures({ language }: NidhiBentoFeaturesProps) {
                 <span className="text-[9.5px] sm:text-[10px] font-mono bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold px-2 py-0.5 rounded-full">
                   🏛️ eSAKSHI
                 </span>
+                <Link
+                  href="/dashboard/3d-view"
+                  className="text-[9.5px] sm:text-[10px] font-mono bg-amber-50 text-amber-900 border border-amber-300 font-bold px-2 py-0.5 rounded-full hover:bg-amber-100 transition flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🧊 3D Twin</span>
+                  <ArrowUpRight className="w-2.5 h-2.5" />
+                </Link>
               </div>
             </div>
 

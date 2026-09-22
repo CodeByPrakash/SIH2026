@@ -78,13 +78,13 @@ export default function HomePage() {
         <NidhiBentoFeatures language={language} />
 
         {/* 7. Recent Documents, User Personas & Important Links */}
-        {/* <DocumentsPersonasLinks language={language} /> */}
+        <DocumentsPersonasLinks language={language} />
 
         {/* 8. Citizen Engagement / Social Media Section */}
         <SocialCitizenEngagement language={language} />
 
         {/* 9. Infographics & Key Statistics Section */}
-        {/* <InfographicsHighlights language={language} /> */}
+        <InfographicsHighlights language={language} />
 
         {/* 10. Partner Logos Carousel */}
       </main>

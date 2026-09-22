@@ -457,6 +457,7 @@ export function DocumentsPersonasLinks({ language }: DocumentsPersonasLinksProps
 
   return (
     <section id="features-research-tables" className="w-full bg-slate-50/70 py-16 px-4 sm:px-8 border-b border-slate-200 select-none relative">
+      <div id="documents" className="absolute -top-20 left-0" />
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* Section Header */}

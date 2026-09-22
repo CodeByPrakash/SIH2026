@@ -24,12 +24,20 @@ export function AnnouncementsTicker({ language }: AnnouncementsTickerProps) {
       id: 2,
       title:
         language === "hi"
+          ? "3डी डिजिटल ट्विन लेआउट लाइव: पुल, भवन, सड़क व चेक-डैम की 4-चरणीय निर्माण प्रगति का 3डी त्रि-आयामी अवलोकन उपलब्ध"
+          : "3D Digital Twin Layouts Live: Step-by-Step 3D Inspection for Bridges, Buildings, Paver Streets & Dams now accessible - 22.09.2026",
+      href: "/dashboard/3d-view",
+    },
+    {
+      id: 3,
+      title:
+        language === "hi"
           ? "निधि-रक्षक मोबाइल ऐप v3.2 जारी: जिला नोडल अभियंताओं के लिए ऑफलाइन जियो-टैगिंग एवं एआई साक्ष्य सत्यापन सक्षम - 21.09.2026"
           : "NIDHI-RAKSHAK Mobile App v3.2 Released with Offline Geotagging & AI Duplicate Detection for District Engineers - 21.09.2026",
       href: "/dashboard/ai-audit",
     },
     {
-      id: 3,
+      id: 4,
       title:
         language === "hi"
           ? "माननीय मंत्री महोदय की अध्यक्षता में सांसद स्थानीय क्षेत्र विकास योजना राष्ट्रीय समीक्षा बैठक की कार्यवाही रिपोर्ट उपलब्ध - 18.09.2026"
@@ -37,12 +45,12 @@ export function AnnouncementsTicker({ language }: AnnouncementsTickerProps) {
       href: "#documents",
     },
     {
-      id: 4,
+      id: 5,
       title:
         language === "hi"
           ? "संशोधित दिशानिर्देश 2023 के तहत आकांक्षी जिलों में सौर ऊर्जा व शुद्ध पेयजल परियोजनाओं को प्राथमिकता आवंटन - 15.09.2026"
           : "Tender & Priority Allocation Notice for Solar Energy & Drinking Water in Aspirational Districts - 15.09.2026",
-      href: "#key-offerings",
+      href: "/dashboard/projects",
     },
   ];
 
