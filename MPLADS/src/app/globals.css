@@ -217,4 +217,14 @@ iframe.goog-te-banner-frame {
   overflow: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
+}
+
+/* Responsive horizontal scrollbars hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

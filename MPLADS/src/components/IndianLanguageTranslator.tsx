@@ -408,11 +408,20 @@ export default function IndianLanguageTranslator({
         </button>
       )}
 
+      {/* ── Mobile Backdrop ── */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 sm:hidden animate-in fade-in duration-150"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* ── Dropdown / Modal Selector ── */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-[340px] sm:w-[380px] rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="fixed inset-x-2.5 top-16 max-h-[85vh] sm:max-h-[520px] sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[380px] w-auto rounded-2xl border border-border bg-popover text-popover-foreground shadow-2xl z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
           {/* Header */}
-          <div className="p-3.5 border-b border-border/70 bg-muted/40">
+          <div className="shrink-0 p-3.5 border-b border-border/70 bg-muted/40">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
@@ -433,9 +442,10 @@ export default function IndianLanguageTranslator({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="size-6 rounded-md hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="size-7 rounded-lg hover:bg-muted active:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                aria-label="Close"
               >
-                <IconX className="size-3.5" />
+                <IconX className="size-4" />
               </button>
             </div>
 
@@ -447,16 +457,16 @@ export default function IndianLanguageTranslator({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search Indian language or state..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-input bg-background text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full pl-8 pr-7 py-2 sm:py-1.5 rounded-lg border border-input bg-background text-sm sm:text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 autoFocus
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground"
                 >
-                  <IconX className="size-3" />
+                  <IconX className="size-3.5" />
                 </button>
               )}
             </div>
@@ -464,7 +474,7 @@ export default function IndianLanguageTranslator({
 
           {/* Quick Popular Picks */}
           {!search && (
-            <div className="p-3 border-b border-border/50 bg-muted/15">
+            <div className="shrink-0 p-3 border-b border-border/50 bg-muted/15">
               <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center justify-between">
                 <span>Top Regional Bhashas</span>
                 {currentLang !== "en" && (
@@ -486,7 +496,7 @@ export default function IndianLanguageTranslator({
                       key={lang.code}
                       type="button"
                       onClick={() => handleSelectLanguage(lang.code)}
-                      className={`px-2 py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer ${
+                      className={`px-2 py-2 sm:py-1.5 rounded-lg text-left transition-all border text-xs cursor-pointer active:scale-98 ${
                         isSelected
                           ? "bg-primary text-primary-foreground border-primary font-bold shadow-xs"
                           : "bg-background border-border/60 hover:bg-muted text-foreground"
@@ -506,7 +516,7 @@ export default function IndianLanguageTranslator({
           )}
 
           {/* Complete Indian Languages Scrollable List */}
-          <div className="max-h-60 overflow-y-auto divide-y divide-border/40 p-1">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain divide-y divide-border/40 p-1">
             {filteredLanguages.length === 0 ? (
               <div className="p-6 text-center text-xs text-muted-foreground">
                 No Indian language matches &quot;{search}&quot;.
@@ -519,7 +529,7 @@ export default function IndianLanguageTranslator({
                     key={lang.code}
                     type="button"
                     onClick={() => handleSelectLanguage(lang.code)}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group ${
+                    className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors cursor-pointer group active:bg-muted/80 ${
                       isSelected
                         ? "bg-primary/10 text-primary font-semibold"
                         : "hover:bg-muted text-foreground"
@@ -556,7 +566,7 @@ export default function IndianLanguageTranslator({
                           <IconCheck className="size-3" />
                         </div>
                       ) : (
-                        <span className="text-[10px] text-muted-foreground font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] text-muted-foreground font-mono opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                           {lang.code.toUpperCase()}
                         </span>
                       )}
@@ -568,7 +578,7 @@ export default function IndianLanguageTranslator({
           </div>
 
           {/* Footer note */}
-          <div className="p-2.5 bg-muted/40 border-t border-border/70 flex items-center justify-between text-[10px] text-muted-foreground px-3">
+          <div className="shrink-0 p-2.5 bg-muted/40 border-t border-border/70 flex items-center justify-between text-[10px] text-muted-foreground px-3">
             <span>Official Bhasha of Republic of India</span>
             {isTranslating ? (
               <span className="text-primary font-medium flex items-center gap-1">

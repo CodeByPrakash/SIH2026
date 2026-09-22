@@ -66,10 +66,10 @@ const ROLES: RoleConfig[] = [
   },
   {
     id: "Ministry",
-    label: "Ministry Official",
-    subLabel: "MoSPI Central Administration",
+    label: "National Authority (Ministry)",
+    subLabel: "Central MoSPI Administration",
     icon: IconScale,
-    description: "National dashboard, scheme guidelines, budget release & policy review",
+    description: "National overview, state performance, all-India budget release & scheme vigilance",
   },
   {
     id: "Citizen",

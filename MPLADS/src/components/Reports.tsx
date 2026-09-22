@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -74,12 +74,19 @@ const SECTOR_COLORS = [
 
 interface Props {
   user: User;
+  initialTab?: "financial" | "physical" | "state" | "risk";
 }
 
-export default function Reports({ user }: Props) {
+export default function Reports({ user, initialTab = "financial" }: Props) {
   const [reportType, setReportType] = useState<
     "financial" | "physical" | "state" | "risk"
-  >("financial");
+  >(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setReportType(initialTab);
+    }
+  }, [initialTab]);
   const [stateSearch, setStateSearch] = useState("");
 
   const filteredStates = useMemo(() => {
