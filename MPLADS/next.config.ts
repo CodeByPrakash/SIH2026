@@ -5,6 +5,9 @@ const MODEL_API_URL = process.env.MODEL_API_URL ?? "http://localhost:8000";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ["mongoose", "mongodb"],
+  images: {
+    unoptimized: true,
+  },
   async rewrites() {
     return [
       {

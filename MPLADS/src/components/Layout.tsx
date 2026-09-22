@@ -242,7 +242,7 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
     return [
       {
         label: "Monitor",
-        items: monitor.filter((i) => ["dashboard", "projects", "gis"].includes(i.id)),
+        items: monitor.filter((i) => ["dashboard", "projects", "3d-view", "gis"].includes(i.id)),
       },
       { label: "Citizen Services", items: citizenIntelligence },
       {

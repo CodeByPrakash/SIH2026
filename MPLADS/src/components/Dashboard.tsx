@@ -130,7 +130,10 @@ import {
   IconClockHour4,
   IconBuildingBank,
   IconReceipt,
+  IconCube,
+  IconMap,
 } from "@tabler/icons-react";
+import { FEATURED_3D_PROJECTS } from "@/components/Project3DView";
 
 interface Props {
   user: User;
@@ -862,6 +865,17 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
           <Button
             variant="outline"
             size="sm"
+            className="flex-1 text-xs gap-1.5 bg-blue-500/10 text-blue-600 border-blue-500/30 hover:bg-blue-500/20 dark:text-blue-400 font-semibold"
+            onClick={() => {
+              onClose();
+              onNavigate(`3d-view?projectId=${project.id}`);
+            }}
+          >
+            <IconCube className="size-3.5 text-blue-500" /> 3D View
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             className="flex-1 text-xs gap-1.5 bg-violet-500/10 text-violet-600 border-violet-500/30 hover:bg-violet-500/20 dark:text-violet-400 font-semibold"
             onClick={() => {
               onClose();
@@ -1233,30 +1247,59 @@ export default function Dashboard({ user, onNavigate }: Props) {
   // ── Citizen view ──────────────────────────────────────────────────────
   if (isCitizen) {
     return (
-      <div className="space-y-6 max-w-5xl mx-auto">
-        <Card className="bg-primary text-primary-foreground border-none shadow-md">
-          <CardHeader className="p-6 md:p-8">
+      <div className="space-y-6 max-w-6xl mx-auto">
+        {/* Citizen Hero Banner */}
+        <Card className="bg-primary text-primary-foreground border-none shadow-md overflow-hidden relative">
+          <div className="absolute right-0 bottom-0 translate-x-12 translate-y-8 opacity-10 pointer-events-none">
+            <IconCube className="size-80" />
+          </div>
+          <CardHeader className="p-6 md:p-8 relative z-10">
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-none">Citizen Transparency Portal</Badge>
-              <span className="text-xs text-primary-foreground/80 font-mono">Real-time Public Works</span>
+              <span className="text-xs text-primary-foreground/80 font-mono">Real-time Public Works & 3D Twins</span>
             </div>
-            <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight text-primary-foreground">Track Public Works In Your Constituency (NIDHI-RAKSHAK)</CardTitle>
+            <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight text-primary-foreground">
+              Track Public Works In Your Constituency (NIDHI-RAKSHAK)
+            </CardTitle>
             <CardDescription className="text-primary-foreground/80 text-sm mt-1 max-w-2xl">
-              Inspect verified public fund allocation, track on-ground progress with GPS geo-tagged photos, and report anomalies directly to authorities.
+              Inspect verified public fund allocation, explore interactive 3D digital twins of infrastructure, track on-ground progress with GPS geo-tagged photos, and report anomalies directly.
             </CardDescription>
-            <div className="flex flex-col sm:flex-row gap-2.5 mt-5">
-              <div className="relative flex-1">
+
+            <div className="flex flex-wrap items-center gap-2.5 mt-5">
+              <div className="relative flex-1 min-w-[240px]">
                 <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <input type="text" placeholder="Enter district, constituency, or MP name..." className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-card text-foreground border border-input text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-foreground" />
+                <input
+                  type="text"
+                  placeholder="Enter district, constituency, or project name..."
+                  className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-card text-foreground border border-input text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary-foreground"
+                />
               </div>
               <Button variant="secondary" className="font-semibold text-xs h-10 px-5">Search Works</Button>
+              <Button
+                variant="outline"
+                onClick={() => onNavigate("3d-view")}
+                className="font-semibold text-xs h-10 px-4 gap-1.5 bg-primary-foreground/15 hover:bg-primary-foreground/25 text-primary-foreground border-primary-foreground/30 backdrop-blur-xs"
+              >
+                <IconCube className="size-4 text-cyan-300" />
+                3D Digital Twin Studio
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => onNavigate("gis")}
+                className="font-semibold text-xs h-10 px-4 gap-1.5 bg-primary-foreground/15 hover:bg-primary-foreground/25 text-primary-foreground border-primary-foreground/30 backdrop-blur-xs"
+              >
+                <IconMap className="size-4" />
+                GIS Map
+              </Button>
             </div>
           </CardHeader>
         </Card>
+
+        {/* 4 Stat Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { label: "Total Projects", value: "89,472", sub: "Nationwide works", icon: IconBuildingCommunity },
-            { label: "Completed Works", value: "62,841", sub: "Verified assets", icon: IconCircleCheck },
+            { label: "Completed Works", value: "62,841", sub: "Verified public assets", icon: IconCircleCheck },
             { label: "Active Execution", value: "21,847", sub: "Under construction", icon: IconClock },
             { label: "Total Investment", value: "₹1,68,200 Cr", sub: "Disbursed to date", icon: IconCoin },
           ].map((item) => {
@@ -1266,13 +1309,189 @@ export default function Dashboard({ user, onNavigate }: Props) {
                 <CardHeader>
                   <CardDescription>{item.label}</CardDescription>
                   <CardTitle className="text-2xl font-semibold tabular-nums text-foreground">{item.value}</CardTitle>
-                  <CardAction><div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary"><IconComp className="size-4" /></div></CardAction>
+                  <CardAction>
+                    <div className="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                      <IconComp className="size-4" />
+                    </div>
+                  </CardAction>
                 </CardHeader>
                 <CardFooter className="text-xs text-muted-foreground">{item.sub}</CardFooter>
               </Card>
             );
           })}
         </div>
+
+        {/* ── 3D Digital Twin Showcase Section ── */}
+        <Card className="border border-border/80 shadow-sm overflow-hidden bg-card">
+          <CardHeader className="p-6 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className="border-cyan-500/40 text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 gap-1 text-[11px] font-semibold">
+                    <IconCube className="size-3.5" /> 3D Digital Twin & BIM Models
+                  </Badge>
+                  <span className="text-xs text-muted-foreground font-mono">Interactive Physical Audits</span>
+                </div>
+                <CardTitle className="text-lg md:text-xl font-bold text-foreground">
+                  Constituency Public Infrastructure 3D Twin
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                  Inspect 3D digital twins of public works with structural layers, physical milestones, GPS coordinates, and statutory verification checks.
+                </CardDescription>
+              </div>
+              <Button
+                onClick={() => onNavigate("3d-view")}
+                className="gap-2 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold h-9"
+              >
+                <IconCube className="size-4" />
+                Launch 3D Explorer
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 pt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {FEATURED_3D_PROJECTS.map((p3d) => {
+                const stepCount = p3d.steps.length;
+                const checkCount = p3d.steps.reduce((acc, s) => acc + s.statutoryChecks.length, 0);
+                return (
+                  <div
+                    key={p3d.id}
+                    className="group relative p-4 rounded-xl border border-border/70 bg-muted/20 hover:bg-muted/40 hover:border-cyan-500/40 transition-all duration-200 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <Badge variant="secondary" className="text-[10px] font-medium capitalize bg-secondary text-secondary-foreground">
+                          {p3d.categoryLabel}
+                        </Badge>
+                        <span className="text-xs font-bold font-mono text-cyan-600 dark:text-cyan-400">
+                          {p3d.overallProgress}% Complete
+                        </span>
+                      </div>
+                      <h4 className="font-semibold text-sm text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                        {p3d.name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        <IconMapPin className="size-3 shrink-0" />
+                        {p3d.location}, {p3d.constituency}
+                      </p>
+
+                      {/* Progress Track */}
+                      <div className="mt-3 space-y-1">
+                        <div className="flex justify-between text-[11px] text-muted-foreground">
+                          <span className="truncate">{p3d.currentMilestone}</span>
+                          <span className="font-mono text-foreground font-medium shrink-0">{p3d.expenditure}</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500"
+                            style={{ width: `${p3d.overallProgress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex items-center gap-3 text-[11px] text-muted-foreground border-t border-border/50 pt-2.5">
+                        <span className="flex items-center gap-1">
+                          <IconBuildingCommunity className="size-3 text-primary" />
+                          {stepCount} BIM Stages
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <IconShieldCheck className="size-3 text-emerald-500" />
+                          {checkCount} Statutory Audits
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-2 border-t border-border/50 flex gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => onNavigate(`3d-view?projectId=${p3d.id}`)}
+                        className="flex-1 h-8 text-xs font-semibold gap-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-xs"
+                      >
+                        <IconCube className="size-3.5" />
+                        View 3D Model
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onNavigate("gis")}
+                        className="h-8 text-xs px-3"
+                        title="View on Geo-Spatial GIS Map"
+                      >
+                        <IconMap className="size-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Local Constituency Public Works ── */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div>
+              <CardTitle className="text-base font-semibold">Active Works in Constituency</CardTitle>
+              <CardDescription className="text-xs">
+                Browse on-ground infrastructure works in your locality, track budgets, and inspect 3D twin models.
+              </CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => onNavigate("projects")} className="text-xs text-primary">
+              All Works →
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {showProjects.slice(0, 5).map((p) => (
+              <div
+                key={p.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors gap-3"
+              >
+                <div className="space-y-1 flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-xs text-foreground line-clamp-1">{p.name}</span>
+                    <RiskStatusBadge riskLevel={p.riskLevel} />
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                    <span>{p.district || p.constituency}</span>
+                    <span>•</span>
+                    <span className="font-mono font-medium text-foreground">{fmt(p.sanctionedAmount)}</span>
+                    <span>•</span>
+                    <span>Work Order: {p.workOrderNo}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0">
+                  <ProgressBar value={p.progress} riskLevel={p.riskLevel} />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onNavigate(`3d-view?projectId=${p.id}`)}
+                    className="h-7 text-xs gap-1 border-cyan-500/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 font-semibold"
+                  >
+                    <IconCube className="size-3" />
+                    3D View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => openPanel(p, "status")}
+                    className="h-7 text-xs text-muted-foreground"
+                  >
+                    Details
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Right-side Panels for Citizen */}
+        {selectedProject && panelType === "status" && (
+          <DetailedStatusPanel project={selectedProject} onClose={closePanel} onNavigate={onNavigate} />
+        )}
+        {selectedProject && panelType === "report" && (
+          <ReportPanel project={selectedProject} onClose={closePanel} />
+        )}
       </div>
     );
   }
@@ -1469,6 +1688,10 @@ export default function Dashboard({ user, onNavigate }: Props) {
                             <IconChartBarAlt className="size-3.5 text-violet-500" />
                             Graphs
                           </DropdownMenuItem>
+                          <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => onNavigate(`3d-view?projectId=${project.id}`)}>
+                            <IconCube className="size-3.5 text-cyan-500" />
+                            3D Digital Twin
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -1626,6 +1849,7 @@ export default function Dashboard({ user, onNavigate }: Props) {
             <CardContent className="space-y-2 pt-0">
               {[
                 { label: "View High Risk Projects", icon: IconAlertTriangle, color: "text-red-500", hover: "hover:bg-red-50 hover:border-red-200 hover:text-red-700 dark:hover:bg-red-900/10 dark:hover:text-red-400", action: () => onNavigate("risk") },
+                { label: "3D Digital Twin Explorer", icon: IconCube, color: "text-cyan-500", hover: "hover:bg-cyan-50 hover:border-cyan-200 hover:text-cyan-700 dark:hover:bg-cyan-900/10 dark:hover:text-cyan-400", action: () => onNavigate("3d-view") },
                 { label: "Field Verification Schedule", icon: IconCalendarEvent, color: "text-blue-500", hover: "hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 dark:hover:bg-blue-900/10 dark:hover:text-blue-400", action: () => onNavigate("compliance") },
                 { label: "Download District Report", icon: IconDownload, color: "text-emerald-500", hover: "hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 dark:hover:bg-emerald-900/10 dark:hover:text-emerald-400", action: () => exportDashboard(user, filteredProjects, filterLabel) },
                 { label: "AI Audit Engine", icon: IconSparkles, color: "text-violet-500", hover: "hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700 dark:hover:bg-violet-900/10 dark:hover:text-violet-400", action: () => onNavigate("ai-audit") },

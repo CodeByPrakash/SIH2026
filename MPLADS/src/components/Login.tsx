@@ -104,7 +104,7 @@ const DigiLockerLogo = ({ className = "h-8 w-auto" }: { className?: string }) =>
     <path d="M42 6 H94 L138 48 V166 C138 174 132 180 124 180 H42 C34 180 28 174 28 166 V20 C28 12 34 6 42 6 Z" fill="#6320EE" transform="scale(0.58)" />
     {/* Folded Corner */}
     <path d="M94 6 V48 H138 Z" fill="#FFFFFF" opacity="0.3" transform="scale(0.58)" />
-    
+
     {/* Cloud with keyhole */}
     <path
       d="M30 68 C30 57 39 48 50 48 C54.5 48 58 49.5 61.5 52 C66 39 78 30 92 30 C109 30 123 42 125 58 C129 58 133 60 137 64 C143 70 143 79 137 86 C133 92 125 96 116 96 H46 C36 96 30 89 30 80 Z"
@@ -195,7 +195,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
     else if (selectedRole === "State") user = { ...STATE_USERS[0], phone: mobile };
     else if (selectedRole === "Ministry") user = { ...MINISTRY_USER, phone: mobile };
     else user = { ...CITIZEN_USER, phone: mobile };
-    
+
     if (onLogin) {
       onLogin(user);
     } else {
@@ -297,11 +297,10 @@ export default function Login({ onLogin }: LoginProps = {}) {
                           <div
                             key={role.id}
                             onClick={() => setSelectedRole(role.id)}
-                            className={`flex items-start gap-3 p-3 rounded-md border text-left cursor-pointer transition-colors ${
-                              isSelected
+                            className={`flex items-start gap-3 p-3 rounded-md border text-left cursor-pointer transition-colors ${isSelected
                                 ? "bg-accent border-primary ring-1 ring-primary text-accent-foreground"
                                 : "bg-card border-border hover:bg-muted text-card-foreground"
-                            }`}
+                              }`}
                           >
                             <div className={`p-2 rounded-md mt-0.5 shrink-0 ${isSelected ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                               <Icon size={18} />
@@ -450,8 +449,8 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     <div className="mb-4">
                       <h2 className="text-base font-bold text-foreground">Verify One-Time Password</h2>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Enter the 6-digit security code dispatched to{" "}
-                        <span className="font-mono font-semibold text-foreground">+91 {mobile}</span>
+                        Enter Any OTP Demo Sample 123456{" "}
+                        {/* <span className="font-mono font-semibold text-foreground">+91 {mobile}</span> */}
                       </p>
                     </div>
 
