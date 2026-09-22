@@ -46,6 +46,10 @@ import {
   IconInfoCircle,
   IconRefresh,
   IconArrowRight,
+  IconSearch,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
 } from "@tabler/icons-react";
 
 interface InterventionSimulationProps {
@@ -54,14 +58,91 @@ interface InterventionSimulationProps {
 
 export default function InterventionSimulation({ initialProjectId }: InterventionSimulationProps) {
   const { user } = useAuth();
-  const { projects } = useProjects();
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId || "");
 
-  // Derive selected project object cleanly from selectedProjectId and projects array
-  const selectedProject = React.useMemo(() => {
-    if (!selectedProjectId) return projects[0] || null;
-    return projects.find((p) => p.id === selectedProjectId) || projects[0] || null;
-  }, [projects, selectedProjectId]);
+  // Project Selector State for Search & Pagination
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isSelectorOpen, setIsSelectorOpen] = useState<boolean>(false);
+
+  // Debounce search query input changes by 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1); // Reset page to 1 when search text changes
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch lightweight paginated project list for selector
+  const {
+    projects: lightweightProjects,
+    pagination,
+    isLoading: isLoadingProjects,
+  } = useProjects({
+    page: currentPage,
+    limit: 10,
+    search: debouncedSearch,
+  });
+
+  // Selected Project State & Full Detail Fetching
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId || "");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [loadingProjectDetails, setLoadingProjectDetails] = useState<boolean>(false);
+  const [projectDetailsError, setProjectDetailsError] = useState<string | null>(null);
+
+  // Client-Side In-Memory Cache for Full Project Details
+  const projectDetailsCacheRef = React.useRef<Map<string, Project>>(new Map());
+  // Race Condition Tracking Token
+  const activeFetchIdRef = React.useRef<string>("");
+
+  // Fetch full project details by ID ONLY after selection
+  const fetchFullProjectDetails = useCallback(async (id: string) => {
+    if (!id) {
+      setSelectedProject(null);
+      return;
+    }
+
+    // Reuse in-memory cache if available
+    if (projectDetailsCacheRef.current.has(id)) {
+      setSelectedProject(projectDetailsCacheRef.current.get(id)!);
+      setLoadingProjectDetails(false);
+      setProjectDetailsError(null);
+      return;
+    }
+
+    // Clear stale detailed project state before fetching new project details
+    setSelectedProject(null);
+    setLoadingProjectDetails(true);
+    setProjectDetailsError(null);
+
+    const fetchToken = `${id}-${Date.now()}`;
+    activeFetchIdRef.current = fetchToken;
+
+    try {
+      const res = await fetch(`/api/projects/${id}`);
+      if (!res.ok) throw new Error("Failed to load project details");
+      const json = await res.json();
+
+      // Guard against race conditions: only update state if user hasn't switched projects during request
+      if (activeFetchIdRef.current === fetchToken) {
+        if (json.success && json.data) {
+          projectDetailsCacheRef.current.set(id, json.data);
+          setSelectedProject(json.data);
+        } else {
+          setProjectDetailsError(json.error || "Unable to load project details. Please try again.");
+        }
+      }
+    } catch (err) {
+      if (activeFetchIdRef.current === fetchToken) {
+        setProjectDetailsError("Unable to load project details. Please try again.");
+      }
+    } finally {
+      if (activeFetchIdRef.current === fetchToken) {
+        setLoadingProjectDetails(false);
+      }
+    }
+  }, []);
 
   // Simulation State
   const [simulation, setSimulation] = useState<IScenarioSimulationResult | null>(null);
@@ -82,17 +163,23 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
   const [decisionSuccessMsg, setDecisionSuccessMsg] = useState<string | null>(null);
   const [decisionHistory, setDecisionHistory] = useState<IAuthorityDecision[]>([]);
 
-  // Initialize selected project ONLY if not set yet or if selected project is invalid
+  // Initialize selected project ID from first lightweight project if not set
   useEffect(() => {
-    if (projects.length > 0) {
-      if (!selectedProjectId || !projects.some((p) => p.id === selectedProjectId)) {
-        const defaultId = initialProjectId && projects.some((p) => p.id === initialProjectId)
+    if (!selectedProjectId && lightweightProjects.length > 0) {
+      const defaultId =
+        initialProjectId && lightweightProjects.some((p) => p.id === initialProjectId)
           ? initialProjectId
-          : projects[0].id;
-        setSelectedProjectId(defaultId);
-      }
+          : lightweightProjects[0].id;
+      setSelectedProjectId(defaultId);
     }
-  }, [projects, initialProjectId, selectedProjectId]);
+  }, [lightweightProjects, initialProjectId, selectedProjectId]);
+
+  // Fetch full project details when selectedProjectId changes
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetchFullProjectDetails(selectedProjectId);
+    }
+  }, [selectedProjectId, fetchFullProjectDetails]);
 
   // Sync what-if state ONLY when the selected project ID actually changes
   useEffect(() => {
@@ -241,26 +328,154 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
           </div>
 
           <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3">
-            <div className="w-full sm:w-64">
+            <div className="w-full sm:w-80 relative">
               <label className="text-xs text-indigo-200 mb-1 block font-medium">Select Project for Analysis:</label>
-              <Select value={selectedProjectId} onValueChange={(val) => { if (val) handleProjectSelect(val); }}>
-                <SelectTrigger className="bg-slate-800/80 border-indigo-500/50 text-white h-10">
-                  <SelectValue placeholder="Select a project..." />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700 text-white max-h-72">
-                  {projects.map((p) => (
-                    <SelectItem key={p.id} value={p.id} className="focus:bg-indigo-800 focus:text-white">
-                      <span className="font-semibold text-xs text-indigo-300 mr-2">[{p.id}]</span>
-                      <span>{p.name.length > 32 ? p.name.substring(0, 32) + "…" : p.name}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsSelectorOpen((prev) => !prev)}
+                  className="w-full bg-slate-800/90 border border-indigo-500/50 hover:border-indigo-400 text-white rounded-md h-10 px-3 flex items-center justify-between text-xs text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <span className="truncate pr-2">
+                    {loadingProjectDetails ? (
+                      <span className="text-indigo-300 animate-pulse">Loading project details...</span>
+                    ) : selectedProject ? (
+                      <span>
+                        <strong className="text-indigo-300 font-semibold mr-1.5">[{selectedProject.id}]</strong>
+                        {selectedProject.name}
+                      </span>
+                    ) : selectedProjectId ? (
+                      <span className="text-indigo-200 font-mono">[{selectedProjectId}]</span>
+                    ) : (
+                      <span className="text-slate-400">Select a project...</span>
+                    )}
+                  </span>
+                  <IconChevronDown className={`w-4 h-4 text-indigo-300 shrink-0 transition-transform ${isSelectorOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {isSelectorOpen && (
+                  <>
+                    {/* Backdrop to close popover when clicking outside */}
+                    <div className="fixed inset-0 z-40" onClick={() => setIsSelectorOpen(false)} />
+
+                    <div className="absolute right-0 top-12 z-50 w-full sm:w-96 bg-slate-900 border border-slate-700 rounded-lg shadow-2xl p-3 text-white space-y-3">
+                      {/* Search Projects Input */}
+                      <div className="relative">
+                        <IconSearch className="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" />
+                        <Input
+                          type="text"
+                          placeholder="Search by ID, name, district, state..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="bg-slate-800 border-slate-700 text-white text-xs pl-8 pr-8 h-9 focus:ring-indigo-500"
+                          autoFocus
+                        />
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-2.5 text-slate-400 hover:text-white"
+                          >
+                            <IconX className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Header Label */}
+                      <div className="flex justify-between items-center text-[11px] text-slate-400 px-1 font-medium">
+                        <span>{debouncedSearch ? "Search Results" : "Recent Projects"}</span>
+                        {isLoadingProjects && (
+                          <span className="text-indigo-400 flex items-center gap-1">
+                            <IconRefresh className="w-3 h-3 animate-spin" /> Fetching...
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Scrollable Project Options List */}
+                      <div className="max-h-60 overflow-y-auto space-y-1 divide-y divide-slate-800/60 pr-1">
+                        {isLoadingProjects && lightweightProjects.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-slate-400 space-y-2">
+                            <IconRefresh className="w-5 h-5 mx-auto text-indigo-400 animate-spin" />
+                            <p>{debouncedSearch ? "Searching projects..." : "Loading recent projects..."}</p>
+                          </div>
+                        ) : lightweightProjects.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-slate-400">
+                            {debouncedSearch ? "No projects match your search." : "No projects found."}
+                          </div>
+                        ) : (
+                          lightweightProjects.map((p) => {
+                            const isSelected = p.id === selectedProjectId;
+                            return (
+                              <button
+                                key={p.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedProjectId(p.id);
+                                  setIsSelectorOpen(false);
+                                }}
+                                className={`w-full text-left p-2 rounded transition-colors text-xs flex flex-col gap-0.5 ${
+                                  isSelected
+                                    ? "bg-indigo-600/30 text-white border-l-2 border-indigo-500 font-semibold"
+                                    : "hover:bg-slate-800 text-slate-200"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-mono text-indigo-300 font-bold">[{p.id}]</span>
+                                  <Badge variant="outline" className="text-[10px] py-0 px-1.5 border-slate-700 bg-slate-800 text-slate-300">
+                                    {p.status}
+                                  </Badge>
+                                </div>
+                                <span className="truncate text-slate-100 font-medium">{p.name}</span>
+                                <span className="text-[10px] text-slate-400 truncate">
+                                  {p.district}, {p.state} · {p.category}
+                                </span>
+                              </button>
+                            );
+                          })
+                        )}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {pagination && (
+                        <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={!pagination.hasPreviousPage || isLoadingProjects}
+                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                            className="h-7 text-xs bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 disabled:opacity-40"
+                          >
+                            <IconChevronLeft className="w-3.5 h-3.5 mr-1" />
+                            Previous
+                          </Button>
+
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            Page {pagination.page} of {pagination.totalPages}
+                          </span>
+
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={!pagination.hasNextPage || isLoadingProjects}
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            className="h-7 text-xs bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700 disabled:opacity-40"
+                          >
+                            Next
+                            <IconChevronRight className="w-3.5 h-3.5 ml-1" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
 
             <Button
               onClick={() => handleRunSimulation(showWhatIf)}
-              disabled={loadingSimulation || !selectedProjectId}
+              disabled={loadingSimulation || !selectedProjectId || loadingProjectDetails}
               className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white mt-auto h-10 px-4"
             >
               {loadingSimulation ? (
@@ -292,8 +507,30 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
         </div>
       </div>
 
-      {/* 3. Project Ground State Overview Bar */}
-      {selectedProject && (
+      {/* Full Project Details Loading / Error / Data View */}
+      {loadingProjectDetails ? (
+        <Card className="border shadow-sm p-8 text-center text-slate-500 space-y-3">
+          <IconRefresh className="w-6 h-6 mx-auto text-indigo-600 animate-spin" />
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            Loading full project details for <span className="font-mono font-bold text-indigo-600">[{selectedProjectId}]</span>...
+          </p>
+        </Card>
+      ) : projectDetailsError ? (
+        <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 rounded-lg text-sm flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-2">
+            <IconAlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{projectDetailsError}</span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => fetchFullProjectDetails(selectedProjectId)}
+            className="text-xs border-red-500/30 hover:bg-red-500/10"
+          >
+            <IconRefresh className="w-3.5 h-3.5 mr-1" /> Retry
+          </Button>
+        </div>
+      ) : selectedProject && (
         <Card className="border shadow-sm">
           <CardHeader className="pb-3 bg-slate-50 dark:bg-slate-900/50 rounded-t-lg">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">

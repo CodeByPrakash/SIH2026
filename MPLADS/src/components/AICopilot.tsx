@@ -50,13 +50,13 @@ const UI: Record<Lang, {
   suggestedLabel: string; disclaimer: string; listening: string;
   onlineStatus: string; voiceQuery: string; clearTitle: string;
 }> = {
-  EN: { placeholder: "Ask about projects, funds, risks…", greeting: "Namaste! I'm your AI Copilot", subtitle: "Ask me anything about NIDHI-RAKSHAK projects, funds, risks, delays, or compliance — in any language.", suggestedLabel: "Suggested Questions", disclaimer: "AI responses are indicative. Verify critical data on official portals.", listening: "Listening… speak your query", onlineStatus: "Online · NIDHI-RAKSHAK Copilot", voiceQuery: "Show all critical risk projects", clearTitle: "Clear chat" },
-  HI: { placeholder: "परियोजनाओं, निधियों, जोखिमों के बारे में पूछें…", greeting: "नमस्ते! मैं आपका AI सहायक हूँ", subtitle: "NIDHI-RAKSHAK परियोजनाओं, निधियों, जोखिमों, देरी या अनुपालन के बारे में कुछ भी पूछें।", suggestedLabel: "सुझाए गए प्रश्न", disclaimer: "AI उत्तर संकेतात्मक हैं। आधिकारिक पोर्टल पर महत्वपूर्ण डेटा सत्यापित करें।", listening: "सुन रहा हूँ… अपना प्रश्न बोलें", onlineStatus: "ऑनलाइन · NIDHI-RAKSHAK सहायक", voiceQuery: "सभी गंभीर जोखिम परियोजनाएं दिखाएं", clearTitle: "चैट साफ़ करें" },
-  MR: { placeholder: "प्रकल्प, निधी, जोखीम विचारा…", greeting: "नमस्कार! मी तुमचा AI सहाय्यक आहे", subtitle: "NIDHI-RAKSHAK प्रकल्प, निधी, जोखीम, विलंब किंवा अनुपालनाबद्दल काहीही विचारा।", suggestedLabel: "सुचवलेले प्रश्न", disclaimer: "AI उत्तरे सूचक आहेत। अधिकृत पोर्टलवर महत्त्वाचा डेटा पडताळा.", listening: "ऐकत आहे… आपला प्रश्न बोला", onlineStatus: "ऑनलाइन · NIDHI-RAKSHAK सहाय्यक", voiceQuery: "सर्व गंभीर जोखीम प्रकल्प दाखवा", clearTitle: "चॅट साफ करा" },
-  TA: { placeholder: "திட்டங்கள், நிதி, அபாயங்கள் கேளுங்கள்…", greeting: "வணக்கம்! நான் உங்கள் AI உதவியாளர்", subtitle: "NIDHI-RAKSHAK திட்டங்கள், நிதி, அபாயங்கள், தாமதங்கள் அல்லது இணக்கம் பற்றி எதையும் கேளுங்கள்.", suggestedLabel: "பரிந்துரைக்கப்பட்ட கேள்விகள்", disclaimer: "AI பதில்கள் குறிப்பீட்டு தன்மையானவை. அதிகாரப்பூர்வ தளங்களில் தரவை சரிபார்க்கவும்.", listening: "கேட்கிறேன்… உங்கள் கேள்வியை பேசுங்கள்", onlineStatus: "ஆன்லைன் · NIDHI-RAKSHAK உதவியாளர்", voiceQuery: "அனைத்து முக்கியமான ஆபத்து திட்டங்களை காட்டு", clearTitle: "அரட்டையை அழி" },
-  BN: { placeholder: "প্রকল্প, তহবিল, ঝুঁকি সম্পর্কে জিজ্ঞাসা করুন…", greeting: "নমস্কার! আমি আপনার AI সহকারী", subtitle: "NIDHI-RAKSHAK প্রকল্প, তহবিল, ঝুঁকি, বিলম্ব বা সম্মতি সম্পর্কে যেকোনো প্রশ্ন করুন।", suggestedLabel: "প্রস্তাবিত প্রশ্নসমূহ", disclaimer: "AI উত্তরগুলি নির্দেশক। সরকারি পোর্টালে গুরুত্বপূর্ণ তথ্য যাচাই করুন।", listening: "শুনছি… আপনার প্রশ্ন বলুন", onlineStatus: "অনলাইন · NIDHI-RAKSHAK সহকারী", voiceQuery: "সমস্ত সঙ্কটজনক ঝুঁকি প্রকল্প দেখান", clearTitle: "চ্যাট পরিষ্কার করুন" },
-  KA: { placeholder: "ಯೋಜನೆಗಳು, ನಿಧಿಗಳು, ಅಪಾಯಗಳ ಬಗ್ಗೆ ಕೇಳಿ…", greeting: "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ", subtitle: "NIDHI-RAKSHAK ಯೋಜನೆಗಳು, ನಿಧಿ, ಅಪಾಯಗಳು, ವಿಳಂಬ ಅಥವಾ ಅನುಪಾಲನೆಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ.", suggestedLabel: "ಸೂಚಿಸಲಾದ ಪ್ರಶ್ನೆಗಳು", disclaimer: "AI ಉತ್ತರಗಳು ಸೂಚಕ. ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ನಿರ್ಣಾಯಕ ಡೇಟಾವನ್ನು ಪರಿಶೀಲಿಸಿ.", listening: "ಆಲಿಸುತ್ತಿದೆ… ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಿ", onlineStatus: "ಆನ್‌ಲೈನ್ · NIDHI-RAKSHAK ಸಹಾಯಕ", voiceQuery: "ಎಲ್ಲಾ ಗಂಭೀರ ಅಪಾಯದ ಯೋಜನೆಗಳನ್ನು ತೋರಿಸಿ", clearTitle: "ಚಾಟ್ ತೆರವುಗೊಳಿಸಿ" },
-  TE: { placeholder: "ప్రాజెక్టులు, నిధులు, నష్టాల గురించి అడగండి…", greeting: "నమస్కారం! నేను మీ AI సహాయకుడు", subtitle: "NIDHI-RAKSHAK ప్రాజెక్టులు, నిధులు, నష్టాలు, జాప్యాలు లేదా సమ్మతి గురించి ఏదైనా అడగండి.", suggestedLabel: "సూచించిన ప్రశ్నలు", disclaimer: "AI స్పందనలు సూచికమైనవి. అధికారిక పోర్టల్‌లలో క్రిటికల్ డేటాను ధృవీకరించండి.", listening: "వింటున్నాను… మీ ప్రశ్న చెప్పండి", onlineStatus: "ఆన్‌లైన్ · NIDHI-RAKSHAK సహాయకుడు", voiceQuery: "అన్ని క్రిటికల్ రిస్క్ ప్రాజెక్టులు చూపించు", clearTitle: "చాట్ క్లియర్ చేయండి" },
+  EN: { placeholder: "Ask about projects, funds, risks…", greeting: "Namaste! I'm your AI Copilot", subtitle: "Ask me anything about NIDHI-SATHI projects, funds, risks, delays, or compliance — in any language.", suggestedLabel: "Suggested Questions", disclaimer: "AI responses are indicative. Verify critical data on official portals.", listening: "Listening… speak your query", onlineStatus: "Online · NIDHI-SATHI Copilot", voiceQuery: "Show all critical risk projects", clearTitle: "Clear chat" },
+  HI: { placeholder: "परियोजनाओं, निधियों, जोखिमों के बारे में पूछें…", greeting: "नमस्ते! मैं आपका AI सहायक हूँ", subtitle: "NIDHI-SATHI परियोजनाओं, निधियों, जोखिमों, देरी या अनुपालन के बारे में कुछ भी पूछें।", suggestedLabel: "सुझाए गए प्रश्न", disclaimer: "AI उत्तर संकेतात्मक हैं। आधिकारिक पोर्टल पर महत्वपूर्ण डेटा सत्यापित करें।", listening: "सुन रहा हूँ… अपना प्रश्न बोलें", onlineStatus: "ऑनलाइन · NIDHI-SATHI सहायक", voiceQuery: "सभी गंभीर जोखिम परियोजनाएं दिखाएं", clearTitle: "चैट साफ़ करें" },
+  MR: { placeholder: "प्रकल्प, निधी, जोखीम विचारा…", greeting: "नमस्कार! मी तुमचा AI सहाय्यक आहे", subtitle: "NIDHI-SATHI प्रकल्प, निधी, जोखीम, विलंब किंवा अनुपालनाबद्दल काहीही विचारा।", suggestedLabel: "सुचवलेले प्रश्न", disclaimer: "AI उत्तरे सूचक आहेत। अधिकृत पोर्टलवर महत्त्वाचा डेटा पडताळा.", listening: "ऐकत आहे… आपला प्रश्न बोला", onlineStatus: "ऑनलाइन · NIDHI-SATHI सहाय्यक", voiceQuery: "सर्व गंभीर जोखीम प्रकल्प दाखवा", clearTitle: "चॅट साफ करा" },
+  TA: { placeholder: "திட்டங்கள், நிதி, அபாயங்கள் கேளுங்கள்…", greeting: "வணக்கம்! நான் உங்கள் AI உதவியாளர்", subtitle: "NIDHI-SATHI திட்டங்கள், நிதி, அபாயங்கள், தாமதங்கள் அல்லது இணக்கம் பற்றி எதையும் கேளுங்கள்.", suggestedLabel: "பரிந்துரைக்கப்பட்ட கேள்விகள்", disclaimer: "AI பதில்கள் குறிப்பீட்டு தன்மையானவை. அதிகாரப்பூர்வ தளங்களில் தரவை சரிபார்க்கவும்.", listening: "கேட்கிறேன்… உங்கள் கேள்வியை பேசுங்கள்", onlineStatus: "ஆன்லைன் · NIDHI-SATHI உதவியாளர்", voiceQuery: "அனைத்து முக்கியமான ஆபத்து திட்டங்களை காட்டு", clearTitle: "அரட்டையை அழி" },
+  BN: { placeholder: "প্রকল্প, তহবিল, ঝুঁকি সম্পর্কে জিজ্ঞাসা করুন…", greeting: "নমস্কার! আমি আপনার AI সহকারী", subtitle: "NIDHI-SATHI প্রকল্প, তহবিল, ঝুঁকি, বিলম্ব বা সম্মতি সম্পর্কে যেকোনো প্রশ্ন করুন।", suggestedLabel: "প্রস্তাবিত প্রশ্নসমূহ", disclaimer: "AI উত্তরগুলি নির্দেশক। সরকারি পোর্টালে গুরুত্বপূর্ণ তথ্য যাচাই করুন।", listening: "শুনছি… আপনার প্রশ্ন বলুন", onlineStatus: "অনলাইন · NIDHI-SATHI সহকারী", voiceQuery: "সমস্ত সঙ্কটজনক ঝুঁকি প্রকল্প দেখান", clearTitle: "চ্যাট পরিষ্কার করুন" },
+  KA: { placeholder: "ಯೋಜನೆಗಳು, ನಿಧಿಗಳು, ಅಪಾಯಗಳ ಬಗ್ಗೆ ಕೇಳಿ…", greeting: "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ AI ಸಹಾಯಕ", subtitle: "NIDHI-SATHI ಯೋಜನೆಗಳು, ನಿಧಿ, ಅಪಾಯಗಳು, ವಿಳಂಬ ಅಥವಾ ಅನುಪಾಲನೆಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ.", suggestedLabel: "ಸೂಚಿಸಲಾದ ಪ್ರಶ್ನೆಗಳು", disclaimer: "AI ಉತ್ತರಗಳು ಸೂಚಕ. ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗಳಲ್ಲಿ ನಿರ್ಣಾಯಕ ಡೇಟಾವನ್ನು ಪರಿಶೀಲಿಸಿ.", listening: "ಆಲಿಸುತ್ತಿದೆ… ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಹೇಳಿ", onlineStatus: "ಆನ್‌ಲೈನ್ · NIDHI-SATHI ಸಹಾಯಕ", voiceQuery: "ಎಲ್ಲಾ ಗಂಭೀರ ಅಪಾಯದ ಯೋಜನೆಗಳನ್ನು ತೋರಿಸಿ", clearTitle: "ಚಾಟ್ ತೆರವುಗೊಳಿಸಿ" },
+  TE: { placeholder: "ప్రాజెక్టులు, నిధులు, నష్టాల గురించి అడగండి…", greeting: "నమస్కారం! నేను మీ AI సహాయకుడు", subtitle: "NIDHI-SATHI ప్రాజెక్టులు, నిధులు, నష్టాలు, జాప్యాలు లేదా సమ్మతి గురించి ఏదైనా అడగండి.", suggestedLabel: "సూచించిన ప్రశ్నలు", disclaimer: "AI స్పందనలు సూచికమైనవి. అధికారిక పోర్టల్‌లలో క్రిటికల్ డేటాను ధృవీకరించండి.", listening: "వింటున్నాను… మీ ప్రశ్న చెప్పండి", onlineStatus: "ఆన్‌లైన్ · NIDHI-SATHI సహాయకుడు", voiceQuery: "అన్ని క్రిటికల్ రిస్క్ ప్రాజెక్టులు చూపించు", clearTitle: "చాట్ క్లియర్ చేయండి" },
 };
 
 // ── Action button labels ──────────────────────────────────────────────────────
@@ -371,13 +371,19 @@ function getLocalizedGreeting(lang: Lang, name: string): string {
 function getLocalizedWelcome(lang: Lang, name: string, role: string, loc: string): string {
   switch (lang) {
     case "HI":
-      return `नमस्ते, **${name}** जी! 🙏\n\nमैं आपका **NIDHI-RAKSHAK AI सहायक** हूँ, जो आपके **${role}** खाते (${loc}) से जुड़ा है।\n\nआज मैं आपकी क्या सहायता कर सकता हूँ? आप निधि उपयोग, विलंबित परियोजनाओं, या जोखिम विश्लेषण के बारे में पूछ सकते हैं।`;
+      return `नमस्ते, **${name}** जी! 🙏\n\nमैं आपका **NIDHI-SATHI AI सहायक** हूँ, जो आपके **${role}** खाते (${loc}) से जुड़ा है।\n\nआज मैं आपकी क्या सहायता कर सकता हूँ? आप निधि उपयोग, विलंबित परियोजनाओं, या जोखिम विश्लेषण के बारे में पूछ सकते हैं।`;
     case "MR":
-      return `नमस्कार, **${name}**! 🙏\n\nमी तुमचा **NIDHI-RAKSHAK AI सहाय्यक** आहे, जो तुमच्या **${role}** खात्याशी (${loc}) जोडलेला आहे।\n\nआज मी तुम्हाला कशी मदत करू शकतो? आपण निधी वापर, विलंबित प्रकल्प किंवा जोखीम विश्लेषणाबद्दल विचारू शकता.`;
+      return `नमस्कार, **${name}**! 🙏\n\nमी तुमचा **NIDHI-SATHI AI सहाय्यक** आहे, जो तुमच्या **${role}** खात्याशी (${loc}) जोडलेला आहे।\n\nआज मी तुम्हाला कशी मदत करू शकतो? आपण निधी वापर, विलंबित प्रकल्प किंवा जोखीम विश्लेषणाबद्दल विचारू शकता.`;
     case "TA":
-      return `வணக்கம், **${name}**! 🙏\n\nநான் உங்கள் **NIDHI-RAKSHAK AI உதவியாளர்**, உங்கள் **${role}** கணக்குடன் (${loc}) இணைக்கப்பட்டுள்ளது.\n\nஇன்று நான் உங்களுக்கு எவ்வாறு உதவ முடியும்? நிதி பயன்பாடு, தாமதமான திட்டங்கள் அல்லது ஆபத்து பகுப்பாய்வு பற்றி நீங்கள் கேட்கலாம்.`;
+      return `வணக்கம், **${name}**! 🙏\n\nநான் உங்கள் **NIDHI-SATHI AI உதவியாளர்**, உங்கள் **${role}** கணக்குடன் (${loc}) இணைக்கப்பட்டுள்ளது.\n\nஇன்று நான் உங்களுக்கு எவ்வாறு உதவ முடியும்? நிதி பயன்பாடு, தாமதமான திட்டங்கள் அல்லது ஆபத்து பகுப்பாய்வு பற்றி நீங்கள் கேட்கலாம்.`;
+    case "BN":
+      return `নমস্কার, **${name}**! 🙏\n\nআমি আপনার **NIDHI-SATHI AI সহকারী**, যা আপনার **${role}** অ্যাকাউন্টের (${loc}) জন্য ব্যক্তিগতকৃত।\n\nআজ আমি আপনাকে কীভাবে সাহায্য করতে পারি? আপনি তহবিল ব্যবহার, বিলম্বিত প্রকল্প বা ঝুঁকি বিশ্লেষণ সম্পর্কে জিজ্ঞাসা করতে পারেন।`;
+    case "KA":
+      return `ನಮಸ್ಕಾರ, **${name}**! 🙏\n\nನಾನು ನಿಮ್ಮ **NIDHI-SATHI AI ಸಹಾಯಕ**, ನಿಮ್ಮ **${role}** ಖಾತೆಗೆ (${loc}) ವೈಯಕ್ತಿಕಗೊಳಿಸಲಾಗಿದೆ.\n\nಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ? ನಿಧಿ ಬಳಕೆ, ವಿಳಂಬಿತ ಯೋಜನೆಗಳು ಅಥವಾ ಅಪಾಯ ವಿಶ್ಲೇಷಣೆಯ ಬಗ್ಗೆ ಕೇಳಬಹುದು.`;
+    case "TE":
+      return `నమస్కారం, **${name}**! 🙏\n\nనేను మీ **NIDHI-SATHI AI సహాయకుడు**, మీ **${role}** ఖాతా (${loc}) కోసం వ్యక్తిగతీకరించబడింది.\n\nఈరోజు నేను మీకు ఎలా సహాయపడగలను? నిధి వినియోగం, జాప్యమైన ప్రాజెక్టులు లేదా రిస్క్ విశ్లేషణ గురించి అడగవచ్చు.`;
     default:
-      return `Namaste, **${name}**! 🙏\n\nI am your **NIDHI-RAKSHAK AI Copilot**, personalized for your **${role}** account (${loc}).\n\nHow may I assist you today? You can ask me about fund utilization, delayed projects, pending UCs, statutory risk flags, or specific works in your jurisdiction.`;
+      return `Namaste, **${name}**! 🙏\n\nI am your **NIDHI-SATHI AI Copilot**, personalized for your **${role}** account (${loc}).\n\nHow may I assist you today? You can ask me about fund utilization, delayed projects, pending UCs, statutory risk flags, or specific works in your jurisdiction.`;
   }
 }
 
@@ -395,6 +401,13 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   const [showLangMenu, setShowLangMenu] = useState(false);
   const [listening, setListening] = useState(false);
   const [showSuggested, setShowSuggested] = useState(true);
+
+  // Micro-interaction states for floating popup & button click animation
+  const [isHovered, setIsHovered] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
+  const [showRipple, setShowRipple] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -439,7 +452,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   const suggested = getSuggested(accountUser?.role, lang);
 
   // Cache storage key for conversation persistence per user
-  const chatCacheKey = `nidhi_rakshak_chat_v2_${accountUser?.mpId || userName.replace(/\s+/g, "_")}`;
+  const chatCacheKey = `nidhi_sathi_chat_v2_${accountUser?.mpId || userName.replace(/\s+/g, "_")}`;
 
   // Initial load from cache or seed with personal greeting
   useEffect(() => {
@@ -563,7 +576,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
         ]);
       } else {
         console.error("[AICopilot Error]", data);
-        const errorText = "Sorry, NIDHI-RAKSHAK AI is temporarily unavailable. Please try again.";
+        const errorText = "Sorry, NIDHI-SATHI AI is temporarily unavailable. Please try again.";
         setMessages((prev) => [
           ...prev,
           {
@@ -611,10 +624,50 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
   };
   const timeStr = (d: Date) => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
+  // Mouse hover handlers for speech-style tooltip popup
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(false);
+    }, 300);
+  };
+
+  // FAB button click handler with micro-interaction animation
+  const handleFabClick = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setIsHovered(false);
+
+    if (open) {
+      setOpen(false);
+      return;
+    }
+
+    // Trigger click scale & ripple
+    setIsClicked(true);
+    setShowRipple(true);
+
+    setTimeout(() => {
+      setIsClicked(false);
+    }, 350);
+
+    setTimeout(() => {
+      setShowRipple(false);
+    }, 550);
+
+    // Smoothly open chatbot window
+    setTimeout(() => {
+      handleToggleOpen();
+    }, 180);
+  };
+
   return (
     <>
       {open && (
-        <div className="fixed z-50 flex flex-col shadow-2xl animate-slide-in inset-0 sm:inset-auto sm:bottom-[88px] sm:right-6 w-full max-w-full sm:w-[380px] sm:max-w-[380px] h-[100dvh] sm:h-[560px] rounded-none sm:rounded-2xl bg-white border-0 sm:border border-slate-200 overflow-hidden">
+        <div className="fixed z-50 flex flex-col shadow-2xl animate-nidhi-chat-in inset-0 sm:inset-auto sm:bottom-[88px] sm:right-6 w-full max-w-full sm:w-[380px] sm:max-w-[380px] h-[100dvh] sm:h-[560px] rounded-none sm:rounded-2xl bg-white border-0 sm:border border-slate-200 overflow-hidden">
           {/* Header */}
           <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 shrink-0" style={{ background: "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 100%)" }}>
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 shadow-lg" style={{ background: "linear-gradient(135deg, #F59E0B, #EF4444)" }}>
@@ -622,7 +675,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-white font-display font-bold text-xs sm:text-sm leading-tight flex items-center gap-1.5 truncate">
-                <span>NIDHI-RAKSHAK AI</span>
+                <span>NIDHI-SATHI AI</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/30 text-blue-200 border border-blue-400/30 font-medium">Copilot</span>
               </div>
               <div className="flex items-center gap-1.5 mt-0.5">
@@ -658,7 +711,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
               </button>
             )}
-            <button onClick={() => setOpen(false)} aria-label="Close Chat" className="text-blue-300 hover:text-white transition-colors p-2 rounded hover:bg-white/10 shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center">
+            <button onClick={() => setOpen(false)} aria-label="Close NIDHI-SATHI AI" className="text-blue-300 hover:text-white transition-colors p-2 rounded hover:bg-white/10 shrink-0 min-h-[36px] min-w-[36px] flex items-center justify-center">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
             </button>
           </div>
@@ -771,21 +824,131 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
         </div>
       )}
 
-      {/* FAB */}
-      <button onClick={handleToggleOpen} className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 active:scale-95 hover:scale-105 bottom-4 right-4 sm:bottom-6 sm:right-6 w-14 h-14" style={{ background: open ? "linear-gradient(135deg, #EF4444, #DC2626)" : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)", boxShadow: open ? "0 8px 32px rgba(239,68,68,0.45)" : "0 8px 32px rgba(13,27,62,0.55)" }} title="NIDHI-RAKSHAK AI Copilot" aria-label="Open AI Copilot">
-        {open
-          ? <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-          : <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
-        }
-        {!open && <span className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: "#F59E0B" }}/>}
-        {!open && ALERTS.filter(a => a.status === "Active").length > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white">
-            {ALERTS.filter(a => a.status === "Active").length}
-          </span>
-        )}
-      </button>
+      {/* Speech-Style Tooltip Popup before chat opens */}
+      {!open && (isHovered || isClicked) && (
+        <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className="fixed z-50 bottom-[78px] right-4 sm:bottom-[92px] sm:right-6 pointer-events-auto transition-all duration-300 ease-out animate-nidhi-popup-in"
+        >
+          <div className="relative bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-xl shadow-slate-900/15 rounded-2xl px-3.5 py-2.5 max-w-[210px] sm:max-w-[230px]">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 font-display">
+              <span className="bg-gradient-to-r from-blue-900 via-indigo-800 to-blue-600 bg-clip-text text-transparent">
+                NIDHI-SATHI AI
+              </span>
+              <span className="text-amber-500 text-xs">✨</span>
+            </div>
+            <p className="text-[11px] font-medium text-slate-500 mt-0.5 leading-tight">
+              Your MPLADS Copilot
+            </p>
+            {/* Pointer / Tail pointing towards FAB button */}
+            <div
+              className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-slate-200/90 rotate-45"
+            />
+          </div>
+        </div>
+      )}
 
-      <style>{`@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }`}</style>
+      {/* Floating Chatbot FAB */}
+      <div
+        className="fixed z-50 bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center justify-center pointer-events-auto"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Ripple effect on click */}
+        {showRipple && (
+          <>
+            <span className="absolute w-14 h-14 rounded-full bg-blue-500/40 animate-nidhi-ripple pointer-events-none" />
+            <span className="absolute w-14 h-14 rounded-full bg-amber-400/40 animate-nidhi-ripple-delayed pointer-events-none" />
+          </>
+        )}
+
+        <button
+          onClick={handleFabClick}
+          className={`relative flex items-center justify-center rounded-full shadow-2xl transition-all duration-200 w-14 h-14 ${
+            isClicked ? "scale-95 rotate-[-6deg]" : "hover:scale-105 active:scale-95"
+          }`}
+          style={{
+            background: open
+              ? "linear-gradient(135deg, #EF4444, #DC2626)"
+              : "linear-gradient(135deg, #0D1B3E 0%, #1a3a6b 60%, #F59E0B 200%)",
+            boxShadow: open
+              ? "0 8px 32px rgba(239,68,68,0.45)"
+              : "0 8px 32px rgba(13,27,62,0.55)",
+          }}
+          title="NIDHI-SATHI AI Copilot"
+          aria-label={open ? "Close NIDHI-SATHI AI" : "Open NIDHI-SATHI AI"}
+        >
+          {open ? (
+            <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="white" className={`w-6 h-6 transition-transform duration-200 ${isClicked ? "scale-110" : ""}`}>
+              <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z" />
+            </svg>
+          )}
+          {!open && <span className="absolute inset-0 rounded-full animate-ping opacity-20" style={{ background: "#F59E0B" }}/>}
+          {!open && ALERTS.filter(a => a.status === "Active").length > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[9px] font-bold text-white z-10">
+              {ALERTS.filter(a => a.status === "Active").length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+
+        @keyframes nidhi-popup-in {
+          0% { opacity: 0; transform: translateY(6px) scale(0.96); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes nidhi-chat-in {
+          0% { opacity: 0; transform: translateY(10px) scale(0.98); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes nidhi-ripple {
+          0% { transform: scale(0.9); opacity: 0.8; }
+          100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        @keyframes nidhi-ripple-delayed {
+          0% { transform: scale(0.9); opacity: 0.6; }
+          100% { transform: scale(1.8); opacity: 0; }
+        }
+
+        .animate-nidhi-popup-in {
+          animation: nidhi-popup-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-nidhi-chat-in {
+          animation: nidhi-chat-in 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-nidhi-ripple {
+          animation: nidhi-ripple 450ms cubic-bezier(0, 0.2, 0.8, 1) forwards;
+        }
+
+        .animate-nidhi-ripple-delayed {
+          animation: nidhi-ripple-delayed 350ms cubic-bezier(0, 0.2, 0.8, 1) 80ms forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-nidhi-popup-in,
+          .animate-nidhi-chat-in,
+          .animate-nidhi-ripple,
+          .animate-nidhi-ripple-delayed {
+            animation: none !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

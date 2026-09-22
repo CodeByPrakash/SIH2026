@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllProjects, createProject, isLastQueryFromCache } from "@/services/project.service";
+import { getAllProjects, getPaginatedProjects, createProject, isLastQueryFromCache } from "@/services/project.service";
 
 export async function GET(request: Request) {
   try {
@@ -9,8 +9,54 @@ export async function GET(request: Request) {
     const constituency = searchParams.get("constituency") || undefined;
     const status = searchParams.get("status") || undefined;
     const riskLevel = searchParams.get("riskLevel") || undefined;
-    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!, 10) : undefined;
+    const pageParam = searchParams.get("page");
+    const limitParam = searchParams.get("limit");
+    const searchParam = searchParams.get("search");
     const force = searchParams.get("force") === "true";
+    const lightweight = searchParams.get("lightweight") === "true" || pageParam !== null || searchParam !== null;
+
+    const isPaginatedCall = pageParam !== null || limitParam !== null || searchParam !== null;
+
+    if (isPaginatedCall) {
+      const page = pageParam ? parseInt(pageParam, 10) : 1;
+      const limit = limitParam ? parseInt(limitParam, 10) : 10;
+      const search = searchParam || undefined;
+
+      const result = await getPaginatedProjects({
+        district,
+        state,
+        constituency,
+        status,
+        riskLevel,
+        page,
+        limit,
+        search,
+        forceRefresh: force,
+        lightweight,
+      });
+
+      const isCached = isLastQueryFromCache();
+
+      return NextResponse.json(
+        {
+          success: true,
+          data: result.projects,
+          projects: result.projects,
+          count: result.projects.length,
+          cached: isCached,
+          pagination: result.pagination,
+        },
+        {
+          status: 200,
+          headers: {
+            "Cache-Control": force
+              ? "no-cache, no-store, must-revalidate"
+              : "public, s-maxage=30, stale-while-revalidate=60",
+            "X-Cache-Status": isCached ? "HIT" : "MISS",
+          },
+        }
+      );
+    }
 
     const projects = await getAllProjects({
       district,
@@ -18,7 +64,7 @@ export async function GET(request: Request) {
       constituency,
       status,
       riskLevel,
-      limit,
+      limit: limitParam ? parseInt(limitParam, 10) : undefined,
       forceRefresh: force,
     });
 
@@ -28,6 +74,7 @@ export async function GET(request: Request) {
       {
         success: true,
         data: projects,
+        projects: projects,
         count: projects.length,
         cached: isCached,
       },
