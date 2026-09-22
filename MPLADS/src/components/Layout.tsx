@@ -43,6 +43,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import IndianLanguageTranslator from "./IndianLanguageTranslator";
 import {
   IconLayoutDashboard,
   IconBuildingCommunity,
@@ -559,6 +560,9 @@ export default function Layout({
               <IconBuildingCommunity className="size-3.5" />
               <span>Nidhirakshak Portal</span>
             </Button>
+
+            {/* Indian Language Translation Dropdown */}
+            <IndianLanguageTranslator variant="pill" />
 
             <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-muted/50 px-2.5 py-1 text-[11px] text-muted-foreground">
               <div className="size-2 rounded-full bg-emerald-500 animate-pulse" />
