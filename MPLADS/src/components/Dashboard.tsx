@@ -1127,6 +1127,103 @@ function exportDashboard(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// CITIZEN PROJECT DETAILS PANEL (Heading & Description Only, No Risk Score)
+// ═══════════════════════════════════════════════════════════════════════════
+function CitizenProjectDetailsPanel({
+  project,
+  onClose,
+  onNavigate,
+}: {
+  project: Project;
+  onClose: () => void;
+  onNavigate: (p: string) => void;
+}) {
+  return (
+    <Sheet open onOpenChange={onClose}>
+      <SheetContent
+        side="right"
+        className="w-full sm:w-[480px] p-0 flex flex-col overflow-hidden"
+        showCloseButton={false}
+      >
+        {/* Header */}
+        <div className="p-5 border-b border-border bg-card flex items-start justify-between gap-3">
+          <div>
+            <span className="text-[10px] font-semibold text-primary uppercase tracking-wider block">
+              Public Overview
+            </span>
+            <SheetTitle className="text-base font-bold text-foreground mt-1 leading-snug">
+              {project.name}
+            </SheetTitle>
+          </div>
+          <button
+            onClick={onClose}
+            className="size-8 rounded-lg flex items-center justify-center hover:bg-muted transition-colors shrink-0"
+          >
+            <IconX className="size-4 text-muted-foreground" />
+          </button>
+        </div>
+
+        {/* Content: Only Heading and Description, no more information, no risk score */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          <div className="space-y-1.5">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Project Title
+            </h4>
+            <p className="text-sm font-semibold text-foreground">
+              {project.name}
+            </p>
+          </div>
+
+          <div className="space-y-1.5 pt-3 border-t border-border/60">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Description
+            </h4>
+            <p className="text-sm text-foreground leading-relaxed">
+              {project.category} · {project.subCategory}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+              Public community development work executed in {project.constituency}, {project.district} ({project.state}) under the MPLADS programme for public benefit.
+            </p>
+          </div>
+
+          <div className="space-y-1.5 pt-3 border-t border-border/60">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Locality
+            </h4>
+            <p className="text-xs text-foreground flex items-center gap-1.5">
+              <IconMapPin className="size-3.5 text-primary shrink-0" />
+              <span>{project.constituency}, {project.district} ({project.state})</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-border bg-card/80 shrink-0 flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 text-xs"
+            onClick={onClose}
+          >
+            Close
+          </Button>
+          <Button
+            size="sm"
+            className="flex-1 text-xs gap-1.5"
+            onClick={() => {
+              onClose();
+              onNavigate(`3d-view?projectId=${project.id}`);
+            }}
+          >
+            <IconCube className="size-3.5" /> View in 3D
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // MAIN DASHBOARD
 // ═══════════════════════════════════════════════════════════════════════════
 export default function Dashboard({ user, onNavigate }: Props) {
@@ -1447,37 +1544,22 @@ export default function Dashboard({ user, onNavigate }: Props) {
                 className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors gap-3"
               >
                 <div className="space-y-1 flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-xs text-foreground line-clamp-1">{p.name}</span>
-                    <RiskStatusBadge riskLevel={p.riskLevel} />
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                    <span>{p.district || p.constituency}</span>
-                    <span>•</span>
-                    <span className="font-mono font-medium text-foreground">{fmt(p.sanctionedAmount)}</span>
-                    <span>•</span>
-                    <span>Work Order: {p.workOrderNo}</span>
-                  </div>
+                  <h4 className="font-semibold text-xs sm:text-sm text-foreground line-clamp-1">
+                    {p.name}
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground line-clamp-1">
+                    {p.category} · {p.subCategory} — {p.district || p.constituency} ({p.state})
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0">
-                  <ProgressBar value={p.progress} riskLevel={p.riskLevel} />
+                <div className="flex items-center gap-2 shrink-0">
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => onNavigate(`3d-view?projectId=${p.id}`)}
-                    className="h-7 text-xs gap-1 border-cyan-500/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10 font-semibold"
-                  >
-                    <IconCube className="size-3" />
-                    3D View
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
                     onClick={() => openPanel(p, "status")}
-                    className="h-7 text-xs text-muted-foreground"
+                    className="h-7 text-xs text-foreground hover:bg-muted font-medium"
                   >
-                    Details
+                    View Details
                   </Button>
                 </div>
               </div>
@@ -1485,12 +1567,9 @@ export default function Dashboard({ user, onNavigate }: Props) {
           </CardContent>
         </Card>
 
-        {/* Right-side Panels for Citizen */}
+        {/* Right-side Panels for Citizen (Heading and Description Only, No Risk Score) */}
         {selectedProject && panelType === "status" && (
-          <DetailedStatusPanel project={selectedProject} onClose={closePanel} onNavigate={onNavigate} />
-        )}
-        {selectedProject && panelType === "report" && (
-          <ReportPanel project={selectedProject} onClose={closePanel} />
+          <CitizenProjectDetailsPanel project={selectedProject} onClose={closePanel} onNavigate={onNavigate} />
         )}
       </div>
     );

@@ -55,8 +55,8 @@ import {
   IconCircleCheck,
   IconChartBar,
   IconHelp,
-  IconSettings,
   IconMessageReport,
+  IconMessageHeart,
   IconLogout,
   IconSearch,
   IconSelector,
@@ -68,9 +68,13 @@ import {
   IconPhoto,
   IconBrain,
   IconCube,
+  IconFileSearch,
+  IconFileSpreadsheet,
+  IconWorld,
+  IconMapPinCheck,
 } from "@tabler/icons-react";
 
-type Page =
+export type Page =
   | "dashboard"
   | "projects"
   | "risk"
@@ -85,7 +89,15 @@ type Page =
   | "crosscheck"
   | "ai-audit"
   | "3d-view"
-  | "state-performance";
+  | "state-performance"
+  | "district-performance"
+  | "financial-analytics"
+  | "citizen-feedback"
+  | "track-grievance"
+  | "project-info"
+  | "help-guidelines"
+  | "landing"
+  | "field-verification";
 
 interface LayoutProps {
   user: User;
@@ -243,17 +255,372 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
   if (role === "Citizen") {
     return [
       {
-        label: "Monitor",
-        items: monitor.filter((i) => ["dashboard", "projects", "3d-view", "gis"].includes(i.id)),
+        label: "Explore",
+        items: [
+          {
+            id: "dashboard",
+            label: "Public Overview",
+            sub: "Overview & Citizen Insights",
+            icon: IconLayoutDashboard,
+          },
+          {
+            id: "projects",
+            label: "Projects & Works",
+            sub: "Public Works & Progress",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "gis",
+            label: "GIS Map",
+            sub: "Interactive Geo-spatial View",
+            icon: IconMap,
+          },
+          {
+            id: "3d-view",
+            label: "3D Digital Twin",
+            sub: "Interactive 3D Visualizer",
+            icon: IconCube,
+          },
+        ],
       },
-      { label: "Citizen Services", items: citizenIntelligence },
       {
-        label: "Reports",
+        label: "Citizen Services",
+        items: [
+          {
+            id: "evidence",
+            label: "Submit Evidence",
+            sub: "Ground Discrepancy & Photos",
+            icon: IconSparkles,
+          },
+          {
+            id: "grievance",
+            label: "Public Grievances",
+            sub: "Lodge Public Complaint",
+            icon: IconMessageReport,
+          },
+          {
+            id: "track-grievance",
+            label: "Track Grievance",
+            sub: "Status & Resolution Timeline",
+            icon: IconFileSearch,
+          },
+        ],
+      },
+      {
+        label: "Transparency",
         items: [
           {
             id: "reports",
             label: "Public Reports",
-            sub: "Constituency Spending & Works",
+            sub: "Constituency Spending & Audits",
+            icon: IconChartBar,
+          },
+          {
+            id: "project-info",
+            label: "Project Information",
+            sub: "RTI & Public Disclosures",
+            icon: IconFileSpreadsheet,
+          },
+        ],
+      },
+      {
+        label: "Support",
+        items: [
+          {
+            id: "help-guidelines",
+            label: "Help & Guidelines",
+            sub: "MPLADS Guidelines & Charter",
+            icon: IconHelp,
+          },
+          {
+            id: "landing",
+            label: "Public Landing Page",
+            sub: "National Public Portal",
+            icon: IconWorld,
+          },
+        ],
+      },
+    ];
+  }
+
+  if (role === "MP") {
+    return [
+      {
+        label: "My Constituency",
+        items: [
+          {
+            id: "dashboard",
+            label: "Constituency Overview",
+            sub: "Constituency Overview & Insights",
+            icon: IconLayoutDashboard,
+          },
+          {
+            id: "projects",
+            label: "Projects & Works",
+            sub: "All Projects & Progress",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "gis",
+            label: "GIS Map View",
+            sub: "Geo-spatial Analytics",
+            icon: IconMap,
+          },
+          {
+            id: "financial-analytics",
+            label: "Financial Analytics",
+            sub: "Allocations, Releases & Trends",
+            icon: IconReceiptTax,
+          },
+        ],
+      },
+      {
+        label: "Project Intelligence",
+        items: [
+          {
+            id: "risk",
+            label: "Project Risk",
+            sub: "Risk Analysis & Anomaly Scoring",
+            icon: IconShieldExclamation,
+          },
+          {
+            id: "crosscheck",
+            label: "Photo Geo-CrossCheck AI",
+            sub: "Geo-Distance & Image Reuse AI",
+            icon: IconPhoto,
+          },
+          {
+            id: "evidence",
+            label: "Citizen Evidence AI",
+            sub: "Ground Discrepancy Verification",
+            icon: IconSparkles,
+          },
+          {
+            id: "alerts",
+            label: "Project Alerts",
+            sub: "Action Required & Warnings",
+            icon: IconBell,
+            badge: alertCount,
+          },
+        ],
+      },
+      {
+        label: "Engagement",
+        items: [
+          {
+            id: "citizen-feedback",
+            label: "Citizen Feedback",
+            sub: "Public Sentiment & Reviews",
+            icon: IconMessageHeart,
+          },
+          {
+            id: "grievance",
+            label: "Public Grievances",
+            sub: "Citizen Grievances & Redressal",
+            icon: IconMessageReport,
+          },
+          {
+            id: "reports",
+            label: "Reports",
+            sub: "Constituency Spending & Exports",
+            icon: IconChartBar,
+          },
+        ],
+      },
+    ];
+  }
+
+  if (role === "District") {
+    return [
+      {
+        label: "Monitor",
+        items: [
+          {
+            id: "dashboard",
+            label: "District Overview",
+            sub: "District-Level Governance & KPIs",
+            icon: IconLayoutDashboard,
+          },
+          {
+            id: "projects",
+            label: "Projects & Works",
+            sub: "All Projects & Progress",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "gis",
+            label: "GIS Map View",
+            sub: "Geo-spatial Analytics",
+            icon: IconMap,
+          },
+          {
+            id: "financial-analytics",
+            label: "Financial Analytics",
+            sub: "Allocations, Releases & Trends",
+            icon: IconReceiptTax,
+          },
+          {
+            id: "field-verification",
+            label: "Field Verification",
+            sub: "Mandatory 10% On-Site Audits",
+            icon: IconMapPinCheck,
+          },
+        ],
+      },
+      {
+        label: "AI & Intelligence",
+        items: [
+          {
+            id: "ai-audit",
+            label: "AI Audit Engine",
+            sub: "ML-Powered CAG Anomaly Audit",
+            icon: IconBrain,
+          },
+          {
+            id: "crosscheck",
+            label: "Photo Geo-CrossCheck AI",
+            sub: "Geo-Distance & Image Reuse AI",
+            icon: IconPhoto,
+          },
+          {
+            id: "evidence",
+            label: "Citizen Evidence AI",
+            sub: "Ground Discrepancy Verification",
+            icon: IconSparkles,
+          },
+          {
+            id: "risk",
+            label: "AI Risk Center",
+            sub: "Risk Analysis & Anomaly Scoring",
+            icon: IconShieldExclamation,
+          },
+          {
+            id: "alerts",
+            label: "Alerts & Warnings",
+            sub: "Action Required & Warnings",
+            icon: IconBell,
+            badge: alertCount,
+          },
+        ],
+      },
+      {
+        label: "Action & Governance",
+        items: [
+          {
+            id: "simulation",
+            label: "Intervention Simulator",
+            sub: "Compare Release, Hold & Action",
+            icon: IconScale,
+          },
+          {
+            id: "compliance",
+            label: "Compliance Engine",
+            sub: "Guidelines & Audit Checks",
+            icon: IconCircleCheck,
+          },
+          {
+            id: "reports",
+            label: "Reports & Exports",
+            sub: "Analytics & Downloads",
+            icon: IconChartBar,
+          },
+        ],
+      },
+    ];
+  }
+
+  if (role === "State") {
+    return [
+      {
+        label: "Monitor",
+        items: [
+          {
+            id: "dashboard",
+            label: "State Dashboard",
+            sub: "State Overview & Key Insights",
+            icon: IconLayoutDashboard,
+          },
+          {
+            id: "district-performance",
+            label: "District Performance",
+            sub: "District-wise Progress & Benchmarks",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "projects",
+            label: "Projects & Works",
+            sub: "All Projects & Progress",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "gis",
+            label: "GIS Map View",
+            sub: "Geo-spatial Analytics",
+            icon: IconMap,
+          },
+          {
+            id: "financial-analytics",
+            label: "Financial Analytics",
+            sub: "Allocations, Releases & Trends",
+            icon: IconReceiptTax,
+          },
+        ],
+      },
+      {
+        label: "AI & Intelligence",
+        items: [
+          {
+            id: "ai-audit",
+            label: "AI Audit Engine",
+            sub: "ML-Powered CAG Anomaly Audit",
+            icon: IconBrain,
+          },
+          {
+            id: "crosscheck",
+            label: "Photo Geo-CrossCheck AI",
+            sub: "Geo-Distance & Image Reuse AI",
+            icon: IconPhoto,
+          },
+          {
+            id: "risk",
+            label: "AI Risk Center",
+            sub: "Risk Analysis & Anomaly",
+            icon: IconShieldExclamation,
+          },
+          {
+            id: "alerts",
+            label: "Alerts & Warnings",
+            sub: "Action Required & Warnings",
+            icon: IconBell,
+            badge: alertCount,
+          },
+          {
+            id: "investigation",
+            label: "Duplicate Detection",
+            sub: "Overlapping Works AI",
+            icon: IconLayersIntersect,
+          },
+        ],
+      },
+      {
+        label: "Governance",
+        items: [
+          {
+            id: "compliance",
+            label: "Compliance Engine",
+            sub: "Guidelines & Audit Checks",
+            icon: IconCircleCheck,
+          },
+          {
+            id: "simulation",
+            label: "Intervention Simulator",
+            sub: "Compare Release, Hold & Action",
+            icon: IconScale,
+          },
+          {
+            id: "reports",
+            label: "Reports & Exports",
+            sub: "Analytics & Downloads",
             icon: IconChartBar,
           },
         ],
@@ -427,12 +794,14 @@ function UserNavFooter({
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => onNavigate("dashboard")}>
                 <IconSparkles className="size-4 mr-2 text-primary" />
-                Executive Overview
+                {user.role === "Citizen" ? "Citizen Overview" : "Executive Overview"}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onNavigate("alerts")}>
-                <IconBell className="size-4 mr-2 text-muted-foreground" />
-                Active Alerts ({alertCount})
-              </DropdownMenuItem>
+              {user.role !== "Citizen" && (
+                <DropdownMenuItem onClick={() => onNavigate("alerts")}>
+                  <IconBell className="size-4 mr-2 text-muted-foreground" />
+                  Active Alerts ({alertCount})
+                </DropdownMenuItem>
+              )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -522,7 +891,13 @@ function AppSidebar({
                       <SidebarMenuButton
                         isActive={isActive}
                         tooltip={item.label}
-                        onClick={() => onNavigate(item.id)}
+                        onClick={() => {
+                          if (item.id === "landing") {
+                            window.location.href = "/";
+                          } else {
+                            onNavigate(item.id);
+                          }
+                        }}
                       >
                         <IconComp className="size-4 shrink-0" />
                         <span>{item.label}</span>
@@ -558,15 +933,14 @@ function AppSidebar({
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Support & Guidelines">
+                <SidebarMenuButton
+                  tooltip="Support & Guidelines"
+                  isActive={currentPage === "help-guidelines"}
+                  onClick={() => onNavigate("help-guidelines")}
+                  className="cursor-pointer"
+                >
                   <IconHelp className="size-4 shrink-0 text-muted-foreground" />
                   <span>Help & Guidelines</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Settings">
-                  <IconSettings className="size-4 shrink-0 text-muted-foreground" />
-                  <span>System Settings</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -660,22 +1034,24 @@ export default function Layout({
               FY 2024-25 Q2
             </Badge>
 
-            {/* Alert Button Triggering Right Side Sheet */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setAlertSheetOpen(true)}
-              className="relative flex items-center gap-1.5 text-xs font-medium border-destructive/30 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive h-8 px-2.5"
-            >
-              <IconBell className="size-3.5" />
-              <span>{alertCount} Alerts</span>
-              {alertCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex size-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-                  <span className="relative inline-flex size-2.5 rounded-full bg-destructive" />
-                </span>
-              )}
-            </Button>
+            {/* Alert Button Triggering Right Side Sheet (Hidden for Citizen role) */}
+            {user.role !== "Citizen" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAlertSheetOpen(true)}
+                className="relative flex items-center gap-1.5 text-xs font-medium border-destructive/30 bg-destructive/5 text-destructive hover:bg-destructive/10 hover:text-destructive h-8 px-2.5"
+              >
+                <IconBell className="size-3.5" />
+                <span>{alertCount} Alerts</span>
+                {alertCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex size-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+                    <span className="relative inline-flex size-2.5 rounded-full bg-destructive" />
+                  </span>
+                )}
+              </Button>
+            )}
 
             <div className="flex items-center gap-2 pl-2 border-l border-border">
               <div className="hidden text-right lg:block">

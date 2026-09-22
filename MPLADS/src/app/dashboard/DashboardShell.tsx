@@ -19,6 +19,11 @@ import GeoPhotoCrossCheckUSP from "@/components/GeoPhotoCrossCheckUSP";
 import AICopilot from "@/components/AICopilot";
 import AiAuditEngine from "@/components/AiAuditEngine";
 import Project3DView from "@/components/Project3DView";
+import DistrictPerformance from "@/components/DistrictPerformance";
+import CitizenFeedback from "@/components/CitizenFeedback";
+import ProjectInformation from "@/components/ProjectInformation";
+import HelpGuidelines from "@/components/HelpGuidelines";
+import FieldVerification from "@/components/FieldVerification";
 import { ALERTS, MP_USERS, DISTRICT_USERS, STATE_USERS, MINISTRY_USER, CITIZEN_USER } from "@/data/mpladsData";
 import type { User, UserRole } from "@/types";
 
@@ -37,7 +42,15 @@ type Page =
   | "crosscheck"
   | "ai-audit"
   | "3d-view"
-  | "state-performance";
+  | "state-performance"
+  | "district-performance"
+  | "financial-analytics"
+  | "citizen-feedback"
+  | "track-grievance"
+  | "project-info"
+  | "help-guidelines"
+  | "landing"
+  | "field-verification";
 
 interface DashboardShellProps {
   role?: UserRole;
@@ -78,7 +91,14 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
   if (!activeSection) {
     if (pathname.includes("/ai-audit")) currentPage = "ai-audit";
     else if (pathname.includes("/3d-view")) currentPage = "3d-view";
+    else if (pathname.includes("/citizen-feedback")) currentPage = "citizen-feedback";
+    else if (pathname.includes("/district-performance")) currentPage = "district-performance";
+    else if (pathname.includes("/financial-analytics")) currentPage = "financial-analytics";
     else if (pathname.includes("/state-performance")) currentPage = "state-performance";
+    else if (pathname.includes("/track-grievance")) currentPage = "track-grievance";
+    else if (pathname.includes("/project-info")) currentPage = "project-info";
+    else if (pathname.includes("/help-guidelines")) currentPage = "help-guidelines";
+    else if (pathname.includes("/field-verification")) currentPage = "field-verification";
     else if (pathname.includes("/projects")) currentPage = "projects";
     else if (pathname.includes("/risk")) currentPage = "risk";
     else if (pathname.includes("/alerts")) currentPage = "alerts";
@@ -94,7 +114,9 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
   }
 
   const handleNavigate = (page: string) => {
-    if (page === "dashboard") {
+    if (page === "landing") {
+      router.push("/");
+    } else if (page === "dashboard") {
       const currentRole = user?.role?.toLowerCase() || role?.toLowerCase() || "mp";
       router.push(`/dashboard/${currentRole}`);
     } else {
@@ -140,8 +162,12 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
         return <Compliance />;
       case "gis":
         return <GISView />;
+      case "district-performance":
+        return <DistrictPerformance user={currentUser} onNavigate={handleNavigate} />;
       case "state-performance":
         return <Reports user={currentUser} initialTab="state" />;
+      case "financial-analytics":
+        return <Reports user={currentUser} initialTab="financial" />;
       case "reports":
         return <Reports user={currentUser} initialTab="financial" />;
       case "investigation":
@@ -156,6 +182,16 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
         return <GeoPhotoCrossCheckUSP />;
       case "ai-audit":
         return <AiAuditEngine initialProjectId={paramProjectId} />;
+      case "citizen-feedback":
+        return <CitizenFeedback user={currentUser} onNavigate={handleNavigate} />;
+      case "track-grievance":
+        return <Grievance initialTab="track" />;
+      case "project-info":
+        return <ProjectInformation user={currentUser} onNavigate={handleNavigate} />;
+      case "help-guidelines":
+        return <HelpGuidelines onNavigate={handleNavigate} />;
+      case "field-verification":
+        return <FieldVerification user={currentUser} onNavigate={handleNavigate} />;
       default:
         return <Dashboard user={currentUser} onNavigate={handleNavigate} />;
     }

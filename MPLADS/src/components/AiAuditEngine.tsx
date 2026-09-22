@@ -560,26 +560,24 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
     <div className="space-y-6 pb-16 px-1">
       {/* ── Page Header ────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between border-b pb-6">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20">
-              <IconBrain className="size-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">NIDHI-RAKSHAK AI Audit Engine</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Official NIDHI-RAKSHAK ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
-              </p>
-            </div>
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0 mt-0.5">
+            <IconBrain className="size-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">NIDHI-RAKSHAK AI Audit Engine</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+              Official NIDHI-RAKSHAK ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
+            </p>
           </div>
         </div>
 
         {/* Backend Connectivity Status */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={refreshHealth}
             title="Click to re-check backend connection"
-            className="flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border border-border bg-card hover:bg-muted transition-colors shadow-sm"
+            className="flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border border-border bg-card hover:bg-muted transition-colors shadow-xs"
           >
             <span
               className={`size-2.5 rounded-full ${
@@ -617,30 +615,40 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
         </div>
       )}
 
-      {/* ── Main Feature Tabs ──────────────────────────────────────────────── */}
+      {/* ── Main Feature Tabs (Fully Responsive Menu) ────────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full h-12 p-1 bg-muted/60 border rounded-xl">
-          <TabsTrigger value="studio" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
-            <IconActivity className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Project Audit Studio</span>
-            <span className="sm:hidden">Studio</span>
-          </TabsTrigger>
-          <TabsTrigger value="batch" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
-            <IconFileSpreadsheet className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Database Batch Audit</span>
-            <span className="sm:hidden">Batch</span>
-          </TabsTrigger>
-          <TabsTrigger value="proposal" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
-            <IconSend className="size-4 shrink-0" />
-            <span className="hidden sm:inline">New Proposal Audit</span>
-            <span className="sm:hidden">Proposal</span>
-          </TabsTrigger>
-          <TabsTrigger value="intel" className="gap-2 text-xs sm:text-sm font-semibold data-[state=active]:shadow-sm rounded-lg">
-            <IconSparkles className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Model Intel & CAG Specs</span>
-            <span className="sm:hidden">Model</span>
-          </TabsTrigger>
-        </TabsList>
+        <div className="w-full overflow-x-auto no-scrollbar pb-1">
+          <TabsList className="inline-flex min-w-full w-max md:w-full md:grid md:grid-cols-4 h-auto min-h-[48px] p-1.5 bg-muted/60 dark:bg-muted/30 border border-border/80 rounded-2xl gap-1.5">
+            <TabsTrigger
+              value="studio"
+              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+            >
+              <IconActivity className="size-4 shrink-0 text-primary" />
+              <span>Project Audit Studio</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="batch"
+              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+            >
+              <IconFileSpreadsheet className="size-4 shrink-0 text-primary" />
+              <span>Database Batch Audit</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="proposal"
+              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+            >
+              <IconSend className="size-4 shrink-0 text-primary" />
+              <span>New Proposal Audit</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="intel"
+              className="flex-1 min-w-[205px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+            >
+              <IconSparkles className="size-4 shrink-0 text-primary" />
+              <span>Model Intel & CAG Specs</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* ═════════════════════════════════════════════════════════════════════
             TAB 1: PROJECT AUDIT STUDIO (Easy Interactive Flow)
@@ -1385,11 +1393,11 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                     Execute live ML evaluation across all projects currently in the website registry, ranking works by risk score descending (as specified in Section 6.3 of TechStack doc).
                   </CardDescription>
                 </div>
-                <div className="flex items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <Button
                     onClick={handleAuditAllProjects}
                     disabled={batchLoading}
-                    className="gap-2 font-bold shadow-sm"
+                    className="gap-2 font-bold shadow-sm w-full sm:w-auto"
                   >
                     {batchLoading ? (
                       <>
@@ -1404,7 +1412,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                     )}
                   </Button>
                   {batchResults && (
-                    <Button variant="outline" onClick={exportBatchToExcel} className="gap-1.5 text-xs">
+                    <Button variant="outline" onClick={exportBatchToExcel} className="gap-1.5 text-xs w-full sm:w-auto">
                       <IconDownload className="size-3.5" />
                       Export Dossier (.xlsx)
                     </Button>
@@ -1513,7 +1521,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
 
                   {/* Filterable Table */}
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <h4 className="text-xs font-bold flex items-center gap-1.5">
                         <IconFilter className="size-3.5 text-primary" />
                         Individual Risk Ledger ({filteredBatchResults.length} works)
@@ -1535,8 +1543,8 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                       </div>
                     </div>
 
-                    <div className="border rounded-xl overflow-hidden shadow-sm">
-                      <Table>
+                    <div className="border rounded-xl overflow-x-auto shadow-sm">
+                      <Table className="min-w-[700px]">
                         <TableHeader className="bg-muted/50">
                           <TableRow>
                             <TableHead className="w-28 text-xs">Work ID</TableHead>
@@ -1812,7 +1820,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 {MODEL_PLOTS.map((p) => (
                   <div
                     key={p.file}
