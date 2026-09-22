@@ -7,8 +7,10 @@ const translationCache = new Map<string, string>();
 const COMMON_DICTIONARY: Record<string, Record<string, string>> = {
   hi: {
     "National Overview": "राष्ट्रीय अवलोकन",
-    "Overview & Key Insights": "अवलोकन और मुख्य अंतर्दृष्टि",
+    "State Performance": "राज्य प्रदर्शन",
+    "Projects & Work": "परियोजनाएं और कार्य",
     "Projects & Works": "परियोजनाएं और कार्य",
+    "Overview & Key Insights": "अवलोकन और मुख्य अंतर्दृष्टि",
     "All Projects & Progress": "सभी परियोजनाएं और प्रगति",
     "3D Digital Twin": "3डी डिजिटल ट्विन",
     "3D Layouts & Viewpoints": "3डी लेआउट और दृश्य",
@@ -17,8 +19,11 @@ const COMMON_DICTIONARY: Record<string, Record<string, string>> = {
     "AI Audit Engine": "एआई ऑडिट इंजन",
     "AI Risk Center": "एआई जोखिम केंद्र",
     "Alerts & Warnings": "अलर्ट और चेतावनियाँ",
+    "Predictive Alerts": "पूर्वानुमानित अलर्ट",
     "Duplicate Detection": "डुप्लिकेट कार्य पहचान",
     "Compliance Engine": "अनुपालन इंजन",
+    "Compliance Monitoring": "अनुपालन निगरानी",
+    "Intervention Simulator": "हस्तक्षेप सिमुलेटर",
     "Reports & Exports": "रिपोर्ट और निर्यात",
     "Photo Geo-CrossCheck AI": "फोटो भू-सत्यापन एआई",
     "AI Intervention Simulator": "एआई हस्तक्षेप सिमुलेटर",

@@ -84,7 +84,8 @@ type Page =
   | "simulation"
   | "crosscheck"
   | "ai-audit"
-  | "3d-view";
+  | "3d-view"
+  | "state-performance";
 
 interface LayoutProps {
   user: User;
@@ -254,6 +255,93 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
             label: "Public Reports",
             sub: "Constituency Spending & Works",
             icon: IconChartBar,
+          },
+        ],
+      },
+    ];
+  }
+
+  if (role === "Ministry") {
+    return [
+      {
+        label: "Monitor",
+        items: [
+          {
+            id: "dashboard",
+            label: "National Overview",
+            sub: "All-India Governance & KPIs",
+            icon: IconLayoutDashboard,
+          },
+          {
+            id: "state-performance",
+            label: "State Performance",
+            sub: "State-wise Progress & Benchmarks",
+            icon: IconChartBar,
+          },
+          {
+            id: "projects",
+            label: "Projects & Work",
+            sub: "All Projects & Progress",
+            icon: IconBuildingCommunity,
+          },
+          {
+            id: "gis",
+            label: "GIS Map View",
+            sub: "Geo-spatial Analytics",
+            icon: IconMap,
+          },
+        ],
+      },
+      {
+        label: "AI & Intelligence",
+        items: [
+          {
+            id: "ai-audit",
+            label: "AI Audit Engine",
+            sub: "ML-Powered CAG Anomaly Audit",
+            icon: IconBrain,
+          },
+          {
+            id: "risk",
+            label: "AI Risk Center",
+            sub: "Risk Analysis & Anomaly",
+            icon: IconShieldExclamation,
+          },
+          {
+            id: "investigation",
+            label: "Duplicate Detection",
+            sub: "Overlapping Works AI",
+            icon: IconLayersIntersect,
+          },
+          {
+            id: "alerts",
+            label: "Predictive Alerts",
+            sub: "Action Required & Warnings",
+            icon: IconBell,
+            badge: alertCount,
+          },
+        ],
+      },
+      {
+        label: "Governance",
+        items: [
+          {
+            id: "compliance",
+            label: "Compliance Monitoring",
+            sub: "Guidelines & Audit Checks",
+            icon: IconCircleCheck,
+          },
+          {
+            id: "simulation",
+            label: "Intervention Simulator",
+            sub: "Compare Release, Hold & Action",
+            icon: IconScale,
+          },
+          {
+            id: "reports",
+            label: "Reports & Exports",
+            sub: "Analytics & Downloads",
+            icon: IconReceiptTax,
           },
         ],
       },

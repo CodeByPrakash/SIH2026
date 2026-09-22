@@ -36,7 +36,8 @@ type Page =
   | "simulation"
   | "crosscheck"
   | "ai-audit"
-  | "3d-view";
+  | "3d-view"
+  | "state-performance";
 
 interface DashboardShellProps {
   role?: UserRole;
@@ -77,6 +78,7 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
   if (!activeSection) {
     if (pathname.includes("/ai-audit")) currentPage = "ai-audit";
     else if (pathname.includes("/3d-view")) currentPage = "3d-view";
+    else if (pathname.includes("/state-performance")) currentPage = "state-performance";
     else if (pathname.includes("/projects")) currentPage = "projects";
     else if (pathname.includes("/risk")) currentPage = "risk";
     else if (pathname.includes("/alerts")) currentPage = "alerts";
@@ -138,8 +140,10 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
         return <Compliance />;
       case "gis":
         return <GISView />;
+      case "state-performance":
+        return <Reports user={currentUser} initialTab="state" />;
       case "reports":
-        return <Reports user={currentUser} />;
+        return <Reports user={currentUser} initialTab="financial" />;
       case "investigation":
         return <Investigation />;
       case "grievance":
