@@ -18,6 +18,7 @@ import InterventionSimulation from "@/components/InterventionSimulation";
 import GeoPhotoCrossCheckUSP from "@/components/GeoPhotoCrossCheckUSP";
 import AICopilot from "@/components/AICopilot";
 import AiAuditEngine from "@/components/AiAuditEngine";
+import Project3DView from "@/components/Project3DView";
 import { ALERTS, MP_USERS, DISTRICT_USERS, STATE_USERS, MINISTRY_USER, CITIZEN_USER } from "@/data/mpladsData";
 import type { User, UserRole } from "@/types";
 
@@ -34,17 +35,20 @@ type Page =
   | "evidence"
   | "simulation"
   | "crosscheck"
-  | "ai-audit";
+  | "ai-audit"
+  | "3d-view";
 
 interface DashboardShellProps {
   role?: UserRole;
   activeSection?: Page;
 }
 
-export default function DashboardShell({ role, activeSection }: DashboardShellProps) {
+function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
   const { user, login, logout, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const paramProjectId = searchParams ? searchParams.get("projectId") : null;
 
   // Protect route & handle role switching for authenticated users
   useEffect(() => {
@@ -72,6 +76,7 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
   let currentPage: Page = activeSection || "dashboard";
   if (!activeSection) {
     if (pathname.includes("/ai-audit")) currentPage = "ai-audit";
+    else if (pathname.includes("/3d-view")) currentPage = "3d-view";
     else if (pathname.includes("/projects")) currentPage = "projects";
     else if (pathname.includes("/risk")) currentPage = "risk";
     else if (pathname.includes("/alerts")) currentPage = "alerts";
@@ -112,15 +117,19 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
 
   const currentUser: User = user;
 
-  const searchParams = useSearchParams();
-  const paramProjectId = searchParams ? searchParams.get("projectId") : null;
-
   const renderContent = () => {
     switch (currentPage) {
       case "dashboard":
         return <Dashboard user={currentUser} onNavigate={handleNavigate} />;
       case "projects":
         return <ProjectExplorer />;
+      case "3d-view":
+        return (
+          <Project3DView
+            initialProjectId={paramProjectId || undefined}
+            onNavigateBack={() => handleNavigate("projects")}
+          />
+        );
       case "risk":
         return <RiskCenter />;
       case "alerts":
@@ -161,5 +170,22 @@ export default function DashboardShell({ role, activeSection }: DashboardShellPr
       </Layout>
       <AICopilot onNavigate={handleNavigate} user={currentUser} />
     </>
+  );
+}
+
+export default function DashboardShell(props: DashboardShellProps) {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-muted border-t-primary rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-xs text-muted-foreground font-medium">Loading MPLADS Portal...</p>
+          </div>
+        </div>
+      }
+    >
+      <DashboardShellContent {...props} />
+    </React.Suspense>
   );
 }

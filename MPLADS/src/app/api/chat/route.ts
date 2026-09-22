@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       trimmedMessage.toLowerCase(),
     ].join("|");
 
-    if (mode !== "audit_explanation" && chatResponseCache.has(cacheKey)) {
+    if (chatResponseCache.has(cacheKey)) {
       const cached = chatResponseCache.get(cacheKey)!;
       if (Date.now() - cached.timestamp < CHAT_CACHE_TTL_MS) {
         return NextResponse.json({
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
       });
     } catch (networkError: any) {
       clearTimeout(timeoutId);
-      console.error("[Chatbot API Proxy] Network or timeout error connecting to DeepBot:", networkError?.message || networkError);
+      console.error("[Chatbot API Proxy] Network or timeout error connecting to Nidhi-saathi:", networkError?.message || networkError);
       return NextResponse.json(
         {
           success: false,
@@ -114,7 +114,7 @@ export async function POST(req: Request) {
 
     // Handle non-2xx HTTP errors from external backend
     if (!externalRes.ok) {
-      console.error(`[Chatbot API Proxy] DeepBot backend HTTP error status ${externalRes.status}`);
+      console.error(`[Chatbot API Proxy] Nidhi-saathi backend HTTP error status ${externalRes.status}`);
       return NextResponse.json(
         {
           success: false,
@@ -128,7 +128,7 @@ export async function POST(req: Request) {
     // Parse external JSON response safely
     const responseData = await externalRes.json().catch(() => null);
 
-    // Normalize DeepBot response formats (reply, message, response, or data object)
+    // Normalize Nidhi-saathi response formats (reply, message, response, or data object)
     const botReply =
       responseData?.reply ||
       responseData?.message ||
@@ -139,7 +139,7 @@ export async function POST(req: Request) {
 
     if (!botReply || typeof botReply !== "string") {
       console.error(
-        "[Chatbot API Proxy] Unexpected or empty response structure from DeepBot:",
+        "[Chatbot API Proxy] Unexpected or empty response structure from Nidhi-saathi:",
         JSON.stringify(responseData)
       );
       return NextResponse.json(

@@ -653,7 +653,7 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                     <IconSparkles className="size-3.5 text-violet-500" />
                     Deep ML & NLP Audit
                   </span>
-                  <p className="text-[10px] text-muted-foreground">XGBoost &bull; Isolation Forest &bull; DeepBot NLP</p>
+                  <p className="text-[10px] text-muted-foreground">XGBoost &bull; Isolation Forest &bull; Nidhi-saathi NLP</p>
                 </div>
                 <Button
                   size="sm"
