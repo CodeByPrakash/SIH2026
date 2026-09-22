@@ -32,6 +32,7 @@ import {
   Video,
   Sparkles,
   GitBranch,
+  Box,
 } from "lucide-react";
 
 interface GovHeaderProps {
@@ -136,6 +137,13 @@ export function GovHeader({
           href: "/dashboard/investigation",
           icon: FileCheck2,
           badge: "Forensics",
+        },
+        {
+          label: language === "hi" ? "3डी डिजिटल ट्विन व लेआउट दृश्य" : "3D Digital Twin & Site Layouts",
+          sub: language === "hi" ? "पुल, भवन, सड़क व बांध का चरणबद्ध 3डी दृश्य" : "Step-by-Step 3D Layouts (Bridge, Building, Street, Dam)",
+          href: "/dashboard/3d-view",
+          icon: Box,
+          badge: "3D WebGL",
         },
       ],
     },

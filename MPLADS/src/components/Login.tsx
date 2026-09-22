@@ -216,6 +216,14 @@ export default function Login({ onLogin }: LoginProps = {}) {
             <span className="hidden md:inline text-muted-foreground">Ministry of Statistics and Programme Implementation (MoSPI)</span>
           </div>
           <div className="flex items-center gap-4 text-muted-foreground">
+            <a
+              href="/"
+              className="flex items-center gap-1 text-primary hover:underline text-xs font-semibold cursor-pointer"
+            >
+              <IconArrowLeft size={14} />
+              National Public Portal
+            </a>
+            <span className="hidden sm:inline text-muted-foreground">|</span>
             <span className="flex items-center gap-1 text-primary">
               <IconShieldCheck size={14} />
               Official Portal (e-SAKSHI v2.4)
