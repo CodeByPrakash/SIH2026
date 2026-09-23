@@ -30,7 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem("mplads_user");
       if (saved) {
-        setUser(JSON.parse(saved));
+        let parsed = JSON.parse(saved) as User;
+        // Patch stale Citizen user data: ensure district/state are always set
+        if (parsed.role === "Citizen" && (!parsed.district || !parsed.state)) {
+          parsed = { ...parsed, district: CITIZEN_USER.district, state: CITIZEN_USER.state };
+          localStorage.setItem("mplads_user", JSON.stringify(parsed));
+        }
+        setUser(parsed);
       }
     } catch {
       // ignore

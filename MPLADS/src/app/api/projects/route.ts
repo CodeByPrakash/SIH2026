@@ -13,6 +13,8 @@ export async function GET(request: Request) {
     let state = searchParams.get("state") || undefined;
     let constituency = searchParams.get("constituency") || undefined;
 
+    const isExplore = searchParams.get("explore") === "true";
+
     // Strict area override for scoped roles
     if (userRole === "District") {
       district = userDistrict || district;
@@ -21,6 +23,11 @@ export async function GET(request: Request) {
       state = userState || state;
     } else if (userRole === "MP") {
       constituency = userConstituency || constituency;
+    } else if (userRole === "Citizen") {
+      if (!isExplore && !district && !state) {
+        district = userDistrict || district;
+        state = userState || state;
+      }
     }
 
     const status = searchParams.get("status") || undefined;
@@ -53,6 +60,7 @@ export async function GET(request: Request) {
         userDistrict,
         userState,
         userConstituency,
+        exploreOther: isExplore,
       });
 
       const isCached = isLastQueryFromCache();
@@ -90,6 +98,7 @@ export async function GET(request: Request) {
       userDistrict,
       userState,
       userConstituency,
+      exploreOther: isExplore,
     });
 
     const isCached = isLastQueryFromCache();

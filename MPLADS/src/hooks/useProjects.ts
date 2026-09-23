@@ -27,6 +27,7 @@ export interface UseProjectsOptions {
   userState?: string;
   userConstituency?: string;
   user?: User | null;
+  exploreOther?: boolean;
 }
 
 // Global Module-level SWR Cache to share across all components without network thrashing
@@ -53,18 +54,25 @@ function getCurrentUserFromStorage(): User | null {
 function resolveEffectiveScope(options?: UseProjectsOptions) {
   const activeUser = options?.user || getCurrentUserFromStorage();
   const effectiveRole = options?.role || options?.userRole || activeUser?.role;
+  const isExploring = Boolean(options?.exploreOther);
 
   const effectiveDistrict =
     effectiveRole === "District" && activeUser?.district
       ? activeUser.district
-      : options?.district || (effectiveRole === "District" ? options?.userDistrict : undefined);
+      : options?.district ||
+        (!isExploring && effectiveRole === "Citizen"
+          ? (activeUser?.district || options?.userDistrict)
+          : (effectiveRole === "District" ? options?.userDistrict : undefined));
 
   const effectiveState =
     effectiveRole === "State" && activeUser?.state
       ? activeUser.state
       : (effectiveRole === "District" && activeUser?.state
           ? activeUser.state
-          : options?.state || (effectiveRole === "State" ? options?.userState : undefined));
+          : options?.state ||
+            (!isExploring && effectiveRole === "Citizen"
+              ? (activeUser?.state || options?.userState)
+              : (effectiveRole === "State" ? options?.userState : undefined)));
 
   const effectiveConstituency =
     effectiveRole === "MP" && activeUser?.constituency
@@ -81,6 +89,7 @@ function buildKey(options?: UseProjectsOptions): string {
     effectiveState?.trim().toLowerCase() || "",
     effectiveConstituency?.trim().toLowerCase() || "",
     effectiveRole || "",
+    Boolean(options?.exploreOther) ? "explore" : "local",
     options?.status || "",
     options?.limit || "",
     options?.page || "",
@@ -100,6 +109,19 @@ function getInitialProjects(options?: UseProjectsOptions): Project[] {
   if (effectiveRole === "State" && effectiveState) {
     const s = effectiveState.trim().toLowerCase();
     return list.filter((p) => p.state.toLowerCase() === s);
+  }
+
+  if (effectiveRole === "Citizen") {
+    if (effectiveDistrict) {
+      const d = effectiveDistrict.trim().toLowerCase();
+      const matched = list.filter((p) => p.district.toLowerCase() === d);
+      if (matched.length > 0) return matched;
+    }
+    if (effectiveState) {
+      const s = effectiveState.trim().toLowerCase();
+      const matched = list.filter((p) => p.state.toLowerCase() === s);
+      if (matched.length > 0) return matched;
+    }
   }
 
   if (effectiveRole === "MP") {
@@ -198,6 +220,7 @@ export function useProjects(options?: UseProjectsOptions) {
         if (activeUser?.district) params.set("userDistrict", activeUser.district);
         if (activeUser?.state) params.set("userState", activeUser.state);
         if (activeUser?.constituency) params.set("userConstituency", activeUser.constituency);
+        if (options?.exploreOther) params.set("explore", "true");
 
         if (status) params.set("status", status);
         if (limit) params.set("limit", String(limit));

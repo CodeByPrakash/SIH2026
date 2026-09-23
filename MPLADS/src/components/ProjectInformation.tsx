@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import type { User, Project } from "@/types";
-import { PROJECTS } from "@/data/mpladsData";
+import { PROJECTS, STATES_DATA } from "@/data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
 import {
   IconSearch,
@@ -47,8 +47,21 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
   const { projects: liveProjects } = useProjects({
     user,
     constituency: user.role === "MP" ? user.constituency : undefined,
-    district: user.role === "District" ? user.district : undefined,
-    state: user.role === "State" ? user.state : (user.role === "District" ? user.state : undefined),
+    district:
+      user.role === "District"
+        ? user.district
+        : isCitizen && !citizenExploreOther
+        ? user.district
+        : (isCitizen && selectedDistrict !== "All" ? selectedDistrict : undefined),
+    state:
+      user.role === "State"
+        ? user.state
+        : user.role === "District"
+        ? user.state
+        : isCitizen && !citizenExploreOther
+        ? user.state
+        : (isCitizen && selectedState !== "All" ? selectedState : undefined),
+    exploreOther: isCitizen ? citizenExploreOther : undefined,
   });
 
   const projectList = liveProjects && liveProjects.length > 0 ? liveProjects : PROJECTS;
@@ -70,12 +83,26 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
     }
     if (isCitizen) {
       if (!citizenExploreOther && user.district) {
-        const matches = projectList.filter(
+        return projectList.filter(
           (p) => p.district.toLowerCase() === user.district!.toLowerCase()
         );
-        if (matches.length > 0) return matches;
       }
-      return projectList;
+      if (!citizenExploreOther && user.state) {
+        return projectList.filter(
+          (p) => p.state.toLowerCase() === user.state!.toLowerCase()
+        );
+      }
+      // Exploring other areas: sort own area to top
+      const ud = user.district?.toLowerCase();
+      const us = user.state?.toLowerCase();
+      return [...projectList].sort((a, b) => {
+        const aL = (ud && a.district.toLowerCase() === ud) ? 1 : 0;
+        const bL = (ud && b.district.toLowerCase() === ud) ? 1 : 0;
+        if (aL !== bL) return bL - aL;
+        const aS = (us && a.state.toLowerCase() === us) ? 1 : 0;
+        const bS = (us && b.state.toLowerCase() === us) ? 1 : 0;
+        return bS - aS;
+      });
     }
     return projectList;
   }, [projectList, user, isCitizen, citizenExploreOther]);
@@ -84,10 +111,16 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
     if ((user.role === "District" || user.role === "State") && user.state) {
       return [user.state];
     }
+    if (isCitizen && !citizenExploreOther && user.state) {
+      return [user.state];
+    }
     const set = new Set<string>();
     scopedBaseList.forEach((p) => p.state && set.add(p.state));
+    if (isCitizen && citizenExploreOther) {
+      STATES_DATA.forEach((s) => set.add(s.state));
+    }
     return ["All", ...Array.from(set).sort()];
-  }, [scopedBaseList, user.role, user.state]);
+  }, [scopedBaseList, user.role, user.state, isCitizen, citizenExploreOther]);
 
   const availableDistricts = useMemo(() => {
     if (user.role === "District" && user.district) {
@@ -219,7 +252,7 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
             </span>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
-            Public transparency disclosures of all sanctioned, ongoing, and completed MPLADS works. 
+            Public transparency disclosures of all sanctioned, ongoing, and completed MPLADS works.
             Citizens can inspect project costs, contractors, geo-tags, and utilization certificates.
           </p>
         </div>
@@ -237,11 +270,10 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card border border-border/80 rounded-2xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div
-              className={`flex size-9 items-center justify-center rounded-xl shrink-0 ${
-                !citizenExploreOther
+              className={`flex size-9 items-center justify-center rounded-xl shrink-0 ${!citizenExploreOther
                   ? "bg-primary/10 text-primary"
                   : "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400"
-              }`}
+                }`}
             >
               {!citizenExploreOther ? <IconMapPin className="size-4.5" /> : <IconWorld className="size-4.5" />}
             </div>
@@ -431,15 +463,14 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
                   {p.workOrderNo}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                    p.status === "Completed"
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.status === "Completed"
                       ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
                       : p.status === "In Progress"
                         ? "bg-blue-500/10 text-blue-600 border border-blue-500/20"
                         : p.status === "Delayed"
                           ? "bg-red-500/10 text-red-600 border border-red-500/20"
                           : "bg-slate-500/10 text-slate-600 border border-slate-500/20"
-                  }`}
+                    }`}
                 >
                   {p.status}
                 </span>
@@ -475,13 +506,12 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all ${
-                      p.progress >= 90
+                    className={`h-full rounded-full transition-all ${p.progress >= 90
                         ? "bg-emerald-500"
                         : p.progress >= 50
                           ? "bg-blue-500"
                           : "bg-amber-500"
-                    }`}
+                      }`}
                     style={{ width: `${p.progress}%` }}
                   />
                 </div>
