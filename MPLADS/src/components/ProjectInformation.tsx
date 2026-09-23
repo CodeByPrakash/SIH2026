@@ -28,6 +28,8 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconWorld,
+  IconCompass,
 } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 
@@ -37,13 +39,68 @@ interface ProjectInformationProps {
 }
 
 export default function ProjectInformation({ user, onNavigate }: ProjectInformationProps) {
+  const isCitizen = user.role === "Citizen";
+  const [citizenExploreOther, setCitizenExploreOther] = useState(false);
+  const [selectedState, setSelectedState] = useState<string>("All");
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("All");
+
   const { projects: liveProjects } = useProjects({
+    user,
     constituency: user.role === "MP" ? user.constituency : undefined,
     district: user.role === "District" ? user.district : undefined,
-    state: user.role === "State" ? user.state : undefined,
+    state: user.role === "State" ? user.state : (user.role === "District" ? user.state : undefined),
   });
 
   const projectList = liveProjects && liveProjects.length > 0 ? liveProjects : PROJECTS;
+
+  // Scoped strictly to role permissions
+  const scopedBaseList = useMemo(() => {
+    if (user.role === "District" && user.district) {
+      return projectList.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+    }
+    if (user.role === "State" && user.state) {
+      return projectList.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+    }
+    if (user.role === "MP") {
+      return projectList.filter(
+        (p) =>
+          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+      );
+    }
+    if (isCitizen) {
+      if (!citizenExploreOther && user.district) {
+        const matches = projectList.filter(
+          (p) => p.district.toLowerCase() === user.district!.toLowerCase()
+        );
+        if (matches.length > 0) return matches;
+      }
+      return projectList;
+    }
+    return projectList;
+  }, [projectList, user, isCitizen, citizenExploreOther]);
+
+  const availableStates = useMemo(() => {
+    if ((user.role === "District" || user.role === "State") && user.state) {
+      return [user.state];
+    }
+    const set = new Set<string>();
+    scopedBaseList.forEach((p) => p.state && set.add(p.state));
+    return ["All", ...Array.from(set).sort()];
+  }, [scopedBaseList, user.role, user.state]);
+
+  const availableDistricts = useMemo(() => {
+    if (user.role === "District" && user.district) {
+      return [user.district];
+    }
+    let pool = scopedBaseList;
+    if (selectedState !== "All") {
+      pool = pool.filter((p) => p.state.toLowerCase() === selectedState.toLowerCase());
+    }
+    const set = new Set<string>();
+    pool.forEach((p) => p.district && set.add(p.district));
+    return ["All", ...Array.from(set).sort()];
+  }, [scopedBaseList, selectedState, user.role, user.district]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -52,12 +109,12 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
 
   const categories = useMemo(() => {
     const set = new Set<string>();
-    projectList.forEach((p) => set.add(p.category));
+    scopedBaseList.forEach((p) => set.add(p.category));
     return ["All", ...Array.from(set)];
-  }, [projectList]);
+  }, [scopedBaseList]);
 
   const filteredProjects = useMemo(() => {
-    return projectList.filter((p) => {
+    return scopedBaseList.filter((p) => {
       const matchesSearch =
         searchTerm === "" ||
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,10 +125,12 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
 
       const matchesCat = selectedCategory === "All" || p.category === selectedCategory;
       const matchesStatus = selectedStatus === "All" || p.status === selectedStatus;
+      const matchesState = selectedState === "All" || p.state.toLowerCase() === selectedState.toLowerCase();
+      const matchesDistrict = selectedDistrict === "All" || p.district.toLowerCase() === selectedDistrict.toLowerCase();
 
-      return matchesSearch && matchesCat && matchesStatus;
+      return matchesSearch && matchesCat && matchesStatus && matchesState && matchesDistrict;
     });
-  }, [projectList, searchTerm, selectedCategory, selectedStatus]);
+  }, [scopedBaseList, searchTerm, selectedCategory, selectedStatus, selectedState, selectedDistrict]);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(12);
@@ -173,14 +232,67 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
         </button>
       </div>
 
+      {/* ── Citizen Area Switcher Banner ── */}
+      {isCitizen && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card border border-border/80 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex size-9 items-center justify-center rounded-xl shrink-0 ${
+                !citizenExploreOther
+                  ? "bg-primary/10 text-primary"
+                  : "bg-cyan-500/10 text-cyan-700 dark:text-cyan-400"
+              }`}
+            >
+              {!citizenExploreOther ? <IconMapPin className="size-4.5" /> : <IconWorld className="size-4.5" />}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs sm:text-sm font-bold text-foreground">
+                  {!citizenExploreOther
+                    ? `My Local Area: ${user.district || "District"}, ${user.state || "State"}`
+                    : "Exploring Public Works Across All India"}
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-muted text-muted-foreground border">
+                  {!citizenExploreOther ? "Home Area Scoped" : "All India Exploration"}
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
+                {!citizenExploreOther
+                  ? "Showing Section 4(1)(b) public disclosures for projects sanctioned in your home district."
+                  : "Browsing public works nationwide. You can filter by any State and District below."}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              const next = !citizenExploreOther;
+              setCitizenExploreOther(next);
+              if (!next) {
+                setSelectedState("All");
+                setSelectedDistrict("All");
+              }
+            }}
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 text-xs font-semibold transition-colors shrink-0 shadow-2xs"
+          >
+            <IconWorld className="size-3.5" />
+            {citizenExploreOther
+              ? `Back to My Area (${user.district || "Local"})`
+              : "Explore Other Areas"}
+          </button>
+        </div>
+      )}
+
       {/* ── Key Metrics Overview ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-card border border-border/70 rounded-xl p-4 shadow-sm">
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
-            Total Disclosed Works
+            {isCitizen && !citizenExploreOther
+              ? `Works in ${user.district || "My District"}`
+              : "Total Disclosed Works"}
           </span>
           <span className="text-xl sm:text-2xl font-bold font-mono text-foreground mt-1 block">
-            {projectList.length}
+            {scopedBaseList.length}
           </span>
           <span className="text-[11px] text-muted-foreground mt-0.5 block">100% public access</span>
         </div>
@@ -190,7 +302,7 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
             Completed Assets
           </span>
           <span className="text-xl sm:text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">
-            {projectList.filter((p) => p.status === "Completed").length}
+            {scopedBaseList.filter((p) => p.status === "Completed").length}
           </span>
           <span className="text-[11px] text-emerald-600/80 mt-0.5 block">Handed over to community</span>
         </div>
@@ -200,7 +312,7 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
             Active Works
           </span>
           <span className="text-xl sm:text-2xl font-bold font-mono text-blue-600 dark:text-blue-400 mt-1 block">
-            {projectList.filter((p) => p.status === "In Progress").length}
+            {scopedBaseList.filter((p) => p.status === "In Progress").length}
           </span>
           <span className="text-[11px] text-blue-600/80 mt-0.5 block">Under ground execution</span>
         </div>
@@ -211,7 +323,7 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
           </span>
           <span className="text-xl sm:text-2xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 block">
             {Math.round(
-              (projectList.filter((p) => p.ucSubmitted).length / (projectList.length || 1)) * 100
+              (scopedBaseList.filter((p) => p.ucSubmitted).length / (scopedBaseList.length || 1)) * 100
             )}%
           </span>
           <span className="text-[11px] text-amber-600/80 mt-0.5 block">Utilization certs verified</span>
@@ -243,6 +355,37 @@ export default function ProjectInformation({ user, onNavigate }: ProjectInformat
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <IconFilter className="size-3.5" /> Filter:
           </div>
+
+          {isCitizen && citizenExploreOther && (
+            <>
+              <select
+                value={selectedState}
+                onChange={(e) => {
+                  setSelectedState(e.target.value);
+                  setSelectedDistrict("All");
+                }}
+                className="px-2.5 py-1.5 text-xs bg-background border border-border rounded-lg text-foreground outline-none focus:border-primary"
+              >
+                {availableStates.map((s) => (
+                  <option key={s} value={s}>
+                    {s === "All" ? "All States" : s}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                className="px-2.5 py-1.5 text-xs bg-background border border-border rounded-lg text-foreground outline-none focus:border-primary"
+              >
+                {availableDistricts.map((d) => (
+                  <option key={d} value={d}>
+                    {d === "All" ? "All Districts" : d}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
           <select
             value={selectedCategory}

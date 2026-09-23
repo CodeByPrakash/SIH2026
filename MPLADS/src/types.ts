@@ -214,8 +214,33 @@ export interface ICitizenEvidence {
     message: string;
     checkedAt?: string | Date;
   };
+  calculationInconsistency?: CalculationInconsistencyEvaluation;
   createdAt?: string | Date;
   updatedAt?: string | Date;
+}
+
+export interface CalculationInconsistencyEvaluation {
+  inconsistencyScore: number; // 0 to 100
+  inconsistencyLevel: "Low" | "Moderate" | "High" | "Critical";
+  hasCalculationInconsistency: boolean;
+  // Physical vs Financial Execution
+  claimedProgressPct: number;
+  calculatedObservedProgressPct: number;
+  progressDeficitPct: number;
+  disbursedExpenditureLakh: number;
+  justifiedExpenditureLakh: number;
+  unjustifiedAtRiskLakh: number;
+  // Unit Cost & Rate Variance
+  sanctionedUnitCost?: string;
+  effectiveObservedUnitCost?: string;
+  unitCostVariancePct?: number;
+  // Statutory Compliance & Milestone
+  ucClaimStatus: string;
+  statutoryViolation: boolean;
+  // Mathematical Evaluation Narrative
+  evaluationSummary: string;
+  discrepancyFormula: string;
+  auditRecommendations: string[];
 }
 
 export interface IDuplicateCheckResult {

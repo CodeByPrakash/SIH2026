@@ -9,6 +9,7 @@ import type {
   IAuthorityDecision,
   InterventionType,
   UserRole,
+  User,
 } from "@/types";
 import {
   Card,
@@ -54,10 +55,24 @@ import {
 
 interface InterventionSimulationProps {
   initialProjectId?: string;
+  user?: User;
 }
 
-export default function InterventionSimulation({ initialProjectId }: InterventionSimulationProps) {
-  const { user } = useAuth();
+export default function InterventionSimulation({ initialProjectId, user: propUser }: InterventionSimulationProps = {}) {
+  const { user: authUser } = useAuth();
+  const effectiveUser = React.useMemo<User | null>(() => {
+    if (propUser) return propUser;
+    if (authUser) return authUser;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mplads_user");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  }, [propUser, authUser]);
 
   // Project Selector State for Search & Pagination
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -74,16 +89,47 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch lightweight paginated project list for selector
+  // Fetch lightweight paginated project list for selector scoped to effectiveUser
   const {
-    projects: lightweightProjects,
+    projects: rawLightweightProjects,
     pagination,
     isLoading: isLoadingProjects,
   } = useProjects({
+    user: effectiveUser,
+    role: effectiveUser?.role,
+    userRole: effectiveUser?.role,
+    district: effectiveUser?.role === "District" ? effectiveUser?.district : undefined,
+    userDistrict: effectiveUser?.district,
+    state: effectiveUser?.role === "State" ? effectiveUser?.state : (effectiveUser?.role === "District" ? effectiveUser?.state : undefined),
+    userState: effectiveUser?.state,
+    constituency: effectiveUser?.role === "MP" ? effectiveUser?.constituency : undefined,
+    userConstituency: effectiveUser?.constituency,
     page: currentPage,
     limit: 10,
     search: debouncedSearch,
   });
+
+  const lightweightProjects = React.useMemo(() => {
+    if (!rawLightweightProjects) return [];
+    if (effectiveUser?.role === "District" && effectiveUser.district) {
+      return rawLightweightProjects.filter(
+        (p) => p.district?.toLowerCase() === effectiveUser.district!.toLowerCase()
+      );
+    }
+    if (effectiveUser?.role === "State" && effectiveUser.state) {
+      return rawLightweightProjects.filter(
+        (p) => p.state?.toLowerCase() === effectiveUser.state!.toLowerCase()
+      );
+    }
+    if (effectiveUser?.role === "MP") {
+      return rawLightweightProjects.filter(
+        (p) =>
+          (effectiveUser.constituency && p.constituency?.toLowerCase() === effectiveUser.constituency.toLowerCase()) ||
+          (effectiveUser.district && p.district?.toLowerCase() === effectiveUser.district.toLowerCase())
+      );
+    }
+    return rawLightweightProjects;
+  }, [rawLightweightProjects, effectiveUser]);
 
   // Selected Project State & Full Detail Fetching
   const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId || "");
@@ -272,8 +318,8 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
     setErrorMsg(null);
     setDecisionSuccessMsg(null);
 
-    const currentUserRole: UserRole = user?.role || "District";
-    const currentUserName = user?.name || `${currentUserRole} Official`;
+    const currentUserRole: UserRole = effectiveUser?.role || "District";
+    const currentUserName = effectiveUser?.name || `${currentUserRole} Official`;
 
     try {
       const res = await fetch(`/api/projects/${selectedProjectId}/decision`, {
@@ -303,7 +349,7 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
     }
   };
 
-  const isCitizen = user?.role === "Citizen";
+  const isCitizen = effectiveUser?.role === "Citizen";
 
   return (
     <div className="space-y-6 pb-12">
@@ -1203,7 +1249,7 @@ export default function InterventionSimulation({ initialProjectId }: Interventio
 
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-xs text-slate-500">
-                      Recording as: <strong className="text-indigo-600">{user?.name || user?.role || "District Nodal Officer"}</strong> ({user?.role || "District"})
+                      Recording as: <strong className="text-indigo-600">{effectiveUser?.name || effectiveUser?.role || "District Nodal Officer"}</strong> ({effectiveUser?.role || "District"})
                     </span>
                     <Button
                       onClick={handleRecordDecision}

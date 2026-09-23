@@ -1,6 +1,8 @@
 import type { ICitizenEvidence } from "@/types";
+import { PROJECTS } from "@/data/mpladsData";
+import { evaluateCalculationInconsistency } from "@/utils/calculationInconsistencyEvaluator";
 
-export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
+const RAW_SEED_EVIDENCE: Omit<ICitizenEvidence, "calculationInconsistency">[] = [
   {
     evidenceId: "CE-2026-001",
     projectId: "MPLAD-UP-0401-2024-001",
@@ -128,3 +130,11 @@ export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = [
     additionalEvidenceRequired: ["High-resolution site photograph", "Geotagged GPS coordinates"],
   },
 ];
+
+export const PROTOTYPE_SEED_EVIDENCE: ICitizenEvidence[] = RAW_SEED_EVIDENCE.map((item) => {
+  const project = PROJECTS.find((p) => p.id === item.projectId) || null;
+  return {
+    ...item,
+    calculationInconsistency: evaluateCalculationInconsistency(item, project),
+  };
+});

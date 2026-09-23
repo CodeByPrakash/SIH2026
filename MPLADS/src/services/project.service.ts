@@ -25,6 +25,10 @@ export interface ProjectFilterOptions {
   search?: string;
   forceRefresh?: boolean;
   lightweight?: boolean;
+  userRole?: string;
+  userDistrict?: string;
+  userState?: string;
+  userConstituency?: string;
 }
 
 export interface PaginationMetadata {
@@ -92,21 +96,38 @@ export async function getPaginatedProjects(
   filters?: ProjectFilterOptions
 ): Promise<PaginatedProjectsResult> {
   const page = Math.max(1, filters?.page || 1);
-  const limit = Math.max(1, Math.min(100, filters?.limit || 10));
+  const limit = Math.max(1, Math.min(filters?.limit && filters.limit > 100 ? 1000 : 100, filters?.limit || 10));
   const skip = (page - 1) * limit;
+
+  // Strict Role-Based Area Enforcement
+  const isDistrictRole = filters?.userRole === "District";
+  const isStateRole = filters?.userRole === "State";
+  const isMPRole = filters?.userRole === "MP";
+
+  const effectiveDistrict = isDistrictRole && filters?.userDistrict
+    ? filters.userDistrict.trim()
+    : filters?.district?.trim();
+
+  const effectiveState = isStateRole && filters?.userState
+    ? filters.userState.trim()
+    : (isDistrictRole && filters?.userState ? filters.userState.trim() : filters?.state?.trim());
+
+  const effectiveConstituency = isMPRole && filters?.userConstituency
+    ? filters.userConstituency.trim()
+    : filters?.constituency?.trim();
 
   try {
     const conn = await dbConnect();
     if (conn) {
       const query: Record<string, any> = {};
-      if (filters?.district) {
-        query.district = { $regex: new RegExp(`^${escapeRegex(filters.district.trim())}$`, "i") };
+      if (effectiveDistrict) {
+        query.district = { $regex: new RegExp(`^${escapeRegex(effectiveDistrict)}$`, "i") };
       }
-      if (filters?.state) {
-        query.state = { $regex: new RegExp(`^${escapeRegex(filters.state.trim())}$`, "i") };
+      if (effectiveState) {
+        query.state = { $regex: new RegExp(`^${escapeRegex(effectiveState)}$`, "i") };
       }
-      if (filters?.constituency) {
-        query.constituency = { $regex: new RegExp(`^${escapeRegex(filters.constituency.trim())}$`, "i") };
+      if (effectiveConstituency) {
+        query.constituency = { $regex: new RegExp(`^${escapeRegex(effectiveConstituency)}$`, "i") };
       }
       if (filters?.status) {
         query.status = filters.status;
@@ -169,21 +190,21 @@ export async function getPaginatedProjects(
 
   // Fallback to memory store
   let fallbackList = [...memoryProjectsStore];
-  if (filters?.district) {
+  if (effectiveDistrict) {
     fallbackList = fallbackList.filter(
-      (p) => p.district.toLowerCase() === filters.district!.trim().toLowerCase()
+      (p) => p.district.toLowerCase() === effectiveDistrict.toLowerCase()
     );
   }
-  if (filters?.state) {
+  if (effectiveState) {
     fallbackList = fallbackList.filter(
-      (p) => p.state.toLowerCase() === filters.state!.trim().toLowerCase()
+      (p) => p.state.toLowerCase() === effectiveState.toLowerCase()
     );
   }
-  if (filters?.constituency) {
+  if (effectiveConstituency) {
     fallbackList = fallbackList.filter(
       (p) =>
-        (p.constituency && p.constituency.toLowerCase() === filters.constituency!.trim().toLowerCase()) ||
-        p.district.toLowerCase() === filters.constituency!.trim().toLowerCase()
+        (p.constituency && p.constituency.toLowerCase() === effectiveConstituency.toLowerCase()) ||
+        p.district.toLowerCase() === effectiveConstituency.toLowerCase()
     );
   }
   if (filters?.status) {
@@ -224,15 +245,32 @@ export async function getPaginatedProjects(
 
 export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Project[]> {
   const force = Boolean(filters?.forceRefresh);
+  const isDistrictRole = filters?.userRole === "District";
+  const isStateRole = filters?.userRole === "State";
+  const isMPRole = filters?.userRole === "MP";
+
+  const effectiveDistrict = isDistrictRole && filters?.userDistrict
+    ? filters.userDistrict.trim()
+    : filters?.district?.trim();
+
+  const effectiveState = isStateRole && filters?.userState
+    ? filters.userState.trim()
+    : (isDistrictRole && filters?.userState ? filters.userState.trim() : filters?.state?.trim());
+
+  const effectiveConstituency = isMPRole && filters?.userConstituency
+    ? filters.userConstituency.trim()
+    : filters?.constituency?.trim();
+
   const cacheKey = [
-    filters?.district?.trim().toLowerCase() || "",
-    filters?.state?.trim().toLowerCase() || "",
-    filters?.constituency?.trim().toLowerCase() || "",
+    effectiveDistrict?.toLowerCase() || "",
+    effectiveState?.toLowerCase() || "",
+    effectiveConstituency?.toLowerCase() || "",
     filters?.status || "",
     filters?.riskLevel || "",
     filters?.limit || "",
     filters?.page || "",
     filters?.search || "",
+    filters?.userRole || "",
   ].join("|");
 
   // Check In-Memory Query Cache
@@ -255,14 +293,14 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
     const conn = await dbConnect();
     if (conn) {
       const query: Record<string, any> = {};
-      if (filters?.district) {
-        query.district = { $regex: new RegExp(`^${filters.district.trim()}$`, "i") };
+      if (effectiveDistrict) {
+        query.district = { $regex: new RegExp(`^${escapeRegex(effectiveDistrict)}$`, "i") };
       }
-      if (filters?.state) {
-        query.state = { $regex: new RegExp(`^${filters.state.trim()}$`, "i") };
+      if (effectiveState) {
+        query.state = { $regex: new RegExp(`^${escapeRegex(effectiveState)}$`, "i") };
       }
-      if (filters?.constituency) {
-        query.constituency = { $regex: new RegExp(`^${filters.constituency.trim()}$`, "i") };
+      if (effectiveConstituency) {
+        query.constituency = { $regex: new RegExp(`^${escapeRegex(effectiveConstituency)}$`, "i") };
       }
       if (filters?.status) {
         query.status = filters.status;
@@ -303,21 +341,21 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
 
   // Fallback to memory store
   let fallbackList = memoryProjectsStore;
-  if (filters?.district) {
+  if (effectiveDistrict) {
     fallbackList = fallbackList.filter(
-      (p) => p.district.toLowerCase() === filters.district!.trim().toLowerCase()
+      (p) => p.district.toLowerCase() === effectiveDistrict.toLowerCase()
     );
   }
-  if (filters?.state) {
+  if (effectiveState) {
     fallbackList = fallbackList.filter(
-      (p) => p.state.toLowerCase() === filters.state!.trim().toLowerCase()
+      (p) => p.state.toLowerCase() === effectiveState.toLowerCase()
     );
   }
-  if (filters?.constituency) {
+  if (effectiveConstituency) {
     fallbackList = fallbackList.filter(
       (p) =>
-        (p.constituency && p.constituency.toLowerCase() === filters.constituency!.trim().toLowerCase()) ||
-        p.district.toLowerCase() === filters.constituency!.trim().toLowerCase()
+        (p.constituency && p.constituency.toLowerCase() === effectiveConstituency.toLowerCase()) ||
+        p.district.toLowerCase() === effectiveConstituency.toLowerCase()
     );
   }
   if (filters?.status) {

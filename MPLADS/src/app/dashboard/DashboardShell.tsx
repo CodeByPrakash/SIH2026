@@ -176,21 +176,21 @@ function DashboardShellContent({ role, activeSection }: DashboardShellProps) {
       case "reports":
         return <Reports user={currentUser} initialTab="financial" />;
       case "investigation":
-        return <Investigation />;
+        return <Investigation user={currentUser} />;
       case "grievance":
-        return <Grievance />;
+        return <Grievance user={currentUser} />;
       case "evidence":
         return <CitizenEvidenceVerification user={currentUser} />;
       case "simulation":
-        return <InterventionSimulation />;
+        return <InterventionSimulation user={currentUser} />;
       case "crosscheck":
-        return <GeoPhotoCrossCheckUSP />;
+        return <GeoPhotoCrossCheckUSP user={currentUser} />;
       case "ai-audit":
-        return <AiAuditEngine initialProjectId={paramProjectId} />;
+        return <AiAuditEngine initialProjectId={paramProjectId} user={currentUser} />;
       case "citizen-feedback":
         return <CitizenFeedback user={currentUser} onNavigate={handleNavigate} />;
       case "track-grievance":
-        return <Grievance initialTab="track" />;
+        return <Grievance initialTab="track" user={currentUser} />;
       case "project-info":
         return <ProjectInformation user={currentUser} onNavigate={handleNavigate} />;
       case "help-guidelines":

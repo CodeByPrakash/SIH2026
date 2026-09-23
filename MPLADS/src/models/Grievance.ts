@@ -1,5 +1,14 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
+export interface IGrievanceTimelineEvent {
+  stage: "Submitted" | "AI_Triaged" | "Assigned" | "Investigation_Action" | "Resolved";
+  title: string;
+  timestamp: string;
+  actor: string;
+  status: "Completed" | "In_Progress" | "Pending";
+  remarks: string;
+}
+
 export interface IGrievance {
   id: string;
   title: string;
@@ -10,7 +19,16 @@ export interface IGrievance {
   status: "Open" | "Under Review" | "Resolved";
   name: string;
   mobile: string;
+  anonymizedName?: string;
+  maskedMobile?: string;
+  isAnonymous?: boolean;
   projectId?: string;
+  projectName?: string;
+  priority?: "High" | "Medium" | "Low";
+  assignedOfficer?: string;
+  actionTaken?: string;
+  slaDays?: number;
+  timeline?: IGrievanceTimelineEvent[];
   date: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,7 +54,16 @@ const GrievanceSchema = new Schema<IGrievanceDocument>(
     },
     name: { type: String, required: true },
     mobile: { type: String, required: true },
+    anonymizedName: { type: String, default: "" },
+    maskedMobile: { type: String, default: "" },
+    isAnonymous: { type: Boolean, default: true },
     projectId: { type: String, default: "" },
+    projectName: { type: String, default: "" },
+    priority: { type: String, enum: ["High", "Medium", "Low"], default: "Medium" },
+    assignedOfficer: { type: String, default: "" },
+    actionTaken: { type: String, default: "" },
+    slaDays: { type: Number, default: 7 },
+    timeline: { type: [Schema.Types.Mixed], default: [] },
     date: { type: String, required: true },
   },
   { timestamps: true }

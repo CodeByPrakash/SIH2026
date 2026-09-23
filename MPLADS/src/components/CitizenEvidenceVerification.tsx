@@ -53,7 +53,10 @@ import {
   IconHelpCircle,
   IconArrowRight,
   IconFilter,
+  IconCalculator,
+  IconScale,
 } from "@tabler/icons-react";
+import { evaluateCalculationInconsistency } from "@/utils/calculationInconsistencyEvaluator";
 
 interface Props {
   user?: User;
@@ -256,7 +259,11 @@ export default function CitizenEvidenceVerification({ user }: Props) {
         item.location.toLowerCase().includes(q);
 
       const matchCategory =
-        categoryFilter === "All" || item.verificationCategory === categoryFilter;
+        categoryFilter === "All" ||
+        item.verificationCategory === categoryFilter ||
+        (categoryFilter === "CALCULATION_INCONSISTENCY" &&
+          (item.calculationInconsistency?.hasCalculationInconsistency ??
+            (item.verificationCategory === "CONFLICT_DETECTED" || item.verificationCategory === "POTENTIAL_CONFLICT")));
 
       return matchSearch && matchCategory;
     });
@@ -330,6 +337,13 @@ export default function CitizenEvidenceVerification({ user }: Props) {
     return PROJECTS.find((p) => p.id === selectedEvidence.projectId) || null;
   }, [selectedEvidence]);
 
+  const selectedCalculationInconsistency = useMemo(() => {
+    if (!selectedEvidence) return null;
+    if (selectedEvidence.calculationInconsistency) return selectedEvidence.calculationInconsistency;
+    if (selectedProject) return evaluateCalculationInconsistency(selectedEvidence, selectedProject);
+    return null;
+  }, [selectedEvidence, selectedProject]);
+
   return (
     <div className="space-y-6 animate-slide-in">
       {/* ── Page Header ── */}
@@ -356,7 +370,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
           </div>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Independent citizen ground evidence cross-checked against project records using AI while protecting citizen privacy.
-            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
+            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}, ${lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
           </p>
           <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md font-mono">
             <span>Data Source:</span>
@@ -390,7 +404,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
       </div>
 
       {/* ── Summary KPI Cards ── */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         <Card className="p-3.5 bg-card border-border shadow-xs">
           <div className="text-[11px] font-medium text-muted-foreground">Total Submissions</div>
           <div className="text-xl font-bold tracking-tight text-foreground mt-1">{stats.total}</div>
@@ -410,6 +424,18 @@ export default function CitizenEvidenceVerification({ user }: Props) {
           <div className="text-[11px] font-medium text-muted-foreground">Potential Conflicts</div>
           <div className="text-xl font-bold tracking-tight text-amber-600 mt-1">{stats.potentialConflict}</div>
           <div className="text-[10px] text-amber-600 font-medium mt-0.5">Review Required</div>
+        </Card>
+        <Card className="p-3.5 bg-card border-border shadow-xs border-l-4 border-l-purple-500">
+          <div className="text-[11px] font-medium text-muted-foreground flex items-center justify-between">
+            <span>Calculation Deficits</span>
+            <IconCalculator className="size-3.5 text-purple-600" />
+          </div>
+          <div className="text-xl font-bold tracking-tight text-purple-600 mt-1">
+            {stats.calculationInconsistencies}
+          </div>
+          <div className="text-[10px] text-purple-700 dark:text-purple-400 font-semibold mt-0.5">
+            ₹{stats.totalAtRiskAmount}L At Risk
+          </div>
         </Card>
         <Card className="p-3.5 bg-card border-border shadow-xs border-l-4 border-l-emerald-500">
           <div className="text-[11px] font-medium text-muted-foreground">Consistent Records</div>
@@ -460,6 +486,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="All">All Categories ({evidenceList.length})</SelectItem>
+                  <SelectItem value="CALCULATION_INCONSISTENCY">Calculation Deficits ({stats.calculationInconsistencies})</SelectItem>
                   <SelectItem value="CONFLICT_DETECTED">Conflict Detected ({stats.conflictDetected})</SelectItem>
                   <SelectItem value="POTENTIAL_CONFLICT">Potential Conflict ({stats.potentialConflict})</SelectItem>
                   <SelectItem value="CONSISTENT">Consistent ({stats.consistent})</SelectItem>
@@ -492,7 +519,7 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                   "{item.description}"
                 </p>
 
-                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-[11px] space-y-1 mb-3">
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-[11px] space-y-1 mb-2">
                   <div className="flex items-center justify-between text-slate-600">
                     <span className="font-medium">AI Cross-Check Result:</span>
                     <span className="font-mono font-bold text-blue-700">{item.aiConfidence}% Match Confidence</span>
@@ -501,6 +528,44 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                     {item.fieldDiscrepancy || item.explanation}
                   </div>
                 </div>
+
+                {/* Calculation Inconsistency Summary Pill */}
+                {item.calculationInconsistency && (
+                  <div
+                    className={`p-2 rounded-lg border text-[11px] mb-3 ${
+                      item.calculationInconsistency.inconsistencyLevel === "Critical"
+                        ? "bg-red-50/80 border-red-200 text-red-900"
+                        : item.calculationInconsistency.inconsistencyLevel === "High"
+                        ? "bg-amber-50/80 border-amber-200 text-amber-900"
+                        : item.calculationInconsistency.inconsistencyLevel === "Moderate"
+                        ? "bg-yellow-50/80 border-yellow-200 text-yellow-900"
+                        : "bg-emerald-50/80 border-emerald-200 text-emerald-900"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between font-semibold">
+                      <span className="flex items-center gap-1.5">
+                        <IconCalculator className="size-3.5 text-indigo-700" />
+                        <span>Calculation Inconsistency:</span>
+                      </span>
+                      <span className="font-mono font-bold">
+                        {item.calculationInconsistency.progressDeficitPct > 0
+                          ? `-${item.calculationInconsistency.progressDeficitPct}% Deficit`
+                          : "Consistent"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-600 mt-1 pt-1 border-t border-black/5 font-mono">
+                      <span>Claim: {item.calculationInconsistency.claimedProgressPct}%</span>
+                      <span>•</span>
+                      <span>Observed: {item.calculationInconsistency.calculatedObservedProgressPct}%</span>
+                      {item.calculationInconsistency.unjustifiedAtRiskLakh > 0 && (
+                        <>
+                          <span>•</span>
+                          <span className="font-bold text-red-700">₹{item.calculationInconsistency.unjustifiedAtRiskLakh}L At Risk</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border">
                   <div className="flex items-center gap-1">
@@ -946,6 +1011,219 @@ export default function CitizenEvidenceVerification({ user }: Props) {
                     </div>
                   </div>
                 </div>
+
+                {/* ── CALCULATION INCONSISTENCY & PROJECT EVALUATION PANEL ── */}
+                {selectedCalculationInconsistency && (
+                  <div className="p-4 rounded-xl border-2 border-indigo-500/40 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white space-y-4 shadow-md">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-800/80 pb-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <div className="p-1 rounded bg-indigo-500/20 text-indigo-300">
+                            <IconCalculator className="size-4" />
+                          </div>
+                          <span className="font-bold text-xs uppercase tracking-wider text-indigo-200">
+                            Calculation Inconsistency & Project Evaluation
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-indigo-300/80 mt-0.5">
+                          Mathematical verification cross-checking displayed official claims against ground physical evidence
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-[11px] text-indigo-200">
+                          Inconsistency Score:{" "}
+                          <strong className="font-mono text-white text-xs">
+                            {selectedCalculationInconsistency.inconsistencyScore}/100
+                          </strong>
+                        </span>
+                        <Badge
+                          className={
+                            selectedCalculationInconsistency.inconsistencyLevel === "Critical"
+                              ? "bg-red-500 text-white text-[10px] font-bold"
+                              : selectedCalculationInconsistency.inconsistencyLevel === "High"
+                              ? "bg-amber-500 text-slate-950 text-[10px] font-bold"
+                              : selectedCalculationInconsistency.inconsistencyLevel === "Moderate"
+                              ? "bg-yellow-400 text-slate-950 text-[10px] font-bold"
+                              : "bg-emerald-500 text-white text-[10px] font-bold"
+                          }
+                        >
+                          {selectedCalculationInconsistency.inconsistencyLevel.toUpperCase()} RISK
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Comparative Calculation Matrix */}
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-semibold text-indigo-200 uppercase tracking-wider flex items-center gap-1.5">
+                        <IconScale className="size-3.5 text-indigo-400" />
+                        <span>Displayed Data vs Ground Reality Mathematical Matrix</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {/* 1. Physical Progress */}
+                        <div className="p-3 rounded-lg bg-white/5 border border-indigo-500/20 space-y-1.5">
+                          <span className="text-[10px] font-semibold text-indigo-300 uppercase tracking-wide block">
+                            1. Physical Completion Rate
+                          </span>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Official Claim:</span>
+                            <span className="text-blue-300 font-bold">
+                              {selectedCalculationInconsistency.claimedProgressPct}%
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Ground Evaluated:</span>
+                            <span className="text-indigo-200 font-bold">
+                              {selectedCalculationInconsistency.calculatedObservedProgressPct}%
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono pt-1 border-t border-white/10">
+                            <span className="text-amber-300 font-medium">Variance / Deficit:</span>
+                            <span
+                              className={`font-bold ${
+                                selectedCalculationInconsistency.progressDeficitPct > 0
+                                  ? "text-red-400"
+                                  : "text-emerald-400"
+                              }`}
+                            >
+                              {selectedCalculationInconsistency.progressDeficitPct > 0
+                                ? `-${selectedCalculationInconsistency.progressDeficitPct}% Deficit`
+                                : "0% (Consistent)"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 2. Financial Outlay at Risk */}
+                        <div className="p-3 rounded-lg bg-white/5 border border-indigo-500/20 space-y-1.5">
+                          <span className="text-[10px] font-semibold text-indigo-300 uppercase tracking-wide block">
+                            2. Public Outlay & Justification
+                          </span>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Disbursed Funds:</span>
+                            <span className="text-blue-300 font-bold">
+                              ₹{selectedCalculationInconsistency.disbursedExpenditureLakh.toFixed(2)}L
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Justified by Ground Work:</span>
+                            <span className="text-emerald-300 font-bold">
+                              ₹{selectedCalculationInconsistency.justifiedExpenditureLakh.toFixed(2)}L
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono pt-1 border-t border-white/10">
+                            <span className="text-amber-300 font-medium">Unjustified Outlay At Risk:</span>
+                            <span
+                              className={`font-bold ${
+                                selectedCalculationInconsistency.unjustifiedAtRiskLakh > 0
+                                  ? "text-red-400"
+                                  : "text-emerald-400"
+                              }`}
+                            >
+                              {selectedCalculationInconsistency.unjustifiedAtRiskLakh > 0
+                                ? `₹${selectedCalculationInconsistency.unjustifiedAtRiskLakh.toFixed(2)}L At Risk`
+                                : "₹0.00L (Justified)"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 3. Unit Cost Execution */}
+                        <div className="p-3 rounded-lg bg-white/5 border border-indigo-500/20 space-y-1.5">
+                          <span className="text-[10px] font-semibold text-indigo-300 uppercase tracking-wide block">
+                            3. Unit Rate & Cost Output
+                          </span>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Sanctioned Unit Cost:</span>
+                            <span className="text-blue-300">
+                              {selectedCalculationInconsistency.sanctionedUnitCost}
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Effective Observed Rate:</span>
+                            <span className="text-indigo-200">
+                              {selectedCalculationInconsistency.effectiveObservedUnitCost}
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-xs font-mono pt-1 border-t border-white/10">
+                            <span className="text-amber-300 font-medium">Unit Rate Variance:</span>
+                            <span
+                              className={`font-bold ${
+                                (selectedCalculationInconsistency.unitCostVariancePct || 0) > 15
+                                  ? "text-red-400"
+                                  : (selectedCalculationInconsistency.unitCostVariancePct || 0) > 0
+                                  ? "text-yellow-400"
+                                  : "text-emerald-400"
+                              }`}
+                            >
+                              {(selectedCalculationInconsistency.unitCostVariancePct || 0) > 0
+                                ? `+${selectedCalculationInconsistency.unitCostVariancePct}% Rate Escalation`
+                                : "Normal Rate"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* 4. Statutory UC Compliance */}
+                        <div className="p-3 rounded-lg bg-white/5 border border-indigo-500/20 space-y-1.5">
+                          <span className="text-[10px] font-semibold text-indigo-300 uppercase tracking-wide block">
+                            4. Statutory UC Milestone Compliance
+                          </span>
+                          <div className="flex items-baseline justify-between text-xs font-mono">
+                            <span className="text-slate-300">Claim Status:</span>
+                            <Badge
+                              variant="outline"
+                              className={
+                                selectedCalculationInconsistency.ucClaimStatus === "Premature_Claim_Breach"
+                                  ? "bg-red-500/20 text-red-300 border-red-500/40 text-[10px]"
+                                  : selectedCalculationInconsistency.ucClaimStatus === "Irregular_Disbursement"
+                                  ? "bg-amber-500/20 text-amber-300 border-amber-500/40 text-[10px]"
+                                  : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px]"
+                              }
+                            >
+                              {selectedCalculationInconsistency.ucClaimStatus.replace(/_/g, " ")}
+                            </Badge>
+                          </div>
+                          <div className="text-[11px] text-slate-300 leading-snug pt-1">
+                            {selectedCalculationInconsistency.statutoryViolation || "Statutory tranche disbursement criteria satisfied."}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Mathematical Formula Breakdown */}
+                    <div className="p-3 rounded-lg bg-black/40 border border-indigo-500/30 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-indigo-200">
+                        <span>Mathematical Inconsistency Audit Formula:</span>
+                        <span className="font-mono text-[10px] text-indigo-300">
+                          Algorithm: Physical Progress Deficit vs Fiscal Outlay
+                        </span>
+                      </div>
+                      <div className="font-mono text-[11px] text-amber-300 bg-white/5 p-2 rounded border border-white/10 break-all">
+                        {selectedCalculationInconsistency.discrepancyFormula}
+                      </div>
+                      <p className="text-[11px] text-indigo-200/90 leading-relaxed pt-1">
+                        {selectedCalculationInconsistency.evaluationSummary}
+                      </p>
+                    </div>
+
+                    {/* Statutory Audit Recommendations */}
+                    {selectedCalculationInconsistency.auditRecommendations.length > 0 && (
+                      <div className="p-3 rounded-lg bg-indigo-950/80 border border-indigo-400/30 space-y-1.5">
+                        <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wide block flex items-center gap-1.5">
+                          <IconAlertTriangle className="size-3.5 text-amber-400" />
+                          Statutory Project Evaluation & Audit Actions
+                        </span>
+                        <ul className="space-y-1 text-[11px] text-indigo-100">
+                          {selectedCalculationInconsistency.auditRecommendations.map((rec, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-amber-400 font-bold shrink-0">•</span>
+                              <span>{rec}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* ── AI ON-SITE EVIDENCE CROSS-CHECK USP CARD (GEO-TAG & IMAGE REUSE) ── */}
                 <div className="p-4 rounded-xl border-2 border-indigo-500/30 bg-gradient-to-br from-indigo-50/70 via-slate-50 to-blue-50/70 space-y-4 shadow-sm">

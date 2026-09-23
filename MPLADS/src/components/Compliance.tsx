@@ -429,7 +429,7 @@ export default function Compliance({ user }: ComplianceProps = {}) {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 pt-2">
-                {PROJECTS.slice(0, 6).map((p) => {
+                {relevantProjects.slice(0, 6).map((p) => {
                   const score =
                     (p.ucSubmitted ? 25 : 0) +
                     (p.assetCreated ? 25 : 0) +

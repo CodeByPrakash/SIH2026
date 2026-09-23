@@ -152,10 +152,23 @@ USER PERSONALIZATION INSTRUCTIONS:
     try {
       let activeAlerts: any[] = [];
       if (isDbConnected) {
-        activeAlerts = await AlertModel.find({ status: "Active" }).lean();
+        const alertQuery: any = { status: "Active" };
+        if (user?.role === "District" && user.district) {
+          alertQuery.district = { $regex: new RegExp(`^${user.district}$`, "i") };
+        } else if (user?.role === "State" && user.state) {
+          alertQuery.state = { $regex: new RegExp(`^${user.state}$`, "i") };
+        }
+        activeAlerts = await AlertModel.find(alertQuery).lean();
       }
       if (!activeAlerts || activeAlerts.length === 0) {
         activeAlerts = ALERTS.filter((a) => a.status === "Active");
+        if (user?.role === "District" && user.district) {
+          const scoped = activeAlerts.filter((a) => a.district?.toLowerCase() === user.district?.toLowerCase());
+          if (scoped.length > 0) activeAlerts = scoped;
+        } else if (user?.role === "State" && user.state) {
+          const scoped = activeAlerts.filter((a) => a.state?.toLowerCase() === user.state?.toLowerCase());
+          if (scoped.length > 0) activeAlerts = scoped;
+        }
       }
 
       const totalActive = activeAlerts.length;
@@ -199,10 +212,34 @@ ${activeAlerts
     try {
       let allProjects: any[] = [];
       if (isDbConnected) {
-        allProjects = await ProjectModel.find({}).lean();
+        const pQuery: any = {};
+        if (user?.role === "District" && user.district) {
+          pQuery.district = { $regex: new RegExp(`^${user.district}$`, "i") };
+        } else if (user?.role === "State" && user.state) {
+          pQuery.state = { $regex: new RegExp(`^${user.state}$`, "i") };
+        } else if (user?.role === "MP" && (user.district || user.constituency)) {
+          pQuery.$or = [
+            ...(user.district ? [{ district: { $regex: new RegExp(`^${user.district}$`, "i") } }] : []),
+            ...(user.constituency ? [{ constituency: { $regex: new RegExp(`^${user.constituency}$`, "i") } }] : []),
+          ];
+        }
+        allProjects = await ProjectModel.find(pQuery).lean();
       }
       if (!allProjects || allProjects.length === 0) {
         allProjects = PROJECTS;
+        if (user?.role === "District" && user.district) {
+          const scoped = allProjects.filter((p) => p.district?.toLowerCase() === user.district?.toLowerCase());
+          if (scoped.length > 0) allProjects = scoped;
+        } else if (user?.role === "State" && user.state) {
+          const scoped = allProjects.filter((p) => p.state?.toLowerCase() === user.state?.toLowerCase());
+          if (scoped.length > 0) allProjects = scoped;
+        } else if (user?.role === "MP" && (user.district || user.constituency)) {
+          const scoped = allProjects.filter((p) =>
+            (user.district && p.district?.toLowerCase() === user.district?.toLowerCase()) ||
+            (user.constituency && p.constituency?.toLowerCase() === user.constituency?.toLowerCase())
+          );
+          if (scoped.length > 0) allProjects = scoped;
+        }
       }
 
       const totalProjects = allProjects.length;

@@ -35,6 +35,7 @@ import {
   getAlertsForRole,
 } from "@/data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
+import WhyRiskModal, { WhyRiskButton } from "@/components/WhyRiskModal";
 import {
   Card,
   CardHeader,
@@ -133,6 +134,8 @@ import {
   IconReceipt,
   IconCube,
   IconMap,
+  IconWorld,
+  IconCompass,
 } from "@tabler/icons-react";
 import { FEATURED_3D_PROJECTS } from "@/components/Project3DView";
 
@@ -220,8 +223,8 @@ function RiskStatusBadge({ riskLevel, size = "sm" }: { riskLevel: string; size?:
 function ProgressBar({ value, riskLevel }: { value: number; riskLevel: string }) {
   const color =
     riskLevel === "High" || riskLevel === "Critical" ? "bg-red-500"
-    : riskLevel === "Medium" ? "bg-amber-500"
-    : "bg-emerald-500";
+      : riskLevel === "Medium" ? "bg-amber-500"
+        : "bg-emerald-500";
   return (
     <div className="flex items-center gap-2">
       <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
@@ -277,7 +280,17 @@ function getRiskColor(riskLevel: string) {
 // ═══════════════════════════════════════════════════════════════════════════
 // RIGHT PANEL — REPORT
 // ═══════════════════════════════════════════════════════════════════════════
-function ReportPanel({ project, onClose }: { project: Project; onClose: () => void }) {
+function ReportPanel({
+  project,
+  onClose,
+  isCitizen,
+  onOpenWhyRisk,
+}: {
+  project: Project;
+  onClose: () => void;
+  isCitizen?: boolean;
+  onOpenWhyRisk?: (project: Project) => void;
+}) {
   const riskColor = getRiskColor(project.riskLevel);
   const utilPct = project.sanctionedAmount > 0
     ? Math.round((project.expenditure / project.sanctionedAmount) * 100)
@@ -314,24 +327,41 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
 
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto">
-          {/* Risk Banner */}
+          {/* Risk / Citizen Banner */}
           <div className={`mx-5 mt-5 rounded-xl p-4 border ${
-            project.riskLevel === "High" || project.riskLevel === "Critical"
+            isCitizen
+              ? "bg-primary/5 border-primary/20"
+              : project.riskLevel === "High" || project.riskLevel === "Critical"
               ? "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/40"
               : project.riskLevel === "Medium"
-              ? "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/40"
-              : "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/40"
+                ? "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/40"
+                : "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/40"
           }`}>
             <div className="flex items-center justify-between mb-2">
-              <RiskStatusBadge riskLevel={project.riskLevel} size="lg" />
-              <span className="text-[11px] text-muted-foreground">AI Audit Engine · FY 2024-25</span>
+              {isCitizen ? (
+                <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 gap-1 text-[11px] font-semibold">
+                  <IconBuildingCommunity className="size-3.5" /> Public Infrastructure Asset
+                </Badge>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <RiskStatusBadge riskLevel={project.riskLevel} size="lg" />
+                  {onOpenWhyRisk && (project.riskLevel === "High" || project.riskLevel === "Critical" || project.riskScore >= 50) && (
+                    <WhyRiskButton project={project} onClick={() => onOpenWhyRisk(project)} />
+                  )}
+                </div>
+              )}
+              <span className="text-[11px] text-muted-foreground">
+                {isCitizen ? "Public Disclosure · RTI Act 4(1)(b)" : "AI Audit Engine · FY 2024-25"}
+              </span>
             </div>
             <p className="text-xs text-foreground leading-relaxed">
               This <strong>{project.category}</strong> project in {project.district} is at <strong>{project.progress}%</strong> completion.
               Expected delivery: <strong>{project.expectedCompletion}</strong>.
-              {project.riskFlags.length > 0
-                ? ` Flagged issues: ${project.riskFlags.join("; ")}.`
-                : " No critical risk flags at this time."}
+              {!isCitizen && (
+                project.riskFlags.length > 0
+                  ? ` Flagged issues: ${project.riskFlags.join("; ")}.`
+                  : " No critical risk flags at this time."
+              )}
             </p>
           </div>
 
@@ -380,11 +410,36 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
                 <span>Milestone: 50%</span>
                 <span>100%</span>
               </div>
+
+              {/* Anomaly Callout: High progress with high risk */}
+              {project.progress >= 70 &&
+                (project.riskLevel === "High" ||
+                  project.riskLevel === "Critical" ||
+                  project.riskScore >= 50) && (
+                  <div className="mt-3 flex items-center justify-between gap-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs">
+                    <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 min-w-0">
+                      <IconAlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                      <span className="font-medium text-[11px] truncate">
+                        High progress ({project.progress}%) with elevated risk ({project.riskScore}/100)
+                      </span>
+                    </div>
+                    {onOpenWhyRisk && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onOpenWhyRisk(project)}
+                        className="h-6 text-[11px] px-2 bg-white dark:bg-card border-amber-300 text-amber-800 dark:text-amber-300 hover:bg-amber-50 font-bold shrink-0"
+                      >
+                        Why high risk? →
+                      </Button>
+                    )}
+                  </div>
+                )}
             </div>
           </div>
 
           {/* AI Risk Flags */}
-          {project.riskFlags.length > 0 && (
+          {!isCitizen && project.riskFlags.length > 0 && (
             <div className="px-5 mt-5">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <IconShieldExclamation className="size-3.5 text-amber-500" />
@@ -402,7 +457,7 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
           )}
 
           {/* Project Details */}
-          <div className="px-5 mt-5">
+          <div className="px-5 mt-5 pb-6">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Project Details</h3>
             <div className="rounded-xl border bg-card overflow-hidden">
               {[
@@ -412,8 +467,12 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
                 { label: "Agreement Date", value: project.agreementDate ?? "—" },
                 { label: "Expected Completion", value: project.expectedCompletion },
                 { label: "Completion Date", value: project.completionDate ?? "In Progress" },
-                { label: "Risk Score", value: `${project.riskScore} / 100` },
-                { label: "Risk Level", value: project.riskLevel },
+                ...(!isCitizen
+                  ? [
+                      { label: "Risk Score", value: `${project.riskScore} / 100` },
+                      { label: "Risk Level", value: project.riskLevel },
+                    ]
+                  : []),
                 { label: "UC Submitted", value: project.ucSubmitted ? "✓ Yes" : "✗ No" },
                 { label: "Asset Created", value: project.assetCreated ? "✓ Yes" : "✗ No" },
                 { label: "Photos Uploaded", value: `${project.photos} photos` },
@@ -426,20 +485,20 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
                   className={`flex items-start justify-between px-4 py-2.5 text-xs ${i < arr.length - 1 ? "border-b border-border/60" : ""}`}
                 >
                   <span className="text-muted-foreground shrink-0 w-36">{item.label}</span>
-                  <span className={`font-medium text-right ${
-                    item.value.startsWith("✓") ? "text-emerald-600" : item.value.startsWith("✗") ? "text-red-500" : "text-foreground"
-                  }`}>{item.value}</span>
+                  <span className={`font-medium text-right ${item.value.startsWith("✓") ? "text-emerald-600" : item.value.startsWith("✗") ? "text-red-500" : "text-foreground"
+                    }`}>{item.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Payment History */}
-          <div className="px-5 mt-5 pb-6">
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <IconCurrencyRupee className="size-3.5 text-primary" />
-              Payment Transactions
-            </h3>
+          {!isCitizen && (
+            <div className="px-5 mt-5 pb-6">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <IconCurrencyRupee className="size-3.5 text-primary" />
+                Payment Transactions
+              </h3>
             <div className="rounded-xl border overflow-hidden">
               <Table>
                 <TableHeader>
@@ -457,11 +516,10 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
                       <TableCell className="text-[11px] font-mono text-muted-foreground py-2.5">{pay.billNo}</TableCell>
                       <TableCell className="text-[11px] font-mono font-semibold text-right py-2.5">{fmt(pay.amount)}</TableCell>
                       <TableCell className="py-2.5">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                          pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
-                          : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                        }`}>{pay.status}</span>
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+                            : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                          }`}>{pay.status}</span>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -469,6 +527,7 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
               </Table>
             </div>
           </div>
+        )}
         </div>
 
         {/* Footer */}
@@ -488,7 +547,17 @@ function ReportPanel({ project, onClose }: { project: Project; onClose: () => vo
 // ═══════════════════════════════════════════════════════════════════════════
 // RIGHT PANEL — DETAILED STATUS (Full comprehensive dedicated view)
 // ═══════════════════════════════════════════════════════════════════════════
-function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Project; onClose: () => void; onNavigate: (p: string) => void }) {
+function DetailedStatusPanel({
+  project,
+  onClose,
+  onNavigate,
+  onOpenWhyRisk,
+}: {
+  project: Project;
+  onClose: () => void;
+  onNavigate: (p: string) => void;
+  onOpenWhyRisk?: (project: Project) => void;
+}) {
   const riskColor = getRiskColor(project.riskLevel);
   const utilPct = project.sanctionedAmount > 0
     ? Math.round((project.expenditure / project.sanctionedAmount) * 100)
@@ -536,7 +605,12 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
                   <span className="text-[11px] font-mono text-muted-foreground">{project.workOrderNo}</span>
                   <span className="text-muted-foreground/40">·</span>
-                  <RiskStatusBadge riskLevel={project.riskLevel} />
+                  <div className="flex items-center gap-1.5">
+                    <RiskStatusBadge riskLevel={project.riskLevel} />
+                    {onOpenWhyRisk && (project.riskLevel === "High" || project.riskLevel === "Critical" || project.riskScore >= 50) && (
+                      <WhyRiskButton project={project} onClick={() => onOpenWhyRisk(project)} />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -626,6 +700,31 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                 </div>
               </div>
             </div>
+
+            {/* Anomaly Callout: High progress with high risk */}
+            {project.progress >= 70 &&
+              (project.riskLevel === "High" ||
+                project.riskLevel === "Critical" ||
+                project.riskScore >= 50) && (
+                <div className="mt-3 flex items-center justify-between gap-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs">
+                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 min-w-0">
+                    <IconAlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <span className="font-medium text-[11px] truncate">
+                      High progress ({project.progress}%) with elevated risk ({project.riskScore}/100)
+                    </span>
+                  </div>
+                  {onOpenWhyRisk && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onOpenWhyRisk(project)}
+                      className="h-6 text-[11px] px-2 bg-white dark:bg-card border-amber-300 text-amber-800 dark:text-amber-300 hover:bg-amber-50 font-bold shrink-0"
+                    >
+                      Why high risk? →
+                    </Button>
+                  )}
+                </div>
+              )}
           </div>
 
           {/* ── AI Audit Scorecard ── */}
@@ -655,9 +754,8 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                     <IconSparkles className="size-3.5 text-violet-500" />
-                    Deep ML & NLP Audit
+                    AI Audit
                   </span>
-                  <p className="text-[10px] text-muted-foreground">XGBoost &bull; Isolation Forest &bull; Nidhi-saathi NLP</p>
                 </div>
                 <Button
                   size="sm"
@@ -684,11 +782,10 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                 <div key={i} className="flex gap-4">
                   {/* Connector */}
                   <div className="flex flex-col items-center">
-                    <div className={`size-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      step.done
+                    <div className={`size-8 rounded-full border-2 flex items-center justify-center shrink-0 ${step.done
                         ? "border-emerald-500 bg-emerald-500/10"
                         : "border-muted-foreground/25 bg-muted/30"
-                    }`}>
+                      }`}>
                       {step.done
                         ? <IconCheck className="size-4 text-emerald-500" />
                         : <span className="size-2 rounded-full bg-muted-foreground/30" />
@@ -784,11 +881,10 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
                       <TableCell className="text-[11px] font-mono text-muted-foreground py-3">{pay.billNo}</TableCell>
                       <TableCell className="text-[11px] font-mono font-bold text-right py-3">{fmt(pay.amount)}</TableCell>
                       <TableCell className="py-3">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                          pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
-                          : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
-                          : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                        }`}>{pay.status}</span>
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+                            : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                          }`}>{pay.status}</span>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -812,13 +908,11 @@ function DetailedStatusPanel({ project, onClose, onNavigate }: { project: Projec
               ].map((item) => {
                 const IconComp = item.icon;
                 return (
-                  <div key={item.label} className={`p-3.5 rounded-xl border flex items-center gap-3 ${
-                    item.status ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/30"
-                    : "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30"
-                  }`}>
-                    <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${
-                      item.status ? "bg-emerald-500/20" : "bg-red-500/20"
+                  <div key={item.label} className={`p-3.5 rounded-xl border flex items-center gap-3 ${item.status ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/30"
+                      : "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30"
                     }`}>
+                    <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${item.status ? "bg-emerald-500/20" : "bg-red-500/20"
+                      }`}>
                       <IconComp className={`size-4 ${item.status ? "text-emerald-600" : "text-red-500"}`} />
                     </div>
                     <div>
@@ -1091,11 +1185,11 @@ function exportDashboard(
     [`Role: ${user.role}`, `Name: ${user.name}`, `Filter: ${filterLabel}`, "", "", "", "", `Exported: ${ts}`, ""],
     [`Total Projects in Export: ${projects.length}`, "", "", "", "", "", "", "", ""],
     [""],
-    ["#","Work Order No","Project Name","Category","Sub-Category","State","District","Constituency","MP Name","Sanctioned (₹L)","Released (₹L)","Expenditure (₹L)","Progress %","Status","Risk Level","Risk Score","UC Submitted","Asset Created","Sanction Date","Expected Completion","Completion Date","Photos","Inspections"],
-    ...projects.map((p, i) => [i+1,p.workOrderNo,p.name,p.category,p.subCategory,p.state,p.district,p.constituency,p.mpName,p.sanctionedAmount,p.releasedAmount,p.expenditure,p.progress,p.status,p.riskLevel,p.riskScore,p.ucSubmitted?"Yes":"No",p.assetCreated?"Yes":"No",p.sanctionDate,p.expectedCompletion,p.completionDate??"—",p.photos,p.inspections]),
+    ["#", "Work Order No", "Project Name", "Category", "Sub-Category", "State", "District", "Constituency", "MP Name", "Sanctioned (₹L)", "Released (₹L)", "Expenditure (₹L)", "Progress %", "Status", "Risk Level", "Risk Score", "UC Submitted", "Asset Created", "Sanction Date", "Expected Completion", "Completion Date", "Photos", "Inspections"],
+    ...projects.map((p, i) => [i + 1, p.workOrderNo, p.name, p.category, p.subCategory, p.state, p.district, p.constituency, p.mpName, p.sanctionedAmount, p.releasedAmount, p.expenditure, p.progress, p.status, p.riskLevel, p.riskScore, p.ucSubmitted ? "Yes" : "No", p.assetCreated ? "Yes" : "No", p.sanctionDate, p.expectedCompletion, p.completionDate ?? "—", p.photos, p.inspections]),
   ];
   const ws1 = XLSX.utils.aoa_to_sheet(projectRows);
-  ws1["!cols"] = [4,14,42,18,20,14,16,18,20,12,12,12,10,12,10,10,10,10,12,14,14,8,10].map((w) => ({ wch: w }));
+  ws1["!cols"] = [4, 14, 42, 18, 20, 14, 16, 18, 20, 12, 12, 12, 10, 12, 10, 10, 10, 10, 12, 14, 14, 8, 10].map((w) => ({ wch: w }));
   XLSX.utils.book_append_sheet(wb, ws1, "Projects");
 
   // Risk summary sheet
@@ -1103,13 +1197,13 @@ function exportDashboard(
     ["Risk Summary"],
     [""],
     ["Risk Level", "Count", "% of Total"],
-    ...["High","Critical","Medium","Low"].map((lvl) => {
+    ...["High", "Critical", "Medium", "Low"].map((lvl) => {
       const cnt = projects.filter((p) => p.riskLevel === lvl).length;
       return [lvl, cnt, projects.length > 0 ? ((cnt / projects.length) * 100).toFixed(1) + "%" : "0%"];
     }),
     [""],
     ["Status", "Count", "% of Total"],
-    ...["Completed","In Progress","Delayed","Not Started"].map((s) => {
+    ...["Completed", "In Progress", "Delayed", "Not Started"].map((s) => {
       const cnt = projects.filter((p) => p.status === s).length;
       return [s, cnt, projects.length > 0 ? ((cnt / projects.length) * 100).toFixed(1) + "%" : "0%"];
     }),
@@ -1117,14 +1211,14 @@ function exportDashboard(
   const ws2 = XLSX.utils.aoa_to_sheet(riskRows);
   XLSX.utils.book_append_sheet(wb, ws2, "Risk Summary");
 
-  const fundRows = [["Fund History — FY-wise Allocation & Utilization"],[""],["Financial Year","Allocated (₹Cr)","Released (₹Cr)","Utilized (₹Cr)","Lapsed (₹Cr)","Utilization %"],...FUND_HISTORY.map((f) => [f.year,(f.allocated/100).toFixed(2),(f.released/100).toFixed(2),(f.utilized/100).toFixed(2),(f.lapsed/100).toFixed(2),f.released>0?((f.utilized/f.released)*100).toFixed(1)+"%":"—"])];
+  const fundRows = [["Fund History — FY-wise Allocation & Utilization"], [""], ["Financial Year", "Allocated (₹Cr)", "Released (₹Cr)", "Utilized (₹Cr)", "Lapsed (₹Cr)", "Utilization %"], ...FUND_HISTORY.map((f) => [f.year, (f.allocated / 100).toFixed(2), (f.released / 100).toFixed(2), (f.utilized / 100).toFixed(2), (f.lapsed / 100).toFixed(2), f.released > 0 ? ((f.utilized / f.released) * 100).toFixed(1) + "%" : "—"])];
   const ws3 = XLSX.utils.aoa_to_sheet(fundRows);
   XLSX.utils.book_append_sheet(wb, ws3, "Fund History");
 
   const role = user.role;
-  const scope = role==="MP"?user.constituency:role==="District"?user.district:role==="State"?user.state:"National";
+  const scope = role === "MP" ? user.constituency : role === "District" ? user.district : role === "State" ? user.state : "National";
   const safeFilter = filterLabel.replace(/[^a-zA-Z0-9]/g, "-");
-  XLSX.writeFile(wb, `NIDHI-RAKSHAK_${role}_${scope}_${safeFilter}_${ts.replace(/\//g,"-")}.xlsx`);
+  XLSX.writeFile(wb, `NIDHI-RAKSHAK_${role}_${scope}_${safeFilter}_${ts.replace(/\//g, "-")}.xlsx`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1238,10 +1332,19 @@ export default function Dashboard({ user, onNavigate }: Props) {
   const [projectFilter, setProjectFilter] = React.useState("all");
   const [pageSize, setPageSize] = React.useState(15);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [lastSynced, setLastSynced] = React.useState<Date>(() => new Date(2024, 9, 15, 11, 42));
+  const [lastSynced, setLastSynced] = React.useState<Date>(() => new Date());
   const [isSyncing, setIsSyncing] = React.useState(false);
   const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
   const [panelType, setPanelType] = React.useState<"report" | "status" | "graphs" | null>(null);
+  const [citizenExploreOther, setCitizenExploreOther] = React.useState(false);
+  const [citizenSelectedState, setCitizenSelectedState] = React.useState("All");
+  const [citizenSelectedDistrict, setCitizenSelectedDistrict] = React.useState("All");
+  const [whyRiskProject, setWhyRiskProject] = React.useState<Project | null>(null);
+
+  React.useEffect(() => {
+    // Ensure accurate current client time on load
+    setLastSynced(new Date());
+  }, []);
 
   const filterLabel = React.useMemo(() => {
     if (projectFilter === "completed") return "Completed";
@@ -1255,12 +1358,20 @@ export default function Dashboard({ user, onNavigate }: Props) {
     isLoading: isLoadingProjects,
     refresh: refreshProjects,
     syncNow,
+    lastUpdated,
   } = useProjects({
+    user,
     district: user.role === "District" ? user.district : undefined,
     constituency: user.role === "MP" ? user.constituency : undefined,
-    state: user.role === "State" ? user.state : undefined,
+    state: user.role === "State" ? user.state : (user.role === "District" ? user.state : undefined),
     limit: user.role === "Ministry" ? 1000 : 500,
   });
+
+  React.useEffect(() => {
+    if (lastUpdated) {
+      setLastSynced(lastUpdated);
+    }
+  }, [lastUpdated]);
 
   const handleSync = async () => {
     if (isSyncing) return;
@@ -1304,15 +1415,42 @@ export default function Dashboard({ user, onNavigate }: Props) {
       );
     }
     if (user.role === "Citizen") {
-      const match = liveProjects.filter(
-        (p) =>
-          (user.district && p.district?.toLowerCase() === user.district?.toLowerCase()) ||
-          (user.state && p.state?.toLowerCase() === user.state?.toLowerCase())
-      );
-      return match.length > 0 ? match : liveProjects;
+      if (!citizenExploreOther) {
+        // By default, strictly show their own area (district/state)
+        const userDist = user.district?.toLowerCase();
+        const userSt = user.state?.toLowerCase();
+        const match = liveProjects.filter((p) =>
+          (userDist && p.district?.toLowerCase() === userDist) ||
+          (!userDist && userSt && p.state?.toLowerCase() === userSt)
+        );
+        return match.length > 0 ? match : liveProjects;
+      }
+      // When citizen clicks "Explore Other Areas", allow custom state/district exploration
+      let pool = liveProjects;
+      if (citizenSelectedState !== "All") {
+        pool = pool.filter((p) => p.state.toLowerCase() === citizenSelectedState.toLowerCase());
+      }
+      if (citizenSelectedDistrict !== "All") {
+        pool = pool.filter((p) => p.district.toLowerCase() === citizenSelectedDistrict.toLowerCase());
+      }
+      return pool;
     }
     return liveProjects;
-  }, [liveProjects, user.role, user.constituency, user.district, user.state]);
+  }, [liveProjects, user.role, user.constituency, user.district, user.state, citizenExploreOther, citizenSelectedState, citizenSelectedDistrict]);
+
+  const citizenAvailableDistricts = React.useMemo(() => {
+    let pool = liveProjects;
+    if (citizenSelectedState !== "All") {
+      pool = pool.filter((p) => p.state.toLowerCase() === citizenSelectedState.toLowerCase());
+    }
+    const dists = Array.from(new Set(pool.map((p) => p.district).filter(Boolean))).sort();
+    return ["All", ...dists];
+  }, [liveProjects, citizenSelectedState]);
+
+  const citizenAvailableStates = React.useMemo(() => {
+    const sts = Array.from(new Set(liveProjects.map((p) => p.state).filter(Boolean))).sort();
+    return ["All", ...sts];
+  }, [liveProjects]);
 
   const filteredProjects = React.useMemo(() => {
     if (projectFilter === "completed") return showProjects.filter((p) => p.status === "Completed");
@@ -1396,9 +1534,12 @@ export default function Dashboard({ user, onNavigate }: Props) {
             <IconCube className="size-80" />
           </div>
           <CardHeader className="p-6 md:p-8 relative z-10">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-none">Citizen Transparency Portal</Badge>
               <span className="text-xs text-primary-foreground/80 font-mono">Real-time Public Works & 3D Twins</span>
+              <span className="text-xs text-primary-foreground/75 font-mono hidden sm:inline">
+                · Last synced: {formatSyncTime(lastSynced)}
+              </span>
             </div>
             <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight text-primary-foreground">
               Track Public Works In Your Constituency (NIDHI-RAKSHAK)
@@ -1437,13 +1578,110 @@ export default function Dashboard({ user, onNavigate }: Props) {
           </CardHeader>
         </Card>
 
+        {/* ── Citizen Area Switcher Banner ── */}
+        {isCitizen && (
+          <Card className="border border-primary/25 bg-gradient-to-r from-primary/10 via-background to-primary/5 shadow-xs overflow-hidden">
+            <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3">
+                <div className="size-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 mt-0.5 sm:mt-0">
+                  {citizenExploreOther ? <IconWorld className="size-5" /> : <IconMapPin className="size-5" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-sm font-bold text-foreground">
+                      {citizenExploreOther
+                        ? `Exploring Other Areas ${citizenSelectedDistrict !== "All" ? `· ${citizenSelectedDistrict}` : citizenSelectedState !== "All" ? `· ${citizenSelectedState}` : "(All India)"}`
+                        : `My Area: ${user.district ? `${user.district}, ${user.state}` : user.state || "Local District"}`}
+                    </h3>
+                    <Badge variant="outline" className={`text-[10px] font-semibold ${
+                      citizenExploreOther
+                        ? "border-cyan-500/40 text-cyan-700 bg-cyan-500/10 dark:text-cyan-300"
+                        : "border-primary/40 text-primary bg-primary/10"
+                    }`}>
+                      {citizenExploreOther ? "Exploring Other Areas" : "Default Local View"}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {citizenExploreOther
+                      ? "Browsing MPLADS projects and public works across other districts in India. You can select any state or district below."
+                      : `Viewing verified community projects and infrastructure in your home area (${user.district || "district"}). Click to explore other areas.`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+                {citizenExploreOther ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setCitizenExploreOther(false);
+                      setCitizenSelectedState("All");
+                      setCitizenSelectedDistrict("All");
+                      setCurrentPage(1);
+                    }}
+                    className="h-8 text-xs font-semibold gap-1.5 border-primary/40 text-primary hover:bg-primary/10 w-full sm:w-auto"
+                  >
+                    <IconMapPin className="size-3.5" />
+                    Back to My Area ({user.district || "Local"})
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setCitizenExploreOther(true);
+                      setCurrentPage(1);
+                    }}
+                    className="h-8 text-xs font-semibold gap-1.5 shadow-xs w-full sm:w-auto"
+                  >
+                    <IconWorld className="size-3.5" />
+                    Explore Other Areas
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: "Total Projects", value: "89,472", sub: "Nationwide works", icon: IconBuildingCommunity },
-            { label: "Completed Works", value: "62,841", sub: "Verified public assets", icon: IconCircleCheck },
-            { label: "Active Execution", value: "21,847", sub: "Under construction", icon: IconClock },
-            { label: "Total Investment", value: "₹1,68,200 Cr", sub: "Disbursed to date", icon: IconCoin },
+            {
+              label: "Total Projects",
+              value: isCitizen
+                ? showProjects.length.toLocaleString()
+                : "89,472",
+              sub: isCitizen
+                ? citizenExploreOther
+                  ? (citizenSelectedDistrict !== "All" ? `In ${citizenSelectedDistrict}` : citizenSelectedState !== "All" ? `In ${citizenSelectedState}` : "Across India")
+                  : `In ${user.district || user.state || "Your Area"}`
+                : "Nationwide works",
+              icon: IconBuildingCommunity,
+            },
+            {
+              label: "Completed Works",
+              value: isCitizen
+                ? showProjects.filter((p) => p.status === "Completed").length.toLocaleString()
+                : "62,841",
+              sub: isCitizen ? "Verified community assets" : "Verified public assets",
+              icon: IconCircleCheck,
+            },
+            {
+              label: "Active Execution",
+              value: isCitizen
+                ? showProjects.filter((p) => p.status === "In Progress").length.toLocaleString()
+                : "21,847",
+              sub: isCitizen ? "Under construction" : "Under construction",
+              icon: IconClock,
+            },
+            {
+              label: "Total Investment",
+              value: isCitizen
+                ? fmt(showProjects.reduce((sum, p) => sum + p.sanctionedAmount, 0))
+                : "₹1,68,200 Cr",
+              sub: isCitizen ? "Sanctioned for area works" : "Disbursed to date",
+              icon: IconCoin,
+            },
           ].map((item) => {
             const IconComp = item.icon;
             return (
@@ -1623,31 +1861,31 @@ export default function Dashboard({ user, onNavigate }: Props) {
   // ── KPI list ──────────────────────────────────────────────────────────
   const kpiList = isMinistry
     ? [
-        { label: "Total Projects", value: "89,472", sub: "Nationwide across 543 constituencies", footer: "Active public asset portfolio", trend: "+12.4%", isPositive: true },
-        { label: "Completed Works", value: "62,841", sub: `${pct(NATIONAL_KPIs.completedProjects, NATIONAL_KPIs.totalProjects)} completion benchmark`, footer: "Trending above target", trend: "+8.2%", isPositive: true },
-        { label: "Fund Utilization", value: "84.8%", sub: "₹1,68,200 Cr of ₹1,98,400 Cr released", footer: "Solid pace in Q2", trend: "+3.1%", isPositive: true },
-        { label: "Flagged Risks", value: "3,847", sub: "AI anomaly detection triggers", footer: "Resolution in progress", trend: "-5.3%", isPositive: true },
-      ]
+      { label: "Total Projects", value: "89,472", sub: "Nationwide across 543 constituencies", footer: "Active public asset portfolio", trend: "+12.4%", isPositive: true },
+      { label: "Completed Works", value: "62,841", sub: `${pct(NATIONAL_KPIs.completedProjects, NATIONAL_KPIs.totalProjects)} completion benchmark`, footer: "Trending above target", trend: "+8.2%", isPositive: true },
+      { label: "Fund Utilization", value: "84.8%", sub: "₹1,68,200 Cr of ₹1,98,400 Cr released", footer: "Solid pace in Q2", trend: "+3.1%", isPositive: true },
+      { label: "Flagged Risks", value: "3,847", sub: "AI anomaly detection triggers", footer: "Resolution in progress", trend: "-5.3%", isPositive: true },
+    ]
     : isMP
-    ? [
+      ? [
         { label: "Constituency Works", value: String(showProjects.length), sub: `In ${user.constituency} constituency`, footer: "All active work orders", trend: "+4 new", isPositive: true },
         { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: "Verified on-ground completion", footer: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} success rate`, trend: "On Track", isPositive: true },
         { label: "Disbursed Funds", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: "Direct ground disbursements", footer: "87.4% fund deployment", trend: "+8.2%", isPositive: true },
         { label: "Active Risk Alerts", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "High/Critical inspection triggers", footer: "Requires MP review", trend: "Urgent", isPositive: false },
       ]
-    : isState
-    ? [
-        { label: "State Works (All Districts)", value: String(showProjects.length), sub: `${user.state} state directory`, footer: "All constituent districts", trend: "+6.8%", isPositive: true },
-        { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} state completion rate`, footer: "Statewide progress", trend: "+4.1%", isPositive: true },
-        { label: "State Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `Across ${new Set(showProjects.map((p) => p.district)).size || 1} districts`, footer: "State fund deployment", trend: "+5.3%", isPositive: true },
-        { label: "State Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Statewide anomaly flags", footer: "State vigilance review", trend: "Active", isPositive: false },
-      ]
-    : [
-        { label: "District Works", value: String(showProjects.length), sub: `Jurisdiction: ${user.district}`, footer: "Tracked in real-time", trend: "+8.2%", isPositive: true },
-        { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} milestone completion`, footer: "Meets SLA expectation", trend: "+4.1%", isPositive: true },
-        { label: "District Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `In ${user.district} district`, footer: "Ground deployment", trend: "+2.1%", isPositive: true },
-        { label: "District Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Open for verification", footer: "Under field audit", trend: "In Review", isPositive: false },
-      ];
+      : isState
+        ? [
+          { label: "State Works (All Districts)", value: String(showProjects.length), sub: `${user.state} state directory`, footer: "All constituent districts", trend: "+6.8%", isPositive: true },
+          { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} state completion rate`, footer: "Statewide progress", trend: "+4.1%", isPositive: true },
+          { label: "State Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `Across ${new Set(showProjects.map((p) => p.district)).size || 1} districts`, footer: "State fund deployment", trend: "+5.3%", isPositive: true },
+          { label: "State Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Statewide anomaly flags", footer: "State vigilance review", trend: "Active", isPositive: false },
+        ]
+        : [
+          { label: "District Works", value: String(showProjects.length), sub: `Jurisdiction: ${user.district}`, footer: "Tracked in real-time", trend: "+8.2%", isPositive: true },
+          { label: "Completed Works", value: String(showProjects.filter((p) => p.status === "Completed").length), sub: `${pct(showProjects.filter((p) => p.status === "Completed").length, showProjects.length)} milestone completion`, footer: "Meets SLA expectation", trend: "+4.1%", isPositive: true },
+          { label: "District Expenditure", value: fmt(showProjects.reduce((s, p) => s + p.expenditure, 0)), sub: `In ${user.district} district`, footer: "Ground deployment", trend: "+2.1%", isPositive: true },
+          { label: "District Risk Flags", value: String(showProjects.filter((p) => p.riskScore > 50).length), sub: "Open for verification", footer: "Under field audit", trend: "In Review", isPositive: false },
+        ];
 
   return (
     <div className="space-y-6">
@@ -1658,8 +1896,8 @@ export default function Dashboard({ user, onNavigate }: Props) {
             <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
               {isMinistry ? "National NIDHI-RAKSHAK Executive Overview"
                 : isMP ? `${user.constituency} Constituency Dashboard`
-                : user.role === "State" ? `${user.state} — State Level Dashboard`
-                : `${user.district} District Overview`}
+                  : user.role === "State" ? `${user.state} — State Level Dashboard`
+                    : `${user.district} District Overview`}
             </h1>
             <Badge variant="secondary" className="font-mono text-[10px] hidden md:inline-flex">PFMS-INTEGRATED</Badge>
           </div>
@@ -1718,19 +1956,73 @@ export default function Dashboard({ user, onNavigate }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Projects Table */}
         <Card className="lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
             <div className="flex items-center gap-2.5">
               <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <IconClipboardCheck className="size-5 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-base font-semibold">Ongoing Projects & Works</CardTitle>
+                <CardTitle className="text-base font-semibold">
+                  {isCitizen
+                    ? citizenExploreOther
+                      ? `Projects & Works (${citizenSelectedDistrict !== "All" ? citizenSelectedDistrict : citizenSelectedState !== "All" ? citizenSelectedState : "All India"})`
+                      : `Projects & Works in ${user.district || user.state || "Your Area"}`
+                    : "Ongoing Projects & Works"}
+                </CardTitle>
                 <CardDescription className="text-xs">
-                  Live list of projects under implementation in your {isDistrict ? "district" : isMP ? "constituency" : "jurisdiction"}
+                  {isCitizen
+                    ? citizenExploreOther
+                      ? "Browsing public works and community assets across other areas"
+                      : `Live public infrastructure projects in your home district (${user.district || "district"})`
+                    : `Live list of projects under implementation in your ${isDistrict ? "district" : isMP ? "constituency" : "jurisdiction"}`}
                 </CardDescription>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Citizen Explore Selectors */}
+              {isCitizen && citizenExploreOther && (
+                <div className="flex items-center gap-1.5">
+                  <Select
+                    value={citizenSelectedState}
+                    onValueChange={(val) => {
+                      setCitizenSelectedState(val || "All");
+                      setCitizenSelectedDistrict("All");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger size="sm" className="h-8 text-xs w-[120px]">
+                      <SelectValue placeholder="State: All" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      {citizenAvailableStates.map((st) => (
+                        <SelectItem key={st} value={st}>
+                          {st === "All" ? "All States" : st}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={citizenSelectedDistrict}
+                    onValueChange={(val) => {
+                      setCitizenSelectedDistrict(val || "All");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger size="sm" className="h-8 text-xs w-[120px]">
+                      <SelectValue placeholder="District: All" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      {citizenAvailableDistricts.map((dst) => (
+                        <SelectItem key={dst} value={dst}>
+                          {dst === "All" ? "All Districts" : dst}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
               {/* Filter selector */}
               <Select value={projectFilter} onValueChange={(v) => { if (v) setProjectFilter(v); }}>
                 <SelectTrigger size="sm" className="w-28 text-xs hidden sm:flex">
@@ -1740,7 +2032,7 @@ export default function Dashboard({ user, onNavigate }: Props) {
                   <SelectItem value="all">All Works</SelectItem>
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="delayed">Delayed</SelectItem>
-                  <SelectItem value="risk">High Risk</SelectItem>
+                  {!isCitizen && <SelectItem value="risk">High Risk</SelectItem>}
                 </SelectContent>
               </Select>
               {/* Rows per page */}
@@ -1770,7 +2062,7 @@ export default function Dashboard({ user, onNavigate }: Props) {
                   <TableHead className="text-[11px] text-right">Sanctioned (₹)</TableHead>
                   <TableHead className="text-[11px]">Progress</TableHead>
                   <TableHead className="text-[11px]">Exp. Completion</TableHead>
-                  <TableHead className="text-[11px]">Risk Status</TableHead>
+                  {!isCitizen && <TableHead className="text-[11px]">Risk Status</TableHead>}
                   <TableHead className="text-[11px] text-center pr-4">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -1794,10 +2086,43 @@ export default function Dashboard({ user, onNavigate }: Props) {
                     </TableCell>
                     <TableCell className="text-xs font-mono font-semibold text-right">{fmt(project.sanctionedAmount)}</TableCell>
                     <TableCell className="text-xs">
-                      <ProgressBar value={project.progress} riskLevel={project.riskLevel} />
+                      <div className="flex items-center gap-1.5">
+                        <ProgressBar value={project.progress} riskLevel={project.riskLevel} />
+                        {project.progress >= 70 &&
+                          (project.riskLevel === "High" ||
+                            project.riskLevel === "Critical" ||
+                            project.riskScore >= 50) && (
+                            <WhyRiskButton
+                              project={project}
+                              compact
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setWhyRiskProject(project);
+                              }}
+                            />
+                          )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-[11px] text-muted-foreground font-mono">{project.expectedCompletion}</TableCell>
-                    <TableCell><RiskStatusBadge riskLevel={project.riskLevel} /></TableCell>
+                    {!isCitizen && (
+                      <TableCell>
+                        <div className="flex items-center gap-1.5">
+                          <RiskStatusBadge riskLevel={project.riskLevel} />
+                          {(project.riskLevel === "High" ||
+                            project.riskLevel === "Critical" ||
+                            project.riskScore >= 50) && (
+                            <WhyRiskButton
+                              project={project}
+                              compact
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setWhyRiskProject(project);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </TableCell>
+                    )}
                     <TableCell className="text-center pr-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -1809,16 +2134,20 @@ export default function Dashboard({ user, onNavigate }: Props) {
                         <DropdownMenuContent align="end" className="w-48 rounded-xl">
                           <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => openPanel(project, "report")}>
                             <IconFileText className="size-3.5 text-primary" />
-                            Report
+                            {isCitizen ? "Public Project Overview" : "Report"}
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => openPanel(project, "status")}>
-                            <IconListDetails className="size-3.5 text-blue-500" />
-                            Detailed Status
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => openPanel(project, "graphs")}>
-                            <IconChartBarAlt className="size-3.5 text-violet-500" />
-                            Graphs
-                          </DropdownMenuItem>
+                          {!isCitizen && (
+                            <>
+                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => openPanel(project, "status")}>
+                                <IconListDetails className="size-3.5 text-blue-500" />
+                                Detailed Status
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => openPanel(project, "graphs")}>
+                                <IconChartBarAlt className="size-3.5 text-violet-500" />
+                                Graphs
+                              </DropdownMenuItem>
+                            </>
+                          )}
                           <DropdownMenuItem className="text-xs gap-2 cursor-pointer" onClick={() => onNavigate(`3d-view?projectId=${project.id}`)}>
                             <IconCube className="size-3.5 text-cyan-500" />
                             3D Digital Twin
@@ -1884,11 +2213,10 @@ export default function Dashboard({ user, onNavigate }: Props) {
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page)}
-                          className={`h-7 min-w-[28px] px-1.5 rounded-md text-[11px] font-medium transition-colors ${
-                            page === currentPage
+                          className={`h-7 min-w-[28px] px-1.5 rounded-md text-[11px] font-medium transition-colors ${page === currentPage
                               ? "bg-primary text-primary-foreground"
                               : "hover:bg-muted text-muted-foreground"
-                          }`}
+                            }`}
                         >
                           {page}
                         </button>
@@ -2082,8 +2410,8 @@ export default function Dashboard({ user, onNavigate }: Props) {
                   {isState
                     ? `${user.state} Districts: Fund Sanctioned vs Utilized`
                     : isDistrict
-                    ? `${user.district} Sectoral Expenditure (₹ Lakh)`
-                    : "State Fund Sanctioned vs Utilized"}
+                      ? `${user.district} Sectoral Expenditure (₹ Lakh)`
+                      : "State Fund Sanctioned vs Utilized"}
                 </CardTitle>
                 <Badge variant="outline" className="text-[10px] font-mono"><IconChartBar className="size-3 mr-1" /> Bar Chart</Badge>
               </div>
@@ -2214,14 +2542,31 @@ export default function Dashboard({ user, onNavigate }: Props) {
 
       {/* ── Right-side Panels ── */}
       {selectedProject && panelType === "report" && (
-        <ReportPanel project={selectedProject} onClose={closePanel} />
+        <ReportPanel
+          project={selectedProject}
+          onClose={closePanel}
+          isCitizen={isCitizen}
+          onOpenWhyRisk={setWhyRiskProject}
+        />
       )}
       {selectedProject && panelType === "status" && (
-        <DetailedStatusPanel project={selectedProject} onClose={closePanel} onNavigate={onNavigate} />
+        <DetailedStatusPanel
+          project={selectedProject}
+          onClose={closePanel}
+          onNavigate={onNavigate}
+          onOpenWhyRisk={setWhyRiskProject}
+        />
       )}
       {selectedProject && panelType === "graphs" && (
         <GraphsPanel project={selectedProject} onClose={closePanel} />
       )}
+
+      {/* ── Why Risk Anomaly Modal ── */}
+      <WhyRiskModal
+        project={whyRiskProject}
+        isOpen={!!whyRiskProject}
+        onClose={() => setWhyRiskProject(null)}
+      />
     </div>
   );
 }

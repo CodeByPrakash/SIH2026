@@ -82,6 +82,14 @@ export function useCitizenEvidence() {
       potentialConflict: evidenceList.filter((e) => e.verificationCategory === "POTENTIAL_CONFLICT").length,
       consistent: evidenceList.filter((e) => e.verificationCategory === "CONSISTENT").length,
       insufficient: evidenceList.filter((e) => e.verificationCategory === "INSUFFICIENT_EVIDENCE").length,
+      calculationInconsistencies: evidenceList.filter(
+        (e) => e.calculationInconsistency?.hasCalculationInconsistency
+      ).length,
+      totalAtRiskAmount: Number(
+        evidenceList
+          .reduce((sum, e) => sum + (e.calculationInconsistency?.unjustifiedAtRiskLakh || 0), 0)
+          .toFixed(2)
+      ),
     };
   }, [evidenceList]);
 
