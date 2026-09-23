@@ -9,6 +9,7 @@ export interface User {
   mpId?: string;
   phone: string;
   avatar?: string;
+  aadhaar?: string;
 }
 
 export interface Project {

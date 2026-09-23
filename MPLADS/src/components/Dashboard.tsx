@@ -328,15 +328,14 @@ function ReportPanel({
         {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto">
           {/* Risk / Citizen Banner */}
-          <div className={`mx-5 mt-5 rounded-xl p-4 border ${
-            isCitizen
+          <div className={`mx-5 mt-5 rounded-xl p-4 border ${isCitizen
               ? "bg-primary/5 border-primary/20"
               : project.riskLevel === "High" || project.riskLevel === "Critical"
-              ? "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/40"
-              : project.riskLevel === "Medium"
-                ? "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/40"
-                : "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/40"
-          }`}>
+                ? "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/40"
+                : project.riskLevel === "Medium"
+                  ? "bg-amber-50 border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/40"
+                  : "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/40"
+            }`}>
             <div className="flex items-center justify-between mb-2">
               {isCitizen ? (
                 <Badge variant="outline" className="border-primary/40 text-primary bg-primary/10 gap-1 text-[11px] font-semibold">
@@ -469,9 +468,9 @@ function ReportPanel({
                 { label: "Completion Date", value: project.completionDate ?? "In Progress" },
                 ...(!isCitizen
                   ? [
-                      { label: "Risk Score", value: `${project.riskScore} / 100` },
-                      { label: "Risk Level", value: project.riskLevel },
-                    ]
+                    { label: "Risk Score", value: `${project.riskScore} / 100` },
+                    { label: "Risk Level", value: project.riskLevel },
+                  ]
                   : []),
                 { label: "UC Submitted", value: project.ucSubmitted ? "✓ Yes" : "✗ No" },
                 { label: "Asset Created", value: project.assetCreated ? "✓ Yes" : "✗ No" },
@@ -499,35 +498,35 @@ function ReportPanel({
                 <IconCurrencyRupee className="size-3.5 text-primary" />
                 Payment Transactions
               </h3>
-            <div className="rounded-xl border overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40">
-                    <TableHead className="text-[11px] py-2">Date</TableHead>
-                    <TableHead className="text-[11px] py-2">Bill No</TableHead>
-                    <TableHead className="text-[11px] py-2 text-right">Amount</TableHead>
-                    <TableHead className="text-[11px] py-2">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {project.payments.map((pay, i) => (
-                    <TableRow key={i} className="hover:bg-muted/30">
-                      <TableCell className="text-[11px] font-mono py-2.5">{pay.date}</TableCell>
-                      <TableCell className="text-[11px] font-mono text-muted-foreground py-2.5">{pay.billNo}</TableCell>
-                      <TableCell className="text-[11px] font-mono font-semibold text-right py-2.5">{fmt(pay.amount)}</TableCell>
-                      <TableCell className="py-2.5">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
+              <div className="rounded-xl border overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40">
+                      <TableHead className="text-[11px] py-2">Date</TableHead>
+                      <TableHead className="text-[11px] py-2">Bill No</TableHead>
+                      <TableHead className="text-[11px] py-2 text-right">Amount</TableHead>
+                      <TableHead className="text-[11px] py-2">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {project.payments.map((pay, i) => (
+                      <TableRow key={i} className="hover:bg-muted/30">
+                        <TableCell className="text-[11px] font-mono py-2.5">{pay.date}</TableCell>
+                        <TableCell className="text-[11px] font-mono text-muted-foreground py-2.5">{pay.billNo}</TableCell>
+                        <TableCell className="text-[11px] font-mono font-semibold text-right py-2.5">{fmt(pay.amount)}</TableCell>
+                        <TableCell className="py-2.5">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
                             : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
                               : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
-                          }`}>{pay.status}</span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                            }`}>{pay.status}</span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
 
         {/* Footer */}
@@ -783,8 +782,8 @@ function DetailedStatusPanel({
                   {/* Connector */}
                   <div className="flex flex-col items-center">
                     <div className={`size-8 rounded-full border-2 flex items-center justify-center shrink-0 ${step.done
-                        ? "border-emerald-500 bg-emerald-500/10"
-                        : "border-muted-foreground/25 bg-muted/30"
+                      ? "border-emerald-500 bg-emerald-500/10"
+                      : "border-muted-foreground/25 bg-muted/30"
                       }`}>
                       {step.done
                         ? <IconCheck className="size-4 text-emerald-500" />
@@ -882,8 +881,8 @@ function DetailedStatusPanel({
                       <TableCell className="text-[11px] font-mono font-bold text-right py-3">{fmt(pay.amount)}</TableCell>
                       <TableCell className="py-3">
                         <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${pay.status === "Paid" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400"
-                            : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
-                              : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                          : pay.status === "Pending" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400"
+                            : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                           }`}>{pay.status}</span>
                       </TableCell>
                     </TableRow>
@@ -909,7 +908,7 @@ function DetailedStatusPanel({
                 const IconComp = item.icon;
                 return (
                   <div key={item.label} className={`p-3.5 rounded-xl border flex items-center gap-3 ${item.status ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-900/10 dark:border-emerald-800/30"
-                      : "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30"
+                    : "bg-red-50 border-red-200 dark:bg-red-900/10 dark:border-red-800/30"
                     }`}>
                     <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${item.status ? "bg-emerald-500/20" : "bg-red-500/20"
                       }`}>
@@ -1361,9 +1360,22 @@ export default function Dashboard({ user, onNavigate }: Props) {
     lastUpdated,
   } = useProjects({
     user,
-    district: user.role === "District" ? user.district : undefined,
+    district:
+      user.role === "District"
+        ? user.district
+        : user.role === "Citizen" && !citizenExploreOther
+        ? user.district
+        : (user.role === "Citizen" && citizenSelectedDistrict !== "All" ? citizenSelectedDistrict : undefined),
     constituency: user.role === "MP" ? user.constituency : undefined,
-    state: user.role === "State" ? user.state : (user.role === "District" ? user.state : undefined),
+    state:
+      user.role === "State"
+        ? user.state
+        : user.role === "District"
+        ? user.state
+        : user.role === "Citizen" && !citizenExploreOther
+        ? user.state
+        : (user.role === "Citizen" && citizenSelectedState !== "All" ? citizenSelectedState : undefined),
+    exploreOther: user.role === "Citizen" ? citizenExploreOther : undefined,
     limit: user.role === "Ministry" ? 1000 : 500,
   });
 
@@ -1416,16 +1428,16 @@ export default function Dashboard({ user, onNavigate }: Props) {
     }
     if (user.role === "Citizen") {
       if (!citizenExploreOther) {
-        // By default, strictly show their own area (district/state)
+        // Default: strictly show only citizen's own area — NO fallback to all India
         const userDist = user.district?.toLowerCase();
         const userSt = user.state?.toLowerCase();
-        const match = liveProjects.filter((p) =>
+        return liveProjects.filter((p) =>
           (userDist && p.district?.toLowerCase() === userDist) ||
           (!userDist && userSt && p.state?.toLowerCase() === userSt)
         );
-        return match.length > 0 ? match : liveProjects;
       }
-      // When citizen clicks "Explore Other Areas", allow custom state/district exploration
+      // "Explore Other Areas": show all India, optionally filtered by selected state/district
+      // citizen's own area projects appear at the top
       let pool = liveProjects;
       if (citizenSelectedState !== "All") {
         pool = pool.filter((p) => p.state.toLowerCase() === citizenSelectedState.toLowerCase());
@@ -1433,7 +1445,17 @@ export default function Dashboard({ user, onNavigate }: Props) {
       if (citizenSelectedDistrict !== "All") {
         pool = pool.filter((p) => p.district.toLowerCase() === citizenSelectedDistrict.toLowerCase());
       }
-      return pool;
+      // Sort citizen's own area to top
+      const userDist = user.district?.toLowerCase();
+      const userSt = user.state?.toLowerCase();
+      return [...pool].sort((a, b) => {
+        const aLocal = (userDist && a.district?.toLowerCase() === userDist) ? 1 : 0;
+        const bLocal = (userDist && b.district?.toLowerCase() === userDist) ? 1 : 0;
+        if (aLocal !== bLocal) return bLocal - aLocal;
+        const aState = (userSt && a.state?.toLowerCase() === userSt) ? 1 : 0;
+        const bState = (userSt && b.state?.toLowerCase() === userSt) ? 1 : 0;
+        return bState - aState;
+      });
     }
     return liveProjects;
   }, [liveProjects, user.role, user.constituency, user.district, user.state, citizenExploreOther, citizenSelectedState, citizenSelectedDistrict]);
@@ -1448,7 +1470,9 @@ export default function Dashboard({ user, onNavigate }: Props) {
   }, [liveProjects, citizenSelectedState]);
 
   const citizenAvailableStates = React.useMemo(() => {
-    const sts = Array.from(new Set(liveProjects.map((p) => p.state).filter(Boolean))).sort();
+    const fromMaster = STATES_DATA.map((s) => s.state);
+    const fromLive = liveProjects.map((p) => p.state).filter(Boolean);
+    const sts = Array.from(new Set([...fromMaster, ...fromLive])).sort();
     return ["All", ...sts];
   }, [liveProjects]);
 
@@ -1593,11 +1617,10 @@ export default function Dashboard({ user, onNavigate }: Props) {
                         ? `Exploring Other Areas ${citizenSelectedDistrict !== "All" ? `· ${citizenSelectedDistrict}` : citizenSelectedState !== "All" ? `· ${citizenSelectedState}` : "(All India)"}`
                         : `My Area: ${user.district ? `${user.district}, ${user.state}` : user.state || "Local District"}`}
                     </h3>
-                    <Badge variant="outline" className={`text-[10px] font-semibold ${
-                      citizenExploreOther
+                    <Badge variant="outline" className={`text-[10px] font-semibold ${citizenExploreOther
                         ? "border-cyan-500/40 text-cyan-700 bg-cyan-500/10 dark:text-cyan-300"
                         : "border-primary/40 text-primary bg-primary/10"
-                    }`}>
+                      }`}>
                       {citizenExploreOther ? "Exploring Other Areas" : "Default Local View"}
                     </Badge>
                   </div>
@@ -2111,15 +2134,15 @@ export default function Dashboard({ user, onNavigate }: Props) {
                           {(project.riskLevel === "High" ||
                             project.riskLevel === "Critical" ||
                             project.riskScore >= 50) && (
-                            <WhyRiskButton
-                              project={project}
-                              compact
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setWhyRiskProject(project);
-                              }}
-                            />
-                          )}
+                              <WhyRiskButton
+                                project={project}
+                                compact
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setWhyRiskProject(project);
+                                }}
+                              />
+                            )}
                         </div>
                       </TableCell>
                     )}
@@ -2214,8 +2237,8 @@ export default function Dashboard({ user, onNavigate }: Props) {
                           key={page}
                           onClick={() => setCurrentPage(page)}
                           className={`h-7 min-w-[28px] px-1.5 rounded-md text-[11px] font-medium transition-colors ${page === currentPage
-                              ? "bg-primary text-primary-foreground"
-                              : "hover:bg-muted text-muted-foreground"
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-muted text-muted-foreground"
                             }`}
                         >
                           {page}

@@ -876,4 +876,4 @@ export const STATE_USERS = [
 ];
 
 export const MINISTRY_USER = { name: "Dr. Ashok Kumar", role: "Ministry" as const, phone: "9610012345" };
-export const CITIZEN_USER = { name: "Ramesh Gupta", role: "Citizen" as const, phone: "9510012345" };
+export const CITIZEN_USER = { name: "Ramesh Gupta", role: "Citizen" as const, district: "Lucknow", state: "Uttar Pradesh", phone: "9510012345", aadhaar: "548912345678" };

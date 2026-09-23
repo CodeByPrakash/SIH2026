@@ -29,6 +29,7 @@ export interface ProjectFilterOptions {
   userDistrict?: string;
   userState?: string;
   userConstituency?: string;
+  exploreOther?: boolean;
 }
 
 export interface PaginationMetadata {
@@ -103,14 +104,22 @@ export async function getPaginatedProjects(
   const isDistrictRole = filters?.userRole === "District";
   const isStateRole = filters?.userRole === "State";
   const isMPRole = filters?.userRole === "MP";
+  const isCitizenRole = filters?.userRole === "Citizen";
+  const isExploring = Boolean(filters?.exploreOther);
 
   const effectiveDistrict = isDistrictRole && filters?.userDistrict
     ? filters.userDistrict.trim()
-    : filters?.district?.trim();
+    : (isCitizenRole && !isExploring && !filters?.district && filters?.userDistrict
+        ? filters.userDistrict.trim()
+        : filters?.district?.trim());
 
   const effectiveState = isStateRole && filters?.userState
     ? filters.userState.trim()
-    : (isDistrictRole && filters?.userState ? filters.userState.trim() : filters?.state?.trim());
+    : (isDistrictRole && filters?.userState
+        ? filters.userState.trim()
+        : (isCitizenRole && !isExploring && !filters?.state && filters?.userState
+            ? filters.userState.trim()
+            : filters?.state?.trim()));
 
   const effectiveConstituency = isMPRole && filters?.userConstituency
     ? filters.userConstituency.trim()
@@ -248,14 +257,22 @@ export async function getAllProjects(filters?: ProjectFilterOptions): Promise<Pr
   const isDistrictRole = filters?.userRole === "District";
   const isStateRole = filters?.userRole === "State";
   const isMPRole = filters?.userRole === "MP";
+  const isCitizenRole = filters?.userRole === "Citizen";
+  const isExploring = Boolean(filters?.exploreOther);
 
   const effectiveDistrict = isDistrictRole && filters?.userDistrict
     ? filters.userDistrict.trim()
-    : filters?.district?.trim();
+    : (isCitizenRole && !isExploring && !filters?.district && filters?.userDistrict
+        ? filters.userDistrict.trim()
+        : filters?.district?.trim());
 
   const effectiveState = isStateRole && filters?.userState
     ? filters.userState.trim()
-    : (isDistrictRole && filters?.userState ? filters.userState.trim() : filters?.state?.trim());
+    : (isDistrictRole && filters?.userState
+        ? filters.userState.trim()
+        : (isCitizenRole && !isExploring && !filters?.state && filters?.userState
+            ? filters.userState.trim()
+            : filters?.state?.trim()));
 
   const effectiveConstituency = isMPRole && filters?.userConstituency
     ? filters.userConstituency.trim()

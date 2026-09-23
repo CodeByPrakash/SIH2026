@@ -219,14 +219,38 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
   const isMP = user?.role === "MP";
   const isCitizen = user?.role === "Citizen";
 
+  const [citizenExploreOther, setCitizenExploreOther] = useState(false);
+  const [status, setStatus] = useState<string>("All");
+  const [category, setCategory] = useState<string>("All");
+  const [state, setState] = useState<string>(
+    (isState && user?.state) || (isDistrict && user?.state) ? user!.state! : "All"
+  );
+  const [district, setDistrict] = useState<string>(
+    isDistrict && user?.district ? user!.district! : "All"
+  );
+  const [search, setSearch] = useState<string>("");
+  const [sortBy, setSortBy] = useState<"riskScore" | "sanctionedAmount" | "progress" | "name">("riskScore");
+  const [viewMode, setViewMode] = useState<"table" | "card">("table");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [whyRiskProject, setWhyRiskProject] = useState<Project | null>(null);
+
   const { projects: allProjects, isLive, lastUpdated, updateProjectStatus } = useProjects({
     user,
-    state: isState ? user?.state : (isDistrict ? user?.state : undefined),
-    district: isDistrict ? user?.district : undefined,
+    state: isState
+      ? user?.state
+      : isDistrict
+      ? user?.state
+      : isCitizen && !citizenExploreOther
+      ? user?.state
+      : (isCitizen && state !== "All" ? state : undefined),
+    district: isDistrict
+      ? user?.district
+      : isCitizen && !citizenExploreOther
+      ? user?.district
+      : (isCitizen && district !== "All" ? district : undefined),
     constituency: isMP ? user?.constituency : undefined,
+    exploreOther: isCitizen ? citizenExploreOther : undefined,
   });
-
-  const [citizenExploreOther, setCitizenExploreOther] = useState(false);
 
   // Base list scoped strictly to role permissions
   const roleScopedProjects = useMemo(() => {
@@ -248,34 +272,35 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
     }
     if (isCitizen) {
       if (!citizenExploreOther && user.district) {
-        const match = allProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
-        if (match.length > 0) return match;
+        return allProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
       }
-      return allProjects;
+      if (!citizenExploreOther && user.state) {
+        return allProjects.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+      }
+      // Exploring other areas: sort own area to top
+      const ud = user.district?.toLowerCase();
+      const us = user.state?.toLowerCase();
+      return [...allProjects].sort((a, b) => {
+        const aL = (ud && a.district.toLowerCase() === ud) ? 1 : 0;
+        const bL = (ud && b.district.toLowerCase() === ud) ? 1 : 0;
+        if (aL !== bL) return bL - aL;
+        const aS = (us && a.state.toLowerCase() === us) ? 1 : 0;
+        const bS = (us && b.state.toLowerCase() === us) ? 1 : 0;
+        return bS - aS;
+      });
     }
     return allProjects;
   }, [allProjects, user, isMinistry, isState, isDistrict, isMP, isCitizen, citizenExploreOther]);
-
-  const [status, setStatus] = useState<string>("All");
-  const [category, setCategory] = useState<string>("All");
-  const [state, setState] = useState<string>(
-    (isState && user?.state) || (isDistrict && user?.state) ? user!.state! : "All"
-  );
-  const [district, setDistrict] = useState<string>(
-    isDistrict && user?.district ? user!.district! : "All"
-  );
-  const [search, setSearch] = useState<string>("");
-  const [sortBy, setSortBy] = useState<"riskScore" | "sanctionedAmount" | "progress" | "name">("riskScore");
-  const [viewMode, setViewMode] = useState<"table" | "card">("table");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [whyRiskProject, setWhyRiskProject] = useState<Project | null>(null);
 
   const availableStates = useMemo(() => {
     if ((isDistrict || isState) && user?.state) {
       return [user.state];
     }
+    if (isCitizen && !citizenExploreOther && user?.state) {
+      return [user.state];
+    }
     return STATES;
-  }, [isDistrict, isState, user?.state]);
+  }, [isDistrict, isState, isCitizen, citizenExploreOther, user?.state]);
 
   const availableDistricts = useMemo(() => {
     if (isDistrict && user?.district) {
@@ -434,14 +459,14 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                 {isMinistry
                   ? "National Scope (All States & Districts)"
                   : isState
-                  ? `State Scope: ${user.state} (All Districts)`
-                  : isDistrict
-                  ? `District Scope: ${user.district} Authority`
-                  : isMP
-                  ? `Constituency Scope: ${user.constituency}`
-                  : !citizenExploreOther
-                  ? `My Local Area: ${user.district || "District"}`
-                  : "Exploring Other Areas (All India)"}
+                    ? `State Scope: ${user.state} (All Districts)`
+                    : isDistrict
+                      ? `District Scope: ${user.district} Authority`
+                      : isMP
+                        ? `Constituency Scope: ${user.constituency}`
+                        : !citizenExploreOther
+                          ? `My Local Area: ${user.district || "District"}`
+                          : "Exploring Other Areas (All India)"}
               </Badge>
             )}
             {isCitizen && (
@@ -463,16 +488,14 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
               </Button>
             )}
             <span
-              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
-                isLive
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${isLive
                   ? "bg-emerald-500/10 text-emerald-700 border-emerald-500/30"
                   : "bg-slate-100 text-slate-600 border-slate-200"
-              }`}
+                }`}
             >
               <span
-                className={`size-1.5 rounded-full ${
-                  isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
-                }`}
+                className={`size-1.5 rounded-full ${isLive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
+                  }`}
               />
               {isLive ? "Live Data" : "Static Mode"}
             </span>
@@ -656,9 +679,8 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
               <button
                 type="button"
                 onClick={() => setStatus((curr) => (curr === "Completed" ? "All" : "Completed"))}
-                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${
-                  status === "Completed" ? "font-semibold text-emerald-600 dark:text-emerald-400" : ""
-                }`}
+                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${status === "Completed" ? "font-semibold text-emerald-600 dark:text-emerald-400" : ""
+                  }`}
               >
                 <span className="size-1.5 rounded-full bg-emerald-500" />
                 <span>
@@ -669,9 +691,8 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
               <button
                 type="button"
                 onClick={() => setStatus((curr) => (curr === "In Progress" ? "All" : "In Progress"))}
-                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${
-                  status === "In Progress" ? "font-semibold text-blue-600 dark:text-blue-400" : ""
-                }`}
+                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${status === "In Progress" ? "font-semibold text-blue-600 dark:text-blue-400" : ""
+                  }`}
               >
                 <span className="size-1.5 rounded-full bg-blue-500" />
                 <span>
@@ -682,9 +703,8 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
               <button
                 type="button"
                 onClick={() => setStatus((curr) => (curr === "Delayed" ? "All" : "Delayed"))}
-                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${
-                  status === "Delayed" ? "font-semibold text-destructive" : ""
-                }`}
+                className={`inline-flex items-center gap-1.5 transition-colors hover:text-foreground ${status === "Delayed" ? "font-semibold text-destructive" : ""
+                  }`}
               >
                 <span className="size-1.5 rounded-full bg-destructive" />
                 <span>
@@ -798,13 +818,12 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                             <div className="flex items-center gap-2.5">
                               <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden min-w-[60px]">
                                 <div
-                                  className={`h-full rounded-full transition-all ${
-                                    p.progress === 100
+                                  className={`h-full rounded-full transition-all ${p.progress === 100
                                       ? "bg-emerald-500"
                                       : p.status === "Delayed"
-                                      ? "bg-destructive"
-                                      : "bg-primary"
-                                  }`}
+                                        ? "bg-destructive"
+                                        : "bg-primary"
+                                    }`}
                                   style={{ width: `${p.progress}%` }}
                                 />
                               </div>
@@ -939,13 +958,12 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${
-                            p.status === "Delayed"
+                          className={`h-full rounded-full ${p.status === "Delayed"
                               ? "bg-destructive"
                               : p.progress === 100
-                              ? "bg-emerald-500"
-                              : "bg-primary"
-                          }`}
+                                ? "bg-emerald-500"
+                                : "bg-primary"
+                            }`}
                           style={{ width: `${p.progress}%` }}
                         />
                       </div>
@@ -1060,9 +1078,8 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                         key={pNum}
                         variant={safeCurrentPage === pNum ? "default" : "outline"}
                         size="sm"
-                        className={`h-7 min-w-7 px-2 text-xs font-medium ${
-                          safeCurrentPage === pNum ? "pointer-events-none shadow-xs font-semibold" : ""
-                        }`}
+                        className={`h-7 min-w-7 px-2 text-xs font-medium ${safeCurrentPage === pNum ? "pointer-events-none shadow-xs font-semibold" : ""
+                          }`}
                         onClick={() => handlePageChange(pNum)}
                       >
                         {pNum}
@@ -1152,13 +1169,12 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${
-                        selectedProject.progress === 100
+                      className={`h-full rounded-full ${selectedProject.progress === 100
                           ? "bg-emerald-500"
                           : selectedProject.status === "Delayed"
-                          ? "bg-destructive"
-                          : "bg-primary"
-                      }`}
+                            ? "bg-destructive"
+                            : "bg-primary"
+                        }`}
                       style={{ width: `${selectedProject.progress}%` }}
                     />
                   </div>
@@ -1227,11 +1243,10 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                           100;
                         return (
                           <div
-                            className={`text-sm font-mono font-bold ${
-                              variance > 0
+                            className={`text-sm font-mono font-bold ${variance > 0
                                 ? "text-destructive"
                                 : "text-emerald-600 dark:text-emerald-400"
-                            }`}
+                              }`}
                           >
                             {variance >= 0 ? "+" : ""}
                             {variance.toFixed(1)}%
@@ -1316,13 +1331,12 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                             <TableCell className="text-center py-2">
                               <Badge
                                 variant="outline"
-                                className={`text-[10px] px-1.5 py-0 ${
-                                  p.status === "Paid"
+                                className={`text-[10px] px-1.5 py-0 ${p.status === "Paid"
                                     ? "border-emerald-500/30 text-emerald-600 bg-emerald-500/10"
                                     : p.status === "Pending"
-                                    ? "border-amber-500/30 text-amber-600 bg-amber-500/10"
-                                    : "border-destructive/30 text-destructive bg-destructive/10"
-                                }`}
+                                      ? "border-amber-500/30 text-amber-600 bg-amber-500/10"
+                                      : "border-destructive/30 text-destructive bg-destructive/10"
+                                  }`}
                               >
                                 {p.status}
                               </Badge>
@@ -1355,11 +1369,10 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                     ].map(({ label, ok }) => (
                       <div
                         key={label}
-                        className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs font-medium ${
-                          ok
+                        className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs font-medium ${ok
                             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
                             : "bg-destructive/10 border-destructive/30 text-destructive"
-                        }`}
+                          }`}
                       >
                         {ok ? (
                           <IconCheck className="size-3.5 shrink-0" />

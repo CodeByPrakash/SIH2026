@@ -178,10 +178,20 @@ export default function Login({ onLogin }: LoginProps = {}) {
   const [officialId, setOfficialId] = useState(OFFICIAL_CREDENTIALS.Ministry.email);
   const [officialPassword, setOfficialPassword] = useState(OFFICIAL_CREDENTIALS.Ministry.demoPassword);
   const [showPassword, setShowPassword] = useState(false);
+  const [aadhaar, setAadhaar] = useState("5489 1234 5678");
   const [mobile, setMobile] = useState(ROLE_PHONES.Citizen);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpTimer, setOtpTimer] = useState(0);
   const [validationMessage, setValidationMessage] = useState("");
+
+  const formatAadhaar = (val: string) => {
+    const digits = val.replace(/\D/g, "").slice(0, 12);
+    const parts = [];
+    for (let i = 0; i < digits.length; i += 4) {
+      parts.push(digits.slice(i, i + 4));
+    }
+    return parts.join(" ");
+  };
 
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
@@ -190,6 +200,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
       setOfficialId(cred.email);
       setOfficialPassword(cred.demoPassword);
     } else {
+      setAadhaar("5489 1234 5678");
       setMobile(ROLE_PHONES.Citizen);
     }
     setPhase("auth");
@@ -206,6 +217,8 @@ export default function Login({ onLogin }: LoginProps = {}) {
   };
 
   const handleSendOtp = () => {
+    if (selectedRole === "Citizen" && aadhaar.replace(/\D/g, "").length !== 12) return;
+    setOtp(["", "", "", "", "", ""]);
     setPhase("otp");
     setOtpTimer(30);
     const interval = setInterval(() => {
@@ -227,13 +240,15 @@ export default function Login({ onLogin }: LoginProps = {}) {
     if (val && idx < 5) {
       document.getElementById(`otp-input-${idx + 1}`)?.focus();
     }
-    if (next.every((d) => d !== "") && idx === 5) {
-      setTimeout(() => handleVerify(next), 200);
-    }
   };
 
   const handleVerify = (otpArr = otp) => {
-    setValidationMessage("Verifying OTP against Aadhaar / National Directory...");
+    if (selectedRole === "Citizen" && mobile.replace(/\D/g, "").length < 10) return;
+    setValidationMessage(
+      selectedRole === "Citizen"
+        ? "Verifying OTP & linking registered mobile with UIDAI Gateway..."
+        : "Verifying OTP against NIC Gateway..."
+    );
     setPhase("validating");
     setTimeout(() => {
       authenticateUser();
@@ -254,7 +269,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
     else if (selectedRole === "MP") user = { ...MP_USERS[0], phone: ROLE_PHONES.MP };
     else if (selectedRole === "State") user = { ...STATE_USERS[0], phone: ROLE_PHONES.State };
     else if (selectedRole === "District") user = { ...DISTRICT_USERS[0], phone: ROLE_PHONES.District };
-    else user = { ...CITIZEN_USER, phone: mobile };
+    else user = { ...CITIZEN_USER, phone: mobile.replace(/\s/g, ""), aadhaar: aadhaar.replace(/\s/g, "") };
 
     if (onLogin) {
       onLogin(user);
@@ -321,14 +336,14 @@ export default function Login({ onLogin }: LoginProps = {}) {
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "auth" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                   2
                 </span>
-                {isCitizen ? "Mobile & DigiLocker" : "Official Sign In"}
+                {isCitizen ? "Aadhaar & DigiLocker" : "Official Sign In"}
               </div>
               <div className="w-8 h-px bg-border" />
               <div className={`flex items-center gap-1.5 ${phase === "otp" || phase === "validating" ? "text-foreground font-semibold" : "text-muted-foreground font-medium"}`}>
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "otp" || phase === "validating" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                   3
                 </span>
-                {isCitizen ? "OTP Verification" : "SSO Gateway"}
+                {isCitizen ? "OTP & Mobile" : "SSO Gateway"}
               </div>
             </div>
 
@@ -414,16 +429,16 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     </button>
 
                     {isCitizen ? (
-                      /* ── Citizen View: Mobile Number + DigiLocker ── */
+                      /* ── Citizen View: 12-Digit Aadhaar Number + DigiLocker ── */
                       <div>
                         <div className="mb-4">
                           <h2 className="text-base font-bold text-foreground">Citizen Public Access</h2>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            Verify using your registered mobile number or DigiLocker National ID.
+                            Verify using your 12-digit Aadhaar number or DigiLocker National ID.
                           </p>
                         </div>
 
-                        {/* Mobile Number Authentication */}
+                        {/* Aadhaar Number Authentication */}
                         <form
                           onSubmit={(e) => {
                             e.preventDefault();
@@ -432,35 +447,42 @@ export default function Login({ onLogin }: LoginProps = {}) {
                           className="space-y-3"
                         >
                           <div className="space-y-1.5">
-                            <Label htmlFor="mobile-input" className="text-xs font-semibold text-foreground">
-                              Registered Mobile Number
-                            </Label>
-                            <div className="flex gap-2">
-                              <div className="flex items-center px-3 bg-muted border border-input rounded-md text-xs font-semibold text-foreground">
-                                +91
-                              </div>
+                            <div className="flex items-center justify-between">
+                              <Label htmlFor="aadhaar-input" className="text-xs font-semibold text-foreground">
+                                Aadhaar Number (12 Digits)
+                              </Label>
+                              <Badge variant="outline" className="text-[10px] border-primary/30 text-primary bg-primary/5">
+                                UIDAI e-KYC
+                              </Badge>
+                            </div>
+                            <div className="relative">
                               <Input
-                                id="mobile-input"
-                                type="tel"
-                                value={mobile}
-                                onChange={(e) => setMobile(e.target.value)}
-                                placeholder="Enter 10-digit mobile number"
-                                className="flex-1 font-mono text-sm"
+                                id="aadhaar-input"
+                                type="text"
+                                inputMode="numeric"
+                                value={aadhaar}
+                                onChange={(e) => setAadhaar(formatAadhaar(e.target.value))}
+                                placeholder="XXXX  XXXX  XXXX"
+                                className="font-mono text-sm tracking-wider pl-3.5"
+                                maxLength={14}
                                 required
                               />
                             </div>
-                            <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-1">
-                              <IconInfoCircle size={12} className="shrink-0" />
-                              A 6-digit OTP will be dispatched to this verified mobile number.
-                            </p>
+                            <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-1">
+                              <span className="flex items-center gap-1">
+                                <IconInfoCircle size={12} className="shrink-0 text-primary" />
+                                A 6-digit OTP will be dispatched to your Aadhaar-linked mobile.
+                              </span>
+                              <span className="font-mono text-[10px] text-primary/80">Demo: 5489 1234 5678</span>
+                            </div>
                           </div>
 
                           <Button
                             type="submit"
-                            disabled={mobile.trim().length < 8}
-                            className="w-full text-sm mt-2"
+                            disabled={aadhaar.replace(/\D/g, "").length !== 12}
+                            className="w-full text-sm mt-2 font-semibold cursor-pointer"
                           >
-                            Get OTP
+                            Get Aadhaar OTP
                           </Button>
                         </form>
 
@@ -576,7 +598,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
                   </motion.div>
                 )}
 
-                {/* Phase 3: OTP Verification */}
+                {/* Phase 3: OTP Verification & Registered Mobile Number */}
                 {phase === "otp" && (
                   <motion.div
                     key="step-otp"
@@ -590,59 +612,110 @@ export default function Login({ onLogin }: LoginProps = {}) {
                       className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 font-medium cursor-pointer"
                     >
                       <IconArrowLeft size={14} />
-                      Back to Mobile Number
+                      {isCitizen ? "Back to Aadhaar Number" : "Back to Official Sign In"}
                     </button>
 
-                    <div className="mb-4">
+                    <div className="mb-3">
                       <h2 className="text-base font-bold text-foreground">Verify One-Time Password</h2>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Enter Any OTP Demo Sample 123456{" "}
-                        {/* <span className="font-mono font-semibold text-foreground">+91 {mobile}</span> */}
+                        {isCitizen
+                          ? `OTP dispatched for Aadhaar ending with ···· ${aadhaar.replace(/\D/g, "").slice(-4)}`
+                          : "Enter the OTP sent to your registered official credential"}
                       </p>
                     </div>
 
+                    {/* Prominently Highlighted Demo OTP Banner */}
+                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex items-center justify-between gap-2 my-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold">Demo OTP:</span>
+                        <span className="font-mono font-bold text-sm tracking-widest px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-950 dark:text-amber-100 border border-amber-500/40 shadow-xs">
+                          123456
+                        </span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setOtp(["1", "2", "3", "4", "5", "6"]);
+                        }}
+                        className="h-7 text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/40 text-amber-900 dark:text-amber-100 cursor-pointer"
+                      >
+                        Auto-fill 123456
+                      </Button>
+                    </div>
+
                     <div className="space-y-4">
-                      <div className="flex justify-between gap-2 max-w-xs mx-auto my-4">
-                        {otp.map((digit, idx) => (
-                          <input
-                            key={idx}
-                            id={`otp-input-${idx}`}
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={1}
-                            value={digit}
-                            onChange={(e) => handleOtpChange(idx, e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Backspace" && !digit && idx > 0) {
-                                document.getElementById(`otp-input-${idx - 1}`)?.focus();
-                              }
-                            }}
-                            className="w-10 h-12 text-center text-lg font-bold font-mono border border-input rounded-md bg-background text-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring"
-                          />
-                        ))}
+                      <div>
+                        <Label className="text-xs font-semibold text-foreground mb-1 block">
+                          Enter 6-Digit One-Time Password
+                        </Label>
+                        <div className="flex justify-between gap-2 max-w-xs mx-auto my-2">
+                          {otp.map((digit, idx) => (
+                            <input
+                              key={idx}
+                              id={`otp-input-${idx}`}
+                              type="text"
+                              inputMode="numeric"
+                              maxLength={1}
+                              value={digit}
+                              onChange={(e) => handleOtpChange(idx, e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Backspace" && !digit && idx > 0) {
+                                  document.getElementById(`otp-input-${idx - 1}`)?.focus();
+                                }
+                              }}
+                              className="w-10 h-12 text-center text-lg font-bold font-mono border border-input rounded-md bg-background text-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring"
+                            />
+                          ))}
+                        </div>
                       </div>
 
-                      <p className="text-center text-[11px] text-muted-foreground">
-                        Sample environment: enter any 6 digits or wait for verification.
-                      </p>
+                      {/* After the OTP: Ask for Registered Mobile Number for Citizen */}
+                      {isCitizen && (
+                        <div className="space-y-1.5 pt-3 border-t border-border">
+                          <Label htmlFor="registered-mobile-input" className="text-xs font-semibold text-foreground flex items-center justify-between">
+                            <span>Registered Mobile Number</span>
+                            <span className="text-[10px] text-muted-foreground font-normal">Aadhaar Linked</span>
+                          </Label>
+                          <div className="flex gap-2">
+                            <div className="flex items-center px-3 bg-muted border border-input rounded-md text-xs font-semibold text-foreground">
+                              +91
+                            </div>
+                            <Input
+                              id="registered-mobile-input"
+                              type="tel"
+                              value={mobile}
+                              onChange={(e) => setMobile(e.target.value)}
+                              placeholder="Enter 10-digit registered mobile number"
+                              className="flex-1 font-mono text-sm"
+                              required
+                            />
+                          </div>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <IconInfoCircle size={12} className="shrink-0 text-primary" />
+                            Official alerts, grievance updates & tracking will be linked to this mobile.
+                          </p>
+                        </div>
+                      )}
 
                       <Button
                         type="button"
                         onClick={() => handleVerify()}
-                        disabled={otp.some((d) => d === "")}
-                        className="w-full text-sm"
+                        disabled={otp.some((d) => d === "") || (isCitizen && mobile.replace(/\D/g, "").length < 10)}
+                        className="w-full text-sm font-semibold cursor-pointer mt-1"
                       >
                         Verify and Proceed to Dashboard
                       </Button>
 
-                      <div className="text-center text-xs text-muted-foreground pt-2">
+                      <div className="text-center text-xs text-muted-foreground pt-1">
                         {otpTimer > 0 ? (
                           <span>Resend OTP in <strong className="text-foreground">{otpTimer}s</strong></span>
                         ) : (
                           <button
                             type="button"
                             onClick={handleSendOtp}
-                            className="text-foreground font-medium hover:underline"
+                            className="text-foreground font-medium hover:underline cursor-pointer"
                           >
                             Resend OTP
                           </button>
