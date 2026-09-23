@@ -6,6 +6,7 @@ import * as XLSX from "xlsx";
 import type { Project, User } from "../types";
 import { PROJECTS } from "../data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
+import WhyRiskModal, { WhyRiskButton } from "@/components/WhyRiskModal";
 
 interface ProjectExplorerProps {
   user?: User;
@@ -71,6 +72,7 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconWorld,
 } from "@tabler/icons-react";
 
 const STATUSES = ["All", "Completed", "In Progress", "Delayed", "On Hold", "Not Started"] as const;
@@ -218,10 +220,13 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
   const isCitizen = user?.role === "Citizen";
 
   const { projects: allProjects, isLive, lastUpdated, updateProjectStatus } = useProjects({
-    state: isState ? user?.state : undefined,
+    user,
+    state: isState ? user?.state : (isDistrict ? user?.state : undefined),
     district: isDistrict ? user?.district : undefined,
     constituency: isMP ? user?.constituency : undefined,
   });
+
+  const [citizenExploreOther, setCitizenExploreOther] = useState(false);
 
   // Base list scoped strictly to role permissions
   const roleScopedProjects = useMemo(() => {
@@ -242,14 +247,14 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
       );
     }
     if (isCitizen) {
-      if (user.district) {
+      if (!citizenExploreOther && user.district) {
         const match = allProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
         if (match.length > 0) return match;
       }
       return allProjects;
     }
     return allProjects;
-  }, [allProjects, user, isMinistry, isState, isDistrict, isMP, isCitizen]);
+  }, [allProjects, user, isMinistry, isState, isDistrict, isMP, isCitizen, citizenExploreOther]);
 
   const [status, setStatus] = useState<string>("All");
   const [category, setCategory] = useState<string>("All");
@@ -263,15 +268,26 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
   const [sortBy, setSortBy] = useState<"riskScore" | "sanctionedAmount" | "progress" | "name">("riskScore");
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [whyRiskProject, setWhyRiskProject] = useState<Project | null>(null);
+
+  const availableStates = useMemo(() => {
+    if ((isDistrict || isState) && user?.state) {
+      return [user.state];
+    }
+    return STATES;
+  }, [isDistrict, isState, user?.state]);
 
   const availableDistricts = useMemo(() => {
+    if (isDistrict && user?.district) {
+      return [user.district];
+    }
     let pool = roleScopedProjects;
     if (state !== "All") {
       pool = pool.filter((p) => p.state.toLowerCase() === state.toLowerCase());
     }
     const dists = Array.from(new Set(pool.map((p) => p.district).filter(Boolean))).sort();
     return ["All", ...dists];
-  }, [roleScopedProjects, state]);
+  }, [isDistrict, user?.district, roleScopedProjects, state]);
 
   const filtered = useMemo(() => {
     return roleScopedProjects.filter((p) => {
@@ -423,8 +439,28 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                   ? `District Scope: ${user.district} Authority`
                   : isMP
                   ? `Constituency Scope: ${user.constituency}`
-                  : "Public Citizen View"}
+                  : !citizenExploreOther
+                  ? `My Local Area: ${user.district || "District"}`
+                  : "Exploring Other Areas (All India)"}
               </Badge>
+            )}
+            {isCitizen && (
+              <Button
+                variant={citizenExploreOther ? "secondary" : "outline"}
+                size="sm"
+                onClick={() => {
+                  const nextState = !citizenExploreOther;
+                  setCitizenExploreOther(nextState);
+                  if (!nextState) {
+                    setState("All");
+                    setDistrict("All");
+                  }
+                }}
+                className="h-7 gap-1.5 text-xs font-medium border-primary/30 shadow-2xs"
+              >
+                <IconWorld className="size-3.5 text-primary" />
+                {citizenExploreOther ? `Back to My Area (${user?.district || "Local"})` : "Explore Other Areas"}
+              </Button>
             )}
             <span
               className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
@@ -443,7 +479,7 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
           </div>
           <p className="text-xs text-muted-foreground md:text-sm">
             Browse, filter, and inspect all NIDHI-RAKSHAK works across constituencies
-            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
+            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}, ${lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -510,13 +546,13 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                   setState(val || "All");
                   setDistrict("All");
                 }}
-                disabled={isState || isDistrict}
+                disabled={isState || isDistrict || (isCitizen && !citizenExploreOther)}
               >
                 <SelectTrigger className="w-full h-8 text-xs">
                   <SelectValue placeholder="State: All" />
                 </SelectTrigger>
                 <SelectContent>
-                  {STATES.map((s) => (
+                  {availableStates.map((s) => (
                     <SelectItem key={s} value={s}>
                       {s === "All" ? "All States" : s}
                     </SelectItem>
@@ -530,7 +566,7 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
               <Select
                 value={district}
                 onValueChange={(val) => setDistrict(val || "All")}
-                disabled={isDistrict}
+                disabled={isDistrict || (isCitizen && !citizenExploreOther)}
               >
                 <SelectTrigger className="w-full h-8 text-xs">
                   <SelectValue placeholder="District: All" />
@@ -775,6 +811,16 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                               <span className="font-mono text-xs text-muted-foreground tabular-nums w-8 text-right">
                                 {p.progress}%
                               </span>
+                              {p.progress >= 70 && (p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50) && (
+                                <WhyRiskButton
+                                  project={p}
+                                  compact
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setWhyRiskProject(p);
+                                  }}
+                                />
+                              )}
                             </div>
                           </TableCell>
 
@@ -786,7 +832,19 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                           {/* Risk */}
                           {!isCitizen && (
                             <TableCell className="align-middle py-3 text-center">
-                              <RiskScorePill score={p.riskScore} level={p.riskLevel} />
+                              <div className="flex items-center justify-center gap-1.5">
+                                <RiskScorePill score={p.riskScore} level={p.riskLevel} />
+                                {(p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50) && (
+                                  <WhyRiskButton
+                                    project={p}
+                                    compact
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setWhyRiskProject(p);
+                                    }}
+                                  />
+                                )}
+                              </div>
                             </TableCell>
                           )}
 
@@ -836,7 +894,21 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                       <span className="text-[11px] font-mono text-muted-foreground truncate">
                         {p.id}
                       </span>
-                      {!isCitizen && <RiskBadge level={p.riskLevel} score={p.riskScore} />}
+                      {!isCitizen && (
+                        <div className="flex items-center gap-1.5">
+                          <RiskBadge level={p.riskLevel} score={p.riskScore} />
+                          {(p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50) && (
+                            <WhyRiskButton
+                              project={p}
+                              compact
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setWhyRiskProject(p);
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
                     </div>
                     <CardTitle className="text-sm font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                       {p.name}
@@ -851,7 +923,19 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                         <span>Physical Progress</span>
-                        <span className="font-mono font-medium text-foreground">{p.progress}%</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono font-medium text-foreground">{p.progress}%</span>
+                          {p.progress >= 70 && (p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50) && (
+                            <WhyRiskButton
+                              project={p}
+                              compact
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setWhyRiskProject(p);
+                              }}
+                            />
+                          )}
+                        </div>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                         <div
@@ -1041,7 +1125,15 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
 
                 <div className="flex flex-wrap items-center gap-2 pt-3">
                   <StatusBadge status={selectedProject.status} />
-                  <RiskBadge level={selectedProject.riskLevel} score={selectedProject.riskScore} />
+                  {!isCitizen && (
+                    <>
+                      <RiskBadge level={selectedProject.riskLevel} score={selectedProject.riskScore} />
+                      <WhyRiskButton
+                        project={selectedProject}
+                        onClick={() => setWhyRiskProject(selectedProject)}
+                      />
+                    </>
+                  )}
                   <Badge variant="outline" className="text-xs font-normal">
                     MP: {selectedProject.mpName}
                   </Badge>
@@ -1074,6 +1166,29 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                     <span>Sanction: {selectedProject.sanctionDate}</span>
                     <span>Target: {selectedProject.expectedCompletion}</span>
                   </div>
+
+                  {/* High Progress vs Elevated Risk Anomaly Callout */}
+                  {selectedProject.progress >= 70 &&
+                    (selectedProject.riskScore >= 50 ||
+                      selectedProject.riskLevel === "High" ||
+                      selectedProject.riskLevel === "Critical") && (
+                      <div className="mt-2.5 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300 font-medium">
+                          <IconAlertTriangle className="size-4 shrink-0 text-amber-600" />
+                          <span>
+                            High Progress ({selectedProject.progress}%) with Elevated Risk ({selectedProject.riskScore}/100)
+                          </span>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setWhyRiskProject(selectedProject)}
+                          className="h-6 text-[11px] px-2 bg-white border-amber-300 text-amber-800 hover:bg-amber-50 font-bold"
+                        >
+                          Why high risk? →
+                        </Button>
+                      </div>
+                    )}
                 </div>
 
                 {/* Financial Summary */}
@@ -1152,7 +1267,7 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                 </div>
 
                 {/* Risk Flags */}
-                {selectedProject.riskFlags.length > 0 && (
+                {!isCitizen && selectedProject.riskFlags.length > 0 && (
                   <div className="space-y-2">
                     <h3 className="text-xs font-semibold uppercase tracking-wider text-destructive flex items-center gap-1.5">
                       <IconAlertTriangle className="size-4" />
@@ -1260,29 +1375,36 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
 
               {/* Sheet Footer */}
               <SheetFooter className="p-4 border-t bg-card flex flex-col sm:flex-row items-center justify-between gap-2">
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <span className="text-xs text-muted-foreground font-medium">Update Status:</span>
-                  <Select
-                    value={selectedProject.status}
-                    onValueChange={(val) => {
-                      if (val && selectedProject) {
-                        updateProjectStatus(selectedProject.id, val as Project["status"]);
-                        setSelectedProject((prev) => (prev ? { ...prev, status: val as Project["status"] } : null));
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="h-8 text-xs w-[140px]">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Completed">Completed</SelectItem>
-                      <SelectItem value="Delayed">Delayed</SelectItem>
-                      <SelectItem value="On Hold">On Hold</SelectItem>
-                      <SelectItem value="Not Started">Not Started</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {!isCitizen ? (
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <span className="text-xs text-muted-foreground font-medium">Update Status:</span>
+                    <Select
+                      value={selectedProject.status}
+                      onValueChange={(val) => {
+                        if (val && selectedProject) {
+                          updateProjectStatus(selectedProject.id, val as Project["status"]);
+                          setSelectedProject((prev) => (prev ? { ...prev, status: val as Project["status"] } : null));
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-8 text-xs w-[140px]">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="In Progress">In Progress</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Delayed">Delayed</SelectItem>
+                        <SelectItem value="On Hold">On Hold</SelectItem>
+                        <SelectItem value="Not Started">Not Started</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : (
+                  <div className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                    <IconShieldCheck className="size-4 text-emerald-600" />
+                    <span>Public Disclosure Verified (Section 4(1)(b) RTI)</span>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                   <Button
@@ -1299,18 +1421,20 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
                     3D Digital Twin
                   </Button>
 
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      if (typeof window !== "undefined") {
-                        window.location.href = `/dashboard/simulation`;
-                      }
-                    }}
-                    className="gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white"
-                  >
-                    <IconSparkles className="size-3.5" />
-                    Simulate AI Intervention →
-                  </Button>
+                  {!isCitizen && (
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        if (typeof window !== "undefined") {
+                          window.location.href = `/dashboard/simulation`;
+                        }
+                      }}
+                      className="gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-500 text-white"
+                    >
+                      <IconSparkles className="size-3.5" />
+                      Simulate AI Intervention →
+                    </Button>
+                  )}
 
                   <Button
                     variant="outline"
@@ -1347,6 +1471,12 @@ export default function ProjectExplorer({ user, onNavigate }: ProjectExplorerPro
           )}
         </SheetContent>
       </Sheet>
+      {/* Why Risk Score Is High Modal */}
+      <WhyRiskModal
+        project={whyRiskProject}
+        isOpen={!!whyRiskProject}
+        onClose={() => setWhyRiskProject(null)}
+      />
     </div>
   );
 }

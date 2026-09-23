@@ -150,11 +150,28 @@ const INITIAL_INSPECTIONS: InspectionRecord[] = [
 
 export default function FieldVerification({ user, onNavigate }: FieldVerificationProps) {
   const { projects: liveProjects } = useProjects({
+    user,
     district: user.role === "District" ? user.district : undefined,
-    state: user.role === "State" ? user.state : undefined,
+    state: user.role === "State" ? user.state : (user.role === "District" ? user.state : undefined),
   });
 
-  const projectList = liveProjects && liveProjects.length > 0 ? liveProjects : PROJECTS;
+  const rawProjects = liveProjects && liveProjects.length > 0 ? liveProjects : PROJECTS;
+  const projectList = useMemo(() => {
+    if (user.role === "District" && user.district) {
+      return rawProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+    }
+    if (user.role === "State" && user.state) {
+      return rawProjects.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+    }
+    if (user.role === "MP") {
+      return rawProjects.filter(
+        (p) =>
+          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+      );
+    }
+    return rawProjects;
+  }, [rawProjects, user]);
 
   const [inspections, setInspections] = useState<InspectionRecord[]>(INITIAL_INSPECTIONS);
   const [searchTerm, setSearchTerm] = useState("");

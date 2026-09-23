@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { STATES_DATA, PROJECTS } from "../data/mpladsData";
-import type { StateData, User } from "../types";
+import type { StateData, User, Project } from "../types";
 import {
   Card,
   CardHeader,
@@ -19,8 +19,18 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import WhyRiskModal, { WhyRiskButton } from "@/components/WhyRiskModal";
 import {
   IconTarget,
   IconCoin,
@@ -34,6 +44,15 @@ import {
   IconX,
   IconFlame,
   IconLayersLinked,
+  IconLock,
+  IconWorld,
+  IconBuildingCommunity,
+  IconBuildingArch,
+  IconFocusCentered,
+  IconArrowLeft,
+  IconShieldCheck,
+  IconChartBar,
+  IconExternalLink,
 } from "@tabler/icons-react";
 
 // State code mappings for SimpleMaps
@@ -82,11 +101,6 @@ interface SimpleMapsStateSpecific {
   hover_color?: string;
   description?: string;
   zoomable?: string;
-}
-
-interface SimpleMapsCountryMapData {
-  main_settings: Record<string, any>;
-  state_specific: Record<string, SimpleMapsStateSpecific>;
 }
 
 const STATE_NAME_TO_CODE: Record<string, string> = Object.entries(
@@ -221,43 +235,171 @@ interface GISViewProps {
 }
 
 export default function GISView({ user }: GISViewProps = {}) {
+  // ── Role & Jurisdiction Scoping ──
+  const userRole = user?.role || "Ministry";
+  const isMinistry = userRole === "Ministry";
+  const isMP = userRole === "MP";
+  const isState = userRole === "State";
+  const isDistrict = userRole === "District";
+  const isCitizen = userRole === "Citizen";
+
+  // Assigned geographical boundaries
+  const userAssignedState = user?.state || "Uttar Pradesh";
+  const userAssignedDistrict = user?.district || "Lucknow";
+  const userAssignedConstituency = user?.constituency || "";
+
+  // Jurisdiction limits
+  // National or MP can view National + State drilldown
+  // State can view their State only
+  // District can view their District only
+  const isDistrictRestricted = isDistrict;
+  const isStateRestricted = isState;
+  const canBrowseNationally = isMinistry || isMP;
+
+  // Active state & district selections
   const [layerIdx, setLayerIdx] = useState(0);
-  const [selectedState, setSelectedState] = useState<string | null>(
-    user?.state || null
-  );
+  const [selectedState, setSelectedState] = useState<string | null>(() => {
+    if (isStateRestricted || isDistrictRestricted) return userAssignedState;
+    return null;
+  });
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(() => {
+    if (isDistrictRestricted) return userAssignedDistrict;
+    return null;
+  });
+
+  // For MP: quick scope toggle between All-India, My State, and My Constituency
+  const [mpScopeFilter, setMpScopeFilter] = useState<"national" | "state" | "constituency">("national");
+
+  // For Citizen: default to local district & state, but allow public transparency exploration
+  const [citizenExploreAll, setCitizenExploreAll] = useState(false);
+
   const [showClusters, setShowClusters] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [whyRiskProject, setWhyRiskProject] = useState<Project | null>(null);
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapBoxRef = useRef<HTMLDivElement>(null);
 
   const activeLayer = LAYERS[layerIdx];
 
+  // Effective state to display
+  const effectiveState = useMemo(() => {
+    if (isDistrictRestricted) return userAssignedState;
+    if (isStateRestricted) return userAssignedState;
+    if (isCitizen && !citizenExploreAll) return userAssignedState;
+    if (isMP && mpScopeFilter !== "national") return userAssignedState;
+    return selectedState;
+  }, [
+    isDistrictRestricted,
+    isStateRestricted,
+    isCitizen,
+    citizenExploreAll,
+    isMP,
+    mpScopeFilter,
+    userAssignedState,
+    selectedState,
+  ]);
+
   // Selected state data
   const selectedStateData = useMemo(() => {
-    const targetState = selectedState || (user?.role === "State" ? user.state : null);
-    if (!targetState) return null;
-    return stateByName.get(targetState.toLowerCase()) || null;
-  }, [selectedState, user]);
+    if (!effectiveState) return null;
+    return stateByName.get(effectiveState.toLowerCase()) || null;
+  }, [effectiveState]);
 
-  // Projects in selected state / district
+  // Projects strictly filtered by role jurisdiction
   const stateProjects = useMemo(() => {
-    let list = PROJECTS;
-    if (user?.role === "District" && user.district) {
-      return list.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
-    }
-    if (user?.role === "MP") {
-      return list.filter(
+    if (!effectiveState) return [];
+    return PROJECTS.filter(
+      (p) => p.state.toLowerCase() === effectiveState.toLowerCase()
+    );
+  }, [effectiveState]);
+
+  // District projects (for district authority or district filter)
+  const districtProjects = useMemo(() => {
+    if (isDistrictRestricted) {
+      return PROJECTS.filter(
         (p) =>
-          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
-          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+          p.district?.toLowerCase() === userAssignedDistrict.toLowerCase() ||
+          (p.state?.toLowerCase() === userAssignedState.toLowerCase() && !p.district)
       );
     }
-    const targetState = selectedState || (user?.role === "State" ? user.state : null);
-    if (!targetState) return [];
-    return list.filter((p) => p.state.toLowerCase() === targetState.toLowerCase());
-  }, [selectedState, user]);
+    if (isCitizen && !citizenExploreAll) {
+      return PROJECTS.filter(
+        (p) =>
+          p.district?.toLowerCase() === userAssignedDistrict.toLowerCase() ||
+          p.state?.toLowerCase() === userAssignedState.toLowerCase()
+      );
+    }
+    if (selectedDistrict && selectedDistrict !== "All") {
+      return stateProjects.filter(
+        (p) => p.district?.toLowerCase() === selectedDistrict.toLowerCase()
+      );
+    }
+    if (isMP && mpScopeFilter === "constituency" && userAssignedConstituency) {
+      return stateProjects.filter(
+        (p) => p.constituency?.toLowerCase() === userAssignedConstituency.toLowerCase()
+      );
+    }
+    return stateProjects;
+  }, [
+    isDistrictRestricted,
+    isCitizen,
+    citizenExploreAll,
+    selectedDistrict,
+    isMP,
+    mpScopeFilter,
+    userAssignedDistrict,
+    userAssignedState,
+    userAssignedConstituency,
+    stateProjects,
+  ]);
 
-  // Ranked states for sidebar leaderboard
+  // District-wise breakdown within the active state
+  const stateDistrictsBreakdown = useMemo(() => {
+    if (!effectiveState) return [];
+    const distMap = new Map<
+      string,
+      {
+        district: string;
+        totalWorks: number;
+        completed: number;
+        delayed: number;
+        highRisk: number;
+        sanctioned: number;
+        expenditure: number;
+      }
+    >();
+
+    stateProjects.forEach((p) => {
+      const dName = p.district || "Unassigned";
+      const curr = distMap.get(dName) || {
+        district: dName,
+        totalWorks: 0,
+        completed: 0,
+        delayed: 0,
+        highRisk: 0,
+        sanctioned: 0,
+        expenditure: 0,
+      };
+      curr.totalWorks += 1;
+      if (p.status === "Completed") curr.completed += 1;
+      if (p.status === "Delayed") curr.delayed += 1;
+      if (p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50) {
+        curr.highRisk += 1;
+      }
+      curr.sanctioned += p.sanctionedAmount;
+      curr.expenditure += p.expenditure;
+      distMap.set(dName, curr);
+    });
+
+    return Array.from(distMap.values()).map((d) => ({
+      ...d,
+      utilization:
+        d.sanctioned > 0 ? Math.round((d.expenditure / d.sanctioned) * 100) : 0,
+    }));
+  }, [effectiveState, stateProjects]);
+
+  // Ranked states for national leaderboard
   const rankedStates = useMemo(() => {
     return [...STATES_DATA].sort((a, b) => {
       if (activeLayer.id === "risk")
@@ -272,7 +414,7 @@ export default function GISView({ user }: GISViewProps = {}) {
     });
   }, [activeLayer]);
 
-  // Synchronize SimpleMaps mapdata configuration with active layer and states data
+  // Synchronize SimpleMaps mapdata configuration with active layer, jurisdiction, and markers
   const updateMapData = useCallback(() => {
     if (typeof window === "undefined" || !window.simplemaps_countrymap_mapdata)
       return;
@@ -296,7 +438,7 @@ export default function GISView({ user }: GISViewProps = {}) {
       auto_load: "no",
     };
 
-    // Populate state colors and rich HTML tooltip descriptions
+    // Populate state colors based on jurisdiction permissions
     Object.keys(STATE_CODE_TO_NAME).forEach((code) => {
       const stateName = STATE_CODE_TO_NAME[code];
       const sd = stateByName.get(stateName.toLowerCase());
@@ -304,6 +446,29 @@ export default function GISView({ user }: GISViewProps = {}) {
       if (!mapdata.state_specific) mapdata.state_specific = {};
       if (!mapdata.state_specific[code]) {
         mapdata.state_specific[code] = { name: stateName };
+      }
+
+      // If State or District authority is locked:
+      // Dim out all states except their assigned jurisdiction
+      if (isStateRestricted || isDistrictRestricted) {
+        const isJurisdictionState =
+          stateName.toLowerCase() === userAssignedState.toLowerCase();
+
+        if (!isJurisdictionState) {
+          mapdata.state_specific[code].color = "#E2E8F0";
+          mapdata.state_specific[code].hover_color = "#CBD5E1";
+          mapdata.state_specific[code].description = `
+            <div style="font-family: inherit; padding: 4px 8px; font-size: 11px;">
+              <strong style="color: #64748B;">${stateName}</strong><br/>
+              <span style="color: #94A3B8;">🔒 Restricted: Outside ${
+                isDistrictRestricted
+                  ? `${userAssignedDistrict} District`
+                  : userAssignedState
+              } Jurisdiction</span>
+            </div>
+          `;
+          return;
+        }
       }
 
       if (sd) {
@@ -353,32 +518,130 @@ export default function GISView({ user }: GISViewProps = {}) {
       }
     });
 
-    // Populate Cluster Locations
+    // Populate Geo-Spatial Markers
     mapdata.locations = {};
-    if (showClusters) {
-      CLUSTERS.forEach((c, idx) => {
-        mapdata.locations[String(idx)] = {
-          name: c.name,
-          lat: c.lat,
-          lng: c.lng,
-          color: c.color,
-          size: 16,
+
+    // 1. District Role: Plot high-precision GPS markers for every project in the district
+    if (isDistrictRestricted || (isCitizen && !citizenExploreAll)) {
+      districtProjects.forEach((p, idx) => {
+        const markerColor =
+          p.riskLevel === "Critical" || p.riskLevel === "High"
+            ? "#DC2626"
+            : p.riskLevel === "Medium"
+            ? "#F59E0B"
+            : "#16A34A";
+        mapdata.locations[`proj_${idx}`] = {
+          name: p.name,
+          lat: p.geoLat || 26.847,
+          lng: p.geoLng || 80.947,
+          color: markerColor,
+          size: 20,
           type: "circle",
           description: `
-            <div style="font-family: inherit; padding: 2px 4px;">
-              <div style="font-weight: 700; color: ${c.color}; font-size: 12px; margin-bottom: 2px;">${c.name}</div>
-              <div style="font-size: 11px; color: #0F172A; margin-bottom: 2px;">${c.state}</div>
-              <div style="font-size: 10px; color: #64748B;">${c.desc}</div>
+            <div style="font-family: inherit; line-height: 1.4; padding: 4px 8px; min-width: 220px;">
+              <div style="font-weight: 700; font-size: 12px; margin-bottom: 2px; color: ${markerColor};">${p.name}</div>
+              <div style="font-size: 10px; color: #64748B; font-family: monospace;">${p.workOrderNo}</div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; margin-top: 4px;">
+                <span>Progress:</span>
+                <strong>${p.progress}%</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 11px;">
+                <span>Risk Score:</span>
+                <strong style="color: ${markerColor};">${p.riskScore}/100 (${p.riskLevel})</strong>
+              </div>
+              <div style="font-size: 10px; color: #64748B; margin-top: 4px;">
+                GPS: ${p.geoLat}°N, ${p.geoLng}°E
+              </div>
             </div>
           `,
         };
       });
+    } else if (isStateRestricted || effectiveState) {
+      // 2. State Role or State Drilldown: Plot state projects & state clusters
+      stateProjects.forEach((p, idx) => {
+        const markerColor =
+          p.riskLevel === "Critical" || p.riskLevel === "High"
+            ? "#DC2626"
+            : p.riskLevel === "Medium"
+            ? "#F59E0B"
+            : "#16A34A";
+        mapdata.locations[`state_proj_${idx}`] = {
+          name: p.name,
+          lat: p.geoLat || 26.847,
+          lng: p.geoLng || 80.947,
+          color: markerColor,
+          size: 16,
+          type: "circle",
+          description: `
+            <div style="font-family: inherit; padding: 4px 6px;">
+              <div style="font-weight: 700; color: ${markerColor}; font-size: 12px;">${p.name}</div>
+              <div style="font-size: 11px; color: #0F172A; margin-top: 2px;">${p.district} · ${p.progress}% done</div>
+              <div style="font-size: 10px; color: #64748B;">Risk: ${p.riskScore}/100</div>
+            </div>
+          `,
+        };
+      });
+
+      // Include clusters in this state
+      if (showClusters) {
+        CLUSTERS.filter(
+          (c) => c.state.toLowerCase() === effectiveState?.toLowerCase()
+        ).forEach((c, idx) => {
+          mapdata.locations[`state_cluster_${idx}`] = {
+            name: c.name,
+            lat: c.lat,
+            lng: c.lng,
+            color: c.color,
+            size: 22,
+            type: "circle",
+            description: `
+              <div style="font-family: inherit; padding: 2px 4px;">
+                <div style="font-weight: 700; color: ${c.color}; font-size: 12px; margin-bottom: 2px;">${c.name}</div>
+                <div style="font-size: 11px; color: #0F172A;">${c.state} · ${c.desc}</div>
+              </div>
+            `,
+          };
+        });
+      }
+    } else {
+      // 3. National Overview: Plot all India risk clusters
+      if (showClusters) {
+        CLUSTERS.forEach((c, idx) => {
+          mapdata.locations[String(idx)] = {
+            name: c.name,
+            lat: c.lat,
+            lng: c.lng,
+            color: c.color,
+            size: 16,
+            type: "circle",
+            description: `
+              <div style="font-family: inherit; padding: 2px 4px;">
+                <div style="font-weight: 700; color: ${c.color}; font-size: 12px; margin-bottom: 2px;">${c.name}</div>
+                <div style="font-size: 11px; color: #0F172A; margin-bottom: 2px;">${c.state}</div>
+                <div style="font-size: 10px; color: #64748B;">${c.desc}</div>
+              </div>
+            `,
+          };
+        });
+      }
     }
 
     if (window.simplemaps_countrymap && window.simplemaps_countrymap.loaded) {
       window.simplemaps_countrymap.refresh();
     }
-  }, [activeLayer, showClusters]);
+  }, [
+    activeLayer,
+    isStateRestricted,
+    isDistrictRestricted,
+    userAssignedState,
+    userAssignedDistrict,
+    effectiveState,
+    districtProjects,
+    stateProjects,
+    showClusters,
+    isCitizen,
+    citizenExploreAll,
+  ]);
 
   // Load official SimpleMaps scripts on client
   useEffect(() => {
@@ -410,17 +673,24 @@ export default function GISView({ user }: GISViewProps = {}) {
 
         if (!isSubscribed) return;
 
-        // Configure click hook
+        // Configure click hook based on role permissions
         if (window.simplemaps_countrymap) {
           window.simplemaps_countrymap.hooks =
             window.simplemaps_countrymap.hooks || {};
           window.simplemaps_countrymap.hooks.click_state = (id: string) => {
             const stateName = STATE_CODE_TO_NAME[id];
-            if (stateName) {
-              setSelectedState((curr) =>
-                curr === stateName ? null : stateName
-              );
+            if (!stateName) return;
+
+            // State & District authorities cannot switch out of their state
+            if (isStateRestricted || isDistrictRestricted) {
+              if (stateName.toLowerCase() !== userAssignedState.toLowerCase()) {
+                return;
+              }
             }
+
+            setSelectedState((curr) =>
+              curr === stateName && canBrowseNationally ? null : stateName
+            );
           };
         }
 
@@ -432,6 +702,16 @@ export default function GISView({ user }: GISViewProps = {}) {
           typeof window.simplemaps_countrymap.load === "function"
         ) {
           window.simplemaps_countrymap.load();
+
+          // Auto-zoom to state for State and District roles
+          if (isStateRestricted || isDistrictRestricted) {
+            const code = STATE_NAME_TO_CODE[userAssignedState.toLowerCase()];
+            if (code && window.simplemaps_countrymap?.state_zoom) {
+              setTimeout(() => {
+                window.simplemaps_countrymap?.state_zoom(code);
+              }, 400);
+            }
+          }
         }
 
         setMapLoaded(true);
@@ -445,14 +725,27 @@ export default function GISView({ user }: GISViewProps = {}) {
     return () => {
       isSubscribed = false;
     };
-  }, [updateMapData]);
+  }, [
+    updateMapData,
+    isStateRestricted,
+    isDistrictRestricted,
+    userAssignedState,
+    canBrowseNationally,
+  ]);
 
-  // Update map colors on layer or clusters change
+  // Update map colors on layer, scope or clusters change
   useEffect(() => {
     if (mapLoaded) {
       updateMapData();
     }
-  }, [layerIdx, showClusters, mapLoaded, updateMapData]);
+  }, [
+    layerIdx,
+    showClusters,
+    mapLoaded,
+    updateMapData,
+    effectiveState,
+    selectedDistrict,
+  ]);
 
   const handleZoomIn = () => {
     if (window.simplemaps_countrymap?.zoom_in) {
@@ -467,13 +760,27 @@ export default function GISView({ user }: GISViewProps = {}) {
   };
 
   const handleResetZoom = () => {
-    if (window.simplemaps_countrymap?.back) {
-      window.simplemaps_countrymap.back();
+    if (isStateRestricted || isDistrictRestricted) {
+      // Re-center on assigned state
+      const code = STATE_NAME_TO_CODE[userAssignedState.toLowerCase()];
+      if (code && window.simplemaps_countrymap?.state_zoom) {
+        window.simplemaps_countrymap.state_zoom(code);
+      }
+      setSelectedDistrict(isDistrictRestricted ? userAssignedDistrict : null);
+    } else {
+      if (window.simplemaps_countrymap?.back) {
+        window.simplemaps_countrymap.back();
+      }
+      setSelectedState(null);
+      setSelectedDistrict(null);
+      setMpScopeFilter("national");
     }
-    setSelectedState(null);
   };
 
   const selectStateFromList = (stateName: string) => {
+    if (isStateRestricted || isDistrictRestricted) {
+      if (stateName.toLowerCase() !== userAssignedState.toLowerCase()) return;
+    }
     setSelectedState((curr) => (curr === stateName ? null : stateName));
     const code = STATE_NAME_TO_CODE[stateName.toLowerCase()];
     if (code && window.simplemaps_countrymap?.state_zoom) {
@@ -487,7 +794,7 @@ export default function GISView({ user }: GISViewProps = {}) {
     if (!container) return;
 
     let lastZoomTime = 0;
-    const ZOOM_COOLDOWN = 100; // ms between zoom steps
+    const ZOOM_COOLDOWN = 100;
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -499,12 +806,10 @@ export default function GISView({ user }: GISViewProps = {}) {
       if (!window.simplemaps_countrymap) return;
 
       if (e.deltaY < 0) {
-        // Scrolling up -> zoom in
         if (typeof window.simplemaps_countrymap.zoom_in === "function") {
           window.simplemaps_countrymap.zoom_in();
         }
       } else if (e.deltaY > 0) {
-        // Scrolling down -> zoom out
         if (typeof window.simplemaps_countrymap.zoom_out === "function") {
           window.simplemaps_countrymap.zoom_out();
         }
@@ -578,20 +883,63 @@ export default function GISView({ user }: GISViewProps = {}) {
         }
       `}</style>
 
-      {/* ── Header ── */}
+      {/* ── Header & Jurisdiction Badge ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl flex items-center gap-2">
-            <IconLayersLinked className="size-6 text-primary" />
-            GIS Monitoring — India
-          </h1>
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h1 className="text-xl font-bold tracking-tight text-foreground md:text-2xl flex items-center gap-2">
+              <IconLayersLinked className="size-6 text-primary" />
+              {isDistrictRestricted
+                ? `GIS Geo-Spatial Tracking — ${userAssignedDistrict} District`
+                : isStateRestricted
+                ? `GIS Monitoring — ${userAssignedState}`
+                : isMP
+                ? `GIS Monitoring — National & State View`
+                : "GIS Geo-Spatial Monitoring — India"}
+            </h1>
+
+            {/* Jurisdiction Badge */}
+            {isDistrictRestricted ? (
+              <Badge className="bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30 gap-1 text-[11px] font-semibold">
+                <IconLock className="size-3 text-amber-600" />
+                District Jurisdiction: {userAssignedDistrict}
+              </Badge>
+            ) : isStateRestricted ? (
+              <Badge className="bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30 gap-1 text-[11px] font-semibold">
+                <IconBuildingCommunity className="size-3 text-blue-600" />
+                State Jurisdiction: {userAssignedState}
+              </Badge>
+            ) : isMP ? (
+              <Badge className="bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30 gap-1 text-[11px] font-semibold">
+                <IconBuildingArch className="size-3 text-violet-600" />
+                MP Jurisdiction: {userAssignedConstituency || "Constituency"} & National
+              </Badge>
+            ) : isCitizen ? (
+              <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 gap-1 text-[11px] font-semibold">
+                <IconShieldCheck className="size-3 text-emerald-600" />
+                Public Transparency: {userAssignedDistrict}, {userAssignedState}
+              </Badge>
+            ) : (
+              <Badge className="bg-primary/10 text-primary border-primary/30 gap-1 text-[11px] font-semibold">
+                <IconWorld className="size-3" />
+                National Central Authority · All 36 States & UTs
+              </Badge>
+            )}
+          </div>
+
           <p className="text-xs text-muted-foreground md:text-sm">
-            All 36 States & UTs · Official vector choropleth map · Click any state to drill down
+            {isDistrictRestricted
+              ? `Operational tracking restricted to ${userAssignedDistrict} District under MPLADS governance rules.`
+              : isStateRestricted
+              ? `State-level surveillance restricted to ${userAssignedState} and its constituent districts.`
+              : isMP
+              ? `National and state surveillance with quick access to your constituency (${userAssignedConstituency}, ${userAssignedState}).`
+              : "All 36 States & UTs · Official vector choropleth map · National & State drilldown enabled"}
           </p>
         </div>
 
         {/* Zoom & Reset Controls */}
-        <div className="flex items-center gap-1.5 bg-card border rounded-lg p-1 shadow-xs">
+        <div className="flex items-center gap-1.5 bg-card border rounded-lg p-1 shadow-xs shrink-0">
           <Button
             variant="ghost"
             size="sm"
@@ -618,10 +966,203 @@ export default function GISView({ user }: GISViewProps = {}) {
             className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground gap-1"
           >
             <IconRefresh className="size-3.5" />
-            Reset
+            {isDistrictRestricted || isStateRestricted ? "Re-center" : "Reset"}
           </Button>
         </div>
       </div>
+
+      {/* ── Role Scope Switcher Toolbar ── */}
+      {canBrowseNationally && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-xl border bg-card/60">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <IconFocusCentered className="size-3.5" /> Scope:
+            </span>
+            <Button
+              size="sm"
+              variant={!effectiveState ? "default" : "outline"}
+              onClick={() => {
+                setSelectedState(null);
+                setMpScopeFilter("national");
+                if (window.simplemaps_countrymap?.back) {
+                  window.simplemaps_countrymap.back();
+                }
+              }}
+              className="h-7 px-2.5 text-xs gap-1.5"
+            >
+              <IconWorld className="size-3.5" />
+              National Overview
+            </Button>
+
+            {isMP && (
+              <>
+                <Button
+                  size="sm"
+                  variant={mpScopeFilter === "state" ? "default" : "outline"}
+                  onClick={() => {
+                    selectStateFromList(userAssignedState);
+                    setMpScopeFilter("state");
+                  }}
+                  className="h-7 px-2.5 text-xs gap-1.5"
+                >
+                  <IconBuildingCommunity className="size-3.5" />
+                  My State ({userAssignedState})
+                </Button>
+                {userAssignedConstituency && (
+                  <Button
+                    size="sm"
+                    variant={mpScopeFilter === "constituency" ? "default" : "outline"}
+                    onClick={() => {
+                      selectStateFromList(userAssignedState);
+                      setMpScopeFilter("constituency");
+                    }}
+                    className="h-7 px-2.5 text-xs gap-1.5"
+                  >
+                    <IconBuildingArch className="size-3.5" />
+                    My Constituency ({userAssignedConstituency})
+                  </Button>
+                )}
+              </>
+            )}
+
+            {/* Quick State Select Dropdown for National & MP */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-muted-foreground">Drilldown:</span>
+              <Select
+                value={effectiveState || "all"}
+                onValueChange={(val) => {
+                  if (!val || val === "all") {
+                    setSelectedState(null);
+                    setMpScopeFilter("national");
+                    if (window.simplemaps_countrymap?.back) {
+                      window.simplemaps_countrymap.back();
+                    }
+                  } else {
+                    selectStateFromList(val);
+                    setMpScopeFilter("state");
+                  }
+                }}
+              >
+                <SelectTrigger className="h-7 text-xs w-[170px]">
+                  <SelectValue placeholder="Jump to State..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All India (National)</SelectItem>
+                  {STATES_DATA.map((s) => (
+                    <SelectItem key={s.state} value={s.state}>
+                      {s.state}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {effectiveState && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">
+                Active State: <strong className="text-foreground">{effectiveState}</strong>
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setSelectedState(null);
+                  setMpScopeFilter("national");
+                  if (window.simplemaps_countrymap?.back) {
+                    window.simplemaps_countrymap.back();
+                  }
+                }}
+                className="h-6 text-[11px] px-2 text-primary"
+              >
+                ← Return to National
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── State Authority Banner ── */}
+      {isStateRestricted && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-blue-200 bg-blue-50/70 dark:bg-blue-900/10 dark:border-blue-800/40 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="size-7 rounded-lg bg-blue-500/20 text-blue-600 flex items-center justify-center shrink-0">
+              <IconBuildingCommunity className="size-4" />
+            </div>
+            <div>
+              <span className="font-bold text-foreground">
+                State Governance Mode: {userAssignedState}
+              </span>
+              <div className="text-[11px] text-muted-foreground">
+                Monitoring {stateDistrictsBreakdown.length} districts and {stateProjects.length} sanctioned works. Cross-state visibility restricted.
+              </div>
+            </div>
+          </div>
+
+          {/* District filter within the state */}
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground">Filter District:</span>
+            <Select
+              value={selectedDistrict || "All"}
+              onValueChange={(val) => setSelectedDistrict(!val || val === "All" ? null : val)}
+            >
+              <SelectTrigger className="h-7 text-xs w-[160px] bg-background">
+                <SelectValue placeholder="All Districts" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All {userAssignedState} Districts</SelectItem>
+                {stateDistrictsBreakdown.map((d) => (
+                  <SelectItem key={d.district} value={d.district}>
+                    {d.district} ({d.totalWorks} works)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      )}
+
+      {/* ── District Authority Banner ── */}
+      {isDistrictRestricted && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50/70 dark:bg-amber-900/10 dark:border-amber-800/40 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="size-7 rounded-lg bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
+              <IconLock className="size-4" />
+            </div>
+            <div>
+              <span className="font-bold text-foreground">
+                District Geo-Fencing Enforced: {userAssignedDistrict} ({userAssignedState})
+              </span>
+              <div className="text-[11px] text-muted-foreground">
+                High-precision GPS tracking of {districtProjects.length} work orders. Access locked to your administrative district.
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+            <span>District Scope: Active</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── Citizen View Switcher ── */}
+      {isCitizen && (
+        <div className="flex items-center justify-between gap-3 p-3 rounded-xl border bg-muted/40 text-xs">
+          <div className="flex items-center gap-2">
+            <IconShieldCheck className="size-4 text-emerald-600" />
+            <span>
+              Showing public infrastructure works in <strong>{userAssignedDistrict}, {userAssignedState}</strong>.
+            </span>
+          </div>
+          <Button
+            size="sm"
+            variant={citizenExploreAll ? "default" : "outline"}
+            onClick={() => setCitizenExploreAll(!citizenExploreAll)}
+            className="h-7 text-xs"
+          >
+            {citizenExploreAll ? "Return to My Area" : "Explore All-India Works"}
+          </Button>
+        </div>
+      )}
 
       {/* ── Main Layout Grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -658,7 +1199,7 @@ export default function GISView({ user }: GISViewProps = {}) {
                 />
                 <span className="flex items-center gap-1">
                   <IconFlame className="size-3.5 text-amber-500" />
-                  Show Risk Clusters
+                  Show GPS Anomalies & Clusters
                 </span>
               </label>
             </div>
@@ -700,37 +1241,201 @@ export default function GISView({ user }: GISViewProps = {}) {
                 </div>
               </div>
 
-              {/* Active Selected State Pill if any */}
-              {selectedState && (
-                <div className="absolute top-4 left-4 z-10 bg-background/95 backdrop-blur-xs border border-primary/30 rounded-lg px-3 py-1.5 shadow-sm text-xs flex items-center gap-2">
-                  <span className="size-2 rounded-full bg-primary animate-pulse" />
-                  <span className="font-semibold text-foreground">
-                    {selectedState}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="h-4 w-4 p-0 text-muted-foreground hover:text-foreground"
-                    onClick={() => setSelectedState(null)}
-                  >
-                    <IconX className="size-3" />
-                  </Button>
-                </div>
-              )}
+              {/* Active Focused Scope Pill */}
+              <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
+                {isDistrictRestricted ? (
+                  <div className="bg-background/95 backdrop-blur-xs border border-amber-500/40 rounded-lg px-3 py-1.5 shadow-sm text-xs flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+                    <span className="font-semibold text-foreground">
+                      District Focus: {userAssignedDistrict} ({districtProjects.length} Works)
+                    </span>
+                  </div>
+                ) : isStateRestricted ? (
+                  <div className="bg-background/95 backdrop-blur-xs border border-blue-500/40 rounded-lg px-3 py-1.5 shadow-sm text-xs flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-blue-500 animate-pulse" />
+                    <span className="font-semibold text-foreground">
+                      State Focus: {userAssignedState}
+                    </span>
+                  </div>
+                ) : effectiveState ? (
+                  <div className="bg-background/95 backdrop-blur-xs border border-primary/30 rounded-lg px-3 py-1.5 shadow-sm text-xs flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-primary animate-pulse" />
+                    <span className="font-semibold text-foreground">
+                      {effectiveState}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="h-4 w-4 p-0 text-muted-foreground hover:text-foreground"
+                      onClick={() => {
+                        setSelectedState(null);
+                        setMpScopeFilter("national");
+                        if (window.simplemaps_countrymap?.back) {
+                          window.simplemaps_countrymap.back();
+                        }
+                      }}
+                    >
+                      <IconX className="size-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="bg-background/95 backdrop-blur-xs border rounded-lg px-3 py-1.5 shadow-sm text-xs flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                    <span className="font-semibold text-foreground">
+                      All-India National Overview
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
         </div>
 
         {/* ── Right Details / Drilldown Panel (4 of 12 cols on desktop) ── */}
         <div className="lg:col-span-4 flex flex-col space-y-4">
-          {selectedStateData ? (
-            /* ── State Dossier Drilldown View ── */
+          {/* SCENARIO A: DISTRICT AUTHORITY VIEW */}
+          {isDistrictRestricted ? (
+            <Card className="shadow-xs border bg-card flex flex-col">
+              <CardHeader className="p-4 pb-3 border-b bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Badge variant="outline" className="text-[10px] mb-1 border-amber-500/30 text-amber-700 dark:text-amber-300">
+                      District Jurisdiction
+                    </Badge>
+                    <CardTitle className="text-base font-bold text-foreground">
+                      {userAssignedDistrict} District
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      State of {userAssignedState} · Collectorate Monitoring
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-4 space-y-4 flex-1 overflow-y-auto max-h-[580px]">
+                {/* District KPI Summary */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-lg border bg-muted/30 p-2.5">
+                    <div className="text-[10px] text-muted-foreground uppercase">
+                      Total Works
+                    </div>
+                    <div className="text-sm font-mono font-bold text-foreground mt-0.5">
+                      {districtProjects.length}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-muted/30 p-2.5">
+                    <div className="text-[10px] text-muted-foreground uppercase">
+                      Completed
+                    </div>
+                    <div className="text-sm font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                      {districtProjects.filter((p) => p.status === "Completed").length}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-muted/30 p-2.5">
+                    <div className="text-[10px] text-muted-foreground uppercase">
+                      Delayed
+                    </div>
+                    <div className="text-sm font-mono font-bold text-destructive mt-0.5">
+                      {districtProjects.filter((p) => p.status === "Delayed").length}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border bg-muted/30 p-2.5">
+                    <div className="text-[10px] text-muted-foreground uppercase">
+                      High Risk
+                    </div>
+                    <div className="text-sm font-mono font-bold text-amber-600 mt-0.5">
+                      {districtProjects.filter((p) => p.riskLevel === "High" || p.riskLevel === "Critical" || p.riskScore >= 50).length}
+                    </div>
+                  </div>
+                </div>
+
+                {/* District Works List */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                    <span>Geotagged Works in {userAssignedDistrict} ({districtProjects.length})</span>
+                  </h4>
+
+                  {districtProjects.length === 0 ? (
+                    <div className="text-xs text-muted-foreground py-6 text-center border rounded-lg">
+                      No works recorded in {userAssignedDistrict} yet.
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {districtProjects.map((p) => {
+                        const hasHighRisk =
+                          p.riskLevel === "High" ||
+                          p.riskLevel === "Critical" ||
+                          p.riskScore >= 50;
+
+                        return (
+                          <div
+                            key={p.id}
+                            className="rounded-lg border p-3 bg-card hover:bg-muted/40 transition-colors text-xs space-y-2"
+                          >
+                            <div className="flex items-start justify-between gap-1">
+                              <span className="font-semibold text-foreground line-clamp-1">
+                                {p.name}
+                              </span>
+                              <Badge
+                                variant={
+                                  p.status === "Completed"
+                                    ? "secondary"
+                                    : p.status === "Delayed"
+                                    ? "destructive"
+                                    : "outline"
+                                }
+                                className="text-[10px] px-1.5 py-0 shrink-0"
+                              >
+                                {p.status}
+                              </Badge>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                              <span className="font-mono">{p.workOrderNo}</span>
+                              <span className="font-semibold font-mono text-foreground">
+                                ₹{p.sanctionedAmount.toFixed(1)}L
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between text-[11px]">
+                              <span>Progress: <strong>{p.progress}%</strong></span>
+                              <span className="text-muted-foreground">
+                                GPS: {p.geoLat}°N, {p.geoLng}°E
+                              </span>
+                            </div>
+
+                            {/* Why Risk Button when high progress and high risk */}
+                            <div className="flex items-center justify-between pt-1 border-t text-[11px]">
+                              <span className={`font-semibold ${hasHighRisk ? "text-destructive" : "text-emerald-600"}`}>
+                                Risk: {p.riskScore}/100 ({p.riskLevel})
+                              </span>
+                              {hasHighRisk && (
+                                <WhyRiskButton
+                                  project={p}
+                                  compact
+                                  onClick={() => setWhyRiskProject(p)}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ) : effectiveState && selectedStateData ? (
+            /* SCENARIO B: STATE VIEW (For State Authority or National/MP State Drilldown) */
             <Card className="shadow-xs border bg-card flex flex-col">
               <CardHeader className="p-4 pb-3 border-b bg-muted/20">
                 <div className="flex items-center justify-between">
                   <div>
                     <Badge variant="outline" className="text-[10px] mb-1">
-                      State Inspection
+                      {isStateRestricted ? "State Jurisdiction" : "State Dossier"}
                     </Badge>
                     <CardTitle className="text-base font-bold text-foreground">
                       {selectedStateData.state}
@@ -739,14 +1444,22 @@ export default function GISView({ user }: GISViewProps = {}) {
                       {selectedStateData.mps} Lok Sabha / RS Constituencies
                     </CardDescription>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={() => setSelectedState(null)}
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    <IconX className="size-4" />
-                  </Button>
+                  {canBrowseNationally && (
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => {
+                        setSelectedState(null);
+                        setMpScopeFilter("national");
+                        if (window.simplemaps_countrymap?.back) {
+                          window.simplemaps_countrymap.back();
+                        }
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <IconX className="size-4" />
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
 
@@ -818,69 +1531,168 @@ export default function GISView({ user }: GISViewProps = {}) {
                   </div>
                 </div>
 
-                {/* State Projects List */}
+                {/* District Breakdown in this State */}
+                {stateDistrictsBreakdown.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+                      <span>Districts in {selectedStateData.state} ({stateDistrictsBreakdown.length})</span>
+                    </h4>
+                    <div className="border rounded-lg overflow-hidden text-xs">
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="bg-muted/40">
+                            <TableHead className="py-1.5 text-[11px]">District</TableHead>
+                            <TableHead className="py-1.5 text-[11px] text-center">Works</TableHead>
+                            <TableHead className="py-1.5 text-[11px] text-right">Util %</TableHead>
+                            <TableHead className="py-1.5 text-[11px] text-center">Risk</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {stateDistrictsBreakdown.map((d) => (
+                            <TableRow
+                              key={d.district}
+                              onClick={() =>
+                                setSelectedDistrict((curr) =>
+                                  curr === d.district ? null : d.district
+                                )
+                              }
+                              className={`cursor-pointer hover:bg-muted/30 transition-colors ${
+                                selectedDistrict === d.district
+                                  ? "bg-primary/10 font-semibold"
+                                  : ""
+                              }`}
+                            >
+                              <TableCell className="py-2 text-[11px] font-medium text-foreground">
+                                {d.district}
+                              </TableCell>
+                              <TableCell className="py-2 text-[11px] text-center font-mono">
+                                {d.totalWorks}
+                              </TableCell>
+                              <TableCell className="py-2 text-[11px] text-right font-mono">
+                                {d.utilization}%
+                              </TableCell>
+                              <TableCell className="py-2 text-[11px] text-center">
+                                {d.highRisk > 0 ? (
+                                  <Badge variant="destructive" className="text-[9px] px-1 py-0 h-4">
+                                    {d.highRisk}
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="secondary" className="text-[9px] px-1 py-0 h-4 text-emerald-600">
+                                    0
+                                  </Badge>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                )}
+
+                {/* State Works List */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Sample Works ({stateProjects.length})
+                      {selectedDistrict
+                        ? `Works in ${selectedDistrict} (${districtProjects.length})`
+                        : `Works in ${selectedStateData.state} (${districtProjects.length})`}
                     </h4>
+                    {selectedDistrict && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedDistrict(null)}
+                        className="h-5 text-[10px] px-1.5 text-primary"
+                      >
+                        Clear filter
+                      </Button>
+                    )}
                   </div>
-                  {stateProjects.length === 0 ? (
+                  {districtProjects.length === 0 ? (
                     <div className="text-xs text-muted-foreground py-4 text-center border rounded-lg">
-                      No active anomalies flagged in database for this state.
+                      No active projects found for this selection.
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {stateProjects.map((p) => (
-                        <div
-                          key={p.id}
-                          className="rounded-lg border p-2.5 bg-card hover:bg-muted/40 transition-colors text-xs space-y-1.5"
-                        >
-                          <div className="flex items-start justify-between gap-1">
-                            <span className="font-medium text-foreground line-clamp-1">
-                              {p.name}
-                            </span>
-                            <Badge
-                              variant={
-                                p.status === "Completed"
-                                  ? "secondary"
-                                  : p.status === "Delayed"
-                                  ? "destructive"
-                                  : "outline"
-                              }
-                              className="text-[10px] px-1.5 py-0"
-                            >
-                              {p.status}
-                            </Badge>
+                      {districtProjects.map((p) => {
+                        const hasHighRisk =
+                          p.riskLevel === "High" ||
+                          p.riskLevel === "Critical" ||
+                          p.riskScore >= 50;
+
+                        return (
+                          <div
+                            key={p.id}
+                            className="rounded-lg border p-2.5 bg-card hover:bg-muted/40 transition-colors text-xs space-y-1.5"
+                          >
+                            <div className="flex items-start justify-between gap-1">
+                              <span className="font-medium text-foreground line-clamp-1">
+                                {p.name}
+                              </span>
+                              <Badge
+                                variant={
+                                  p.status === "Completed"
+                                    ? "secondary"
+                                    : p.status === "Delayed"
+                                    ? "destructive"
+                                    : "outline"
+                                }
+                                className="text-[10px] px-1.5 py-0 shrink-0"
+                              >
+                                {p.status}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                              <span>{p.district}</span>
+                              <span className="font-mono font-medium text-foreground">
+                                ₹{p.sanctionedAmount.toFixed(1)}L
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] pt-1 border-t">
+                              <span>Progress: <strong>{p.progress}%</strong></span>
+                              <div className="flex items-center gap-1.5">
+                                <span className={hasHighRisk ? "text-destructive font-semibold" : "text-muted-foreground"}>
+                                  Risk: {p.riskScore}/100
+                                </span>
+                                {hasHighRisk && (
+                                  <WhyRiskButton
+                                    project={p}
+                                    compact
+                                    onClick={() => setWhyRiskProject(p)}
+                                  />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                            <span>{p.district}</span>
-                            <span className="font-mono font-medium text-foreground">
-                              {p.sanctionedAmount >= 100
-                                ? `₹${(p.sanctionedAmount / 100).toFixed(2)}Cr`
-                                : `₹${p.sanctionedAmount.toFixed(1)}L`}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
               </CardContent>
 
-              <CardFooter className="p-3 border-t bg-muted/20">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSelectedState(null)}
-                  className="w-full text-xs"
-                >
-                  Back to National View
-                </Button>
-              </CardFooter>
+              {canBrowseNationally && (
+                <CardFooter className="p-3 border-t bg-muted/20">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSelectedState(null);
+                      setMpScopeFilter("national");
+                      if (window.simplemaps_countrymap?.back) {
+                        window.simplemaps_countrymap.back();
+                      }
+                    }}
+                    className="w-full text-xs"
+                  >
+                    Back to All-India National View
+                  </Button>
+                </CardFooter>
+              )}
             </Card>
           ) : (
-            /* ── National Overview & Rankings Panel ── */
+            /* SCENARIO C: NATIONAL OVERVIEW & RANKINGS (For Ministry & MP in National mode) */
             <div className="space-y-4">
               {/* Guidance Info Card */}
               <Card className="shadow-xs border border-primary/20 bg-primary/5 p-3.5">
@@ -991,6 +1803,13 @@ export default function GISView({ user }: GISViewProps = {}) {
           )}
         </div>
       </div>
+
+      {/* ── Root Why Risk Anomaly Modal ── */}
+      <WhyRiskModal
+        project={whyRiskProject}
+        isOpen={!!whyRiskProject}
+        onClose={() => setWhyRiskProject(null)}
+      />
     </div>
   );
 }

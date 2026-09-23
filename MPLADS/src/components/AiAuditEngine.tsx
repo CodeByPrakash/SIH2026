@@ -91,9 +91,10 @@ import {
   IconZoomIn,
   IconFolderOpen,
 } from "@tabler/icons-react";
-import type { Project } from "../types";
+import type { Project, User } from "../types";
 import { PROJECTS, STATES_DATA } from "../data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
+import { useAuth } from "@/context/AuthContext";
 import { ArchetypeIcon } from "@/components/ArchetypeIcon";
 import {
   type WorkAuditRequest,
@@ -195,7 +196,12 @@ function RiskGauge({ score, tier }: { score: number; tier: string }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function AiAuditEngine({ initialProjectId }: { initialProjectId?: string | null } = {}) {
+interface AiAuditEngineProps {
+  initialProjectId?: string | null;
+  user?: User;
+}
+
+export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAuditEngineProps = {}) {
   const searchParams = useSearchParams();
   const queryProjectId = searchParams ? searchParams.get("projectId") : null;
   const activeTargetId = initialProjectId || queryProjectId;
@@ -203,8 +209,37 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
   // Extra projects fetched directly (e.g. deep-linked from Dashboard)
   const [extraProjects, setExtraProjects] = useState<Project[]>([]);
 
-  // Live Database Projects Roster from MongoDB
-  const { projects: dbProjects } = useProjects({ limit: 10000 });
+  const { user: authUser } = useAuth();
+
+  // Resolve effective user synchronously with storage fallback
+  const effectiveUser = useMemo<User | null>(() => {
+    if (propUser) return propUser;
+    if (authUser) return authUser;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mplads_user");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  }, [propUser, authUser]);
+
+  // Live Database Projects Roster from MongoDB scoped strictly to effectiveUser
+  const { projects: dbProjects } = useProjects({
+    user: effectiveUser,
+    role: effectiveUser?.role,
+    userRole: effectiveUser?.role,
+    district: effectiveUser?.role === "District" ? effectiveUser?.district : undefined,
+    userDistrict: effectiveUser?.district,
+    state: effectiveUser?.role === "State" ? effectiveUser?.state : (effectiveUser?.role === "District" ? effectiveUser?.state : undefined),
+    userState: effectiveUser?.state,
+    constituency: effectiveUser?.role === "MP" ? effectiveUser?.constituency : undefined,
+    userConstituency: effectiveUser?.constituency,
+    limit: 10000,
+  });
+
   const projectsList = useMemo(() => {
     const map = new Map<string, Project>();
     extraProjects.forEach((p) => map.set(p.id, p));
@@ -213,32 +248,78 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
         if (!map.has(p.id)) map.set(p.id, p);
       });
     } else {
-      PROJECTS.forEach((p) => {
+      let pool = PROJECTS;
+      if (effectiveUser?.role === "District" && effectiveUser.district) {
+        pool = pool.filter((p) => p.district.toLowerCase() === effectiveUser.district!.toLowerCase());
+      } else if (effectiveUser?.role === "State" && effectiveUser.state) {
+        pool = pool.filter((p) => p.state.toLowerCase() === effectiveUser.state!.toLowerCase());
+      }
+      pool.forEach((p) => {
         if (!map.has(p.id)) map.set(p.id, p);
       });
     }
-    return Array.from(map.values());
-  }, [dbProjects, extraProjects]);
+    const all = Array.from(map.values());
+    if (effectiveUser?.role === "District" && effectiveUser.district) {
+      return all.filter((p) => p.district?.toLowerCase() === effectiveUser.district!.toLowerCase());
+    }
+    if (effectiveUser?.role === "State" && effectiveUser.state) {
+      return all.filter((p) => p.state?.toLowerCase() === effectiveUser.state!.toLowerCase());
+    }
+    if (effectiveUser?.role === "MP") {
+      return all.filter(
+        (p) =>
+          (effectiveUser.constituency && p.constituency?.toLowerCase() === effectiveUser.constituency.toLowerCase()) ||
+          (effectiveUser.district && p.district?.toLowerCase() === effectiveUser.district.toLowerCase())
+      );
+    }
+    return all;
+  }, [dbProjects, extraProjects, effectiveUser]);
 
   // Navigation & Mode States
   const [activeTab, setActiveTab] = useState("studio");
   const [searchProject, setSearchProject] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
-  const [stateFilter, setStateFilter] = useState("All");
-  const [districtFilter, setDistrictFilter] = useState("All");
+
+  const defaultState =
+    effectiveUser?.role === "District" || effectiveUser?.role === "State"
+      ? effectiveUser.state || "All"
+      : "All";
+  const defaultDistrict =
+    effectiveUser?.role === "District"
+      ? effectiveUser.district || "All"
+      : "All";
+
+  const [stateFilter, setStateFilter] = useState(defaultState);
+  const [districtFilter, setDistrictFilter] = useState(defaultDistrict);
   const [statusFilter, setStatusFilter] = useState("All");
   const [visibleCount, setVisibleCount] = useState(80);
 
-  // Dynamic States and Districts derived from projects list
+  // Synchronize state and district filters when effectiveUser loads or changes
+  useEffect(() => {
+    if (effectiveUser?.role === "District" && effectiveUser.district) {
+      setDistrictFilter(effectiveUser.district);
+      if (effectiveUser.state) setStateFilter(effectiveUser.state);
+    } else if (effectiveUser?.role === "State" && effectiveUser.state) {
+      setStateFilter(effectiveUser.state);
+    }
+  }, [effectiveUser]);
+
+  // Dynamic States and Districts derived from scoped projects list
   const availableStates = useMemo(() => {
+    if (effectiveUser?.role === "District" || effectiveUser?.role === "State") {
+      if (effectiveUser?.state) return [effectiveUser.state];
+    }
     const set = new Set<string>();
     projectsList.forEach((p) => {
       if (p.state) set.add(p.state);
     });
     return Array.from(set).sort();
-  }, [projectsList]);
+  }, [projectsList, effectiveUser]);
 
   const availableDistricts = useMemo(() => {
+    if (effectiveUser?.role === "District" && effectiveUser.district) {
+      return [effectiveUser.district];
+    }
     const set = new Set<string>();
     projectsList.forEach((p) => {
       if (stateFilter === "All" || p.state?.toLowerCase() === stateFilter.toLowerCase()) {
@@ -246,7 +327,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
       }
     });
     return Array.from(set).sort();
-  }, [projectsList, stateFilter]);
+  }, [projectsList, stateFilter, effectiveUser]);
 
   const availableCategories = useMemo(() => {
     const set = new Set<string>();
@@ -259,17 +340,32 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
   // Selected Website Project for Studio Mode
   const [selectedProjectId, setSelectedProjectId] = useState<string>(() => {
     if (activeTargetId) return activeTargetId;
-    return projectsList[0]?.id || PROJECTS[0]?.id || "";
+    return "";
   });
+
+  // Keep selectedProjectId synchronized to first valid scoped project
+  useEffect(() => {
+    if (projectsList.length > 0 && (!selectedProjectId || !projectsList.some((p) => p.id === selectedProjectId))) {
+      setSelectedProjectId(projectsList[0].id);
+    }
+  }, [projectsList, selectedProjectId]);
 
   const selectedProject = useMemo(() => {
     return (
       projectsList.find((p) => p.id === selectedProjectId) ||
-      PROJECTS.find((p) => p.id === selectedProjectId) ||
       projectsList[0] ||
+      PROJECTS.find((p) => {
+        if (effectiveUser?.role === "District" && effectiveUser.district) {
+          return p.district.toLowerCase() === effectiveUser.district.toLowerCase();
+        }
+        if (effectiveUser?.role === "State" && effectiveUser.state) {
+          return p.state.toLowerCase() === effectiveUser.state.toLowerCase();
+        }
+        return true;
+      }) ||
       PROJECTS[0]
     );
-  }, [projectsList, selectedProjectId]);
+  }, [projectsList, selectedProjectId, effectiveUser]);
 
   // Editable Form for Studio Project (allowing officer to adjust real-time inspection inputs)
   const [studioForm, setStudioForm] = useState<Partial<Project>>({ ...selectedProject });
@@ -296,25 +392,36 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchFilterTier, setBatchFilterTier] = useState<string>("ALL");
 
-  // Custom Proposal Form State
-  const [customForm, setCustomForm] = useState({
-    name: "Construction of Multi-Purpose Cyclone Shelter",
-    category: "Disaster Management",
-    state: "Odisha",
-    district: "Kendrapara",
-    constituency: "Kendrapara",
+  // Custom Proposal Form State scoped to user jurisdiction
+  const [customForm, setCustomForm] = useState(() => ({
+    name: "Construction of Multi-Purpose Community Infrastructure",
+    category: "Community & Civic Amenities",
+    state: effectiveUser?.state || "Uttar Pradesh",
+    district: effectiveUser?.district || "Lucknow",
+    constituency: effectiveUser?.constituency || effectiveUser?.district || "Lucknow",
     sanctionedAmount: 75.0,
     expenditure: 72.5,
     sanctionDate: "2024-02-10",
     expectedCompletion: "2024-11-30",
     completionDate: "2024-11-15",
-    contractor: "M/s Coastal Infra Developers",
+    contractor: "M/s Local Infrastructure Developers",
     photos: 18,
     inspections: 4,
-    geoLat: 20.501,
-    geoLng: 86.422,
+    geoLat: effectiveUser?.district?.toLowerCase() === "lucknow" ? 26.8467 : 20.501,
+    geoLng: effectiveUser?.district?.toLowerCase() === "lucknow" ? 80.9462 : 86.422,
     hasGeoMismatch: false,
-  });
+  }));
+
+  useEffect(() => {
+    if (effectiveUser) {
+      setCustomForm((prev) => ({
+        ...prev,
+        state: effectiveUser.state || prev.state,
+        district: effectiveUser.district || prev.district,
+        constituency: effectiveUser.constituency || effectiveUser.district || prev.constituency,
+      }));
+    }
+  }, [effectiveUser]);
 
   // Metadata & Health State
   const [metadata, setMetadata] = useState<ModelMetadata | null>(null);
@@ -414,14 +521,49 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
     }
   }, [activeTargetId, projectsList, executeAudit]);
 
-  // Run Batch Audit across All Website Projects
+  // Strictly isolate projects pool for Batch Audit according to role & area
+  const scopedBatchProjects = useMemo(() => {
+    return projectsList.filter((p) => {
+      if (effectiveUser?.role === "District" && effectiveUser.district) {
+        return p.district?.toLowerCase() === effectiveUser.district.toLowerCase();
+      }
+      if (effectiveUser?.role === "State" && effectiveUser.state) {
+        return p.state?.toLowerCase() === effectiveUser.state.toLowerCase();
+      }
+      if (effectiveUser?.role === "MP") {
+        const matchesConst = effectiveUser.constituency && p.constituency?.toLowerCase() === effectiveUser.constituency.toLowerCase();
+        const matchesDist = effectiveUser.district && p.district?.toLowerCase() === effectiveUser.district.toLowerCase();
+        return Boolean(matchesConst || matchesDist);
+      }
+      return true;
+    });
+  }, [projectsList, effectiveUser]);
+
+  // Reset batch audit results whenever effective user or jurisdiction switches
+  useEffect(() => {
+    setBatchResults(null);
+  }, [effectiveUser?.role, effectiveUser?.district, effectiveUser?.state, effectiveUser?.constituency]);
+
+  // Run Batch Audit across Scoped Jurisdiction Projects
   const handleAuditAllProjects = async () => {
     setBatchLoading(true);
     setError(null);
     try {
-      const targetBatch = projectsList.slice(0, 100);
+      const targetBatch = scopedBatchProjects.slice(0, 100);
+      if (targetBatch.length === 0) {
+        setError("No projects found in your assigned jurisdiction to audit.");
+        return;
+      }
       const res = await auditWebsiteProjectsBatch(targetBatch);
-      setBatchResults(res);
+      // Guarantee no out-of-district works in batchResults
+      const scopedResults = res.results.filter((r) => {
+        return scopedBatchProjects.some((p) => p.id === r.work_id);
+      });
+      setBatchResults({
+        total_audited: scopedResults.length,
+        high_or_critical_count: scopedResults.filter((r) => r.risk_tier === "HIGH" || r.risk_tier === "CRITICAL").length,
+        results: scopedResults,
+      });
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Batch audit failed");
     } finally {
@@ -467,6 +609,17 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
   const filteredProjects = useMemo(() => {
     const q = searchProject.trim().toLowerCase();
     return projectsList.filter((p) => {
+      // Guaranteed Role & Area isolation
+      if (effectiveUser?.role === "District" && effectiveUser.district) {
+        if (p.district?.toLowerCase() !== effectiveUser.district.toLowerCase()) return false;
+      } else if (effectiveUser?.role === "State" && effectiveUser.state) {
+        if (p.state?.toLowerCase() !== effectiveUser.state.toLowerCase()) return false;
+      } else if (effectiveUser?.role === "MP") {
+        const matchesConst = effectiveUser.constituency && p.constituency?.toLowerCase() === effectiveUser.constituency.toLowerCase();
+        const matchesDist = effectiveUser.district && p.district?.toLowerCase() === effectiveUser.district.toLowerCase();
+        if (!matchesConst && !matchesDist) return false;
+      }
+
       const matchesSearch =
         !q ||
         p.name.toLowerCase().includes(q) ||
@@ -487,7 +640,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
 
       return matchesSearch && matchesState && matchesDistrict && matchesCat && matchesStatus;
     });
-  }, [projectsList, searchProject, stateFilter, districtFilter, categoryFilter, statusFilter]);
+  }, [projectsList, searchProject, stateFilter, districtFilter, categoryFilter, statusFilter, effectiveUser]);
 
   // Derived Radar & Bar Data
   const radarData = result
@@ -506,32 +659,38 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
       }))
     : [];
 
-  // Derived Batch Data
-  const batchTierData = batchResults
-    ? ["LOW", "MODERATE", "HIGH", "CRITICAL"].map((tier) => ({
-        name: tier,
-        value: batchResults.results.filter((r) => r.risk_tier === tier).length,
-      }))
-    : [];
+  // Derived Batch Data strictly scoped to current user jurisdiction
+  const scopedBatchResults = useMemo(() => {
+    if (!batchResults) return [];
+    return batchResults.results.filter((r) => {
+      return scopedBatchProjects.some((p) => p.id === r.work_id);
+    });
+  }, [batchResults, scopedBatchProjects]);
+
+  const batchTierData = useMemo(() => {
+    return ["LOW", "MODERATE", "HIGH", "CRITICAL"].map((tier) => ({
+      name: tier,
+      value: scopedBatchResults.filter((r) => r.risk_tier === tier).length,
+    }));
+  }, [scopedBatchResults]);
 
   const filteredBatchResults = useMemo(() => {
-    if (!batchResults) return [];
-    if (batchFilterTier === "ALL") return batchResults.results;
-    return batchResults.results.filter((r) => r.risk_tier === batchFilterTier);
-  }, [batchResults, batchFilterTier]);
+    if (batchFilterTier === "ALL") return scopedBatchResults;
+    return scopedBatchResults.filter((r) => r.risk_tier === batchFilterTier);
+  }, [scopedBatchResults, batchFilterTier]);
 
   const PIE_COLORS = ["#10b981", "#f59e0b", "#f97316", "#ef4444"];
 
-  // Export Batch to Excel
+  // Export Batch to Excel strictly for scoped projects
   const exportBatchToExcel = () => {
-    if (!batchResults) return;
-    const rows = batchResults.results.map((r) => {
-      const matched = projectsList.find((p) => p.id === r.work_id);
+    if (!scopedBatchResults || scopedBatchResults.length === 0) return;
+    const rows = scopedBatchResults.map((r) => {
+      const matched = scopedBatchProjects.find((p) => p.id === r.work_id);
       return {
         "Work ID": r.work_id,
         "Project Name": matched?.name || "N/A",
-        "State": matched?.state || "N/A",
-        "District": matched?.district || "N/A",
+        "State": matched?.state || effectiveUser?.state || "N/A",
+        "District": matched?.district || effectiveUser?.district || "N/A",
         "Category": matched?.category || "N/A",
         "Sanctioned (₹ Lakhs)": matched?.sanctionedAmount || 0,
         "Expenditure (₹ Lakhs)": matched?.expenditure || 0,
@@ -553,7 +712,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "ML_Audit_Matrix");
-    XLSX.writeFile(wb, "NIDHI_RAKSHAK_AI_Audit_Dossier.xlsx");
+    XLSX.writeFile(wb, `NIDHI_RAKSHAK_${effectiveUser?.district || "Jurisdiction"}_Audit_Dossier.xlsx`);
   };
 
   return (
@@ -567,7 +726,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">NIDHI-RAKSHAK AI Audit Engine</h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Official NIDHI-RAKSHAK ML Governance Engine — XGBoost Binary + Multiclass Archetype + Isolation Forest with Hybrid Risk Fusion
+              Official NIDHI-RAKSHAK ML Governance Engine
             </p>
           </div>
         </div>
@@ -669,6 +828,24 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                     <Badge variant="secondary" className="text-xs font-normal">
                       {filteredProjects.length} Projects Available
                     </Badge>
+                    {effectiveUser?.role === "District" && effectiveUser.district && (
+                      <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/30 text-xs px-2.5 py-0.5 rounded-full font-semibold dark:text-emerald-400">
+                        <IconMapPin className="size-3 mr-1 inline" />
+                        District Jurisdiction: {effectiveUser.district}, {effectiveUser.state}
+                      </Badge>
+                    )}
+                    {effectiveUser?.role === "State" && effectiveUser.state && (
+                      <Badge variant="outline" className="bg-blue-500/10 text-blue-700 border-blue-500/30 text-xs px-2.5 py-0.5 rounded-full font-semibold dark:text-blue-400">
+                        <IconMapPin className="size-3 mr-1 inline" />
+                        State Jurisdiction: {effectiveUser.state}
+                      </Badge>
+                    )}
+                    {effectiveUser?.role === "MP" && (
+                      <Badge variant="outline" className="bg-purple-500/10 text-purple-700 border-purple-500/30 text-xs px-2.5 py-0.5 rounded-full font-semibold dark:text-purple-400">
+                        <IconMapPin className="size-3 mr-1 inline" />
+                        Constituency: {effectiveUser.constituency || effectiveUser.district}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 <CardDescription className="text-sm leading-relaxed">
@@ -687,24 +864,36 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                     />
                   </div>
 
-                  <Select value={stateFilter} onValueChange={(val) => { setStateFilter(val || "All"); setDistrictFilter("All"); }}>
-                    <SelectTrigger className="h-9 text-xs bg-card">
+                  <Select
+                    value={stateFilter}
+                    disabled={effectiveUser?.role === "District" || effectiveUser?.role === "State"}
+                    onValueChange={(val) => { setStateFilter(val || "All"); setDistrictFilter("All"); }}
+                  >
+                    <SelectTrigger className="h-9 text-xs bg-card disabled:opacity-85 disabled:cursor-not-allowed">
                       <SelectValue placeholder="All States" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      <SelectItem value="All" className="text-xs">All States</SelectItem>
+                      {effectiveUser?.role !== "District" && effectiveUser?.role !== "State" && (
+                        <SelectItem value="All" className="text-xs">All States</SelectItem>
+                      )}
                       {availableStates.map((s) => (
                         <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
 
-                  <Select value={districtFilter} onValueChange={(val) => setDistrictFilter(val || "All")}>
-                    <SelectTrigger className="h-9 text-xs bg-card">
+                  <Select
+                    value={districtFilter}
+                    disabled={effectiveUser?.role === "District"}
+                    onValueChange={(val) => setDistrictFilter(val || "All")}
+                  >
+                    <SelectTrigger className="h-9 text-xs bg-card disabled:opacity-85 disabled:cursor-not-allowed">
                       <SelectValue placeholder="All Districts" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      <SelectItem value="All" className="text-xs">All Districts</SelectItem>
+                      {effectiveUser?.role !== "District" && (
+                        <SelectItem value="All" className="text-xs">All Districts</SelectItem>
+                      )}
                       {availableDistricts.map((d) => (
                         <SelectItem key={d} value={d} className="text-xs">{d}</SelectItem>
                       ))}
@@ -1385,33 +1574,56 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
             <CardHeader className="pb-3">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <CardTitle className="text-lg flex items-center gap-2">
+                  <CardTitle className="text-lg flex flex-wrap items-center gap-2">
                     <IconFileSpreadsheet className="size-5 text-primary" />
-                    Batch Risk Audit — Full National Database
+                    {effectiveUser?.role === "District" && effectiveUser.district
+                      ? `Batch Risk Audit — District Jurisdiction: ${effectiveUser.district}, ${effectiveUser.state || "Uttar Pradesh"}`
+                      : effectiveUser?.role === "State" && effectiveUser.state
+                      ? `Batch Risk Audit — State Jurisdiction: ${effectiveUser.state}`
+                      : effectiveUser?.role === "MP"
+                      ? `Batch Risk Audit — Constituency (${effectiveUser.constituency || effectiveUser.district})`
+                      : "Batch Risk Audit — Full National Database"}
+                    {effectiveUser?.role && (
+                      <Badge variant="outline" className="text-xs font-semibold bg-primary/10 text-primary border-primary/30">
+                        {effectiveUser.role === "District" ? `District • ${effectiveUser.district}` : effectiveUser.role}
+                      </Badge>
+                    )}
                   </CardTitle>
                   <CardDescription className="text-xs mt-1">
-                    Execute live ML evaluation across all projects currently in the website registry, ranking works by risk score descending (as specified in Section 6.3 of TechStack doc).
+                    {effectiveUser?.role === "District" && effectiveUser.district
+                      ? `Execute live ML evaluation across all ${scopedBatchProjects.length} projects in your district registry (${effectiveUser.district}, ${effectiveUser.state || "Uttar Pradesh"}), ranking works by risk score descending.`
+                      : effectiveUser?.role === "State" && effectiveUser.state
+                      ? `Execute live ML evaluation across all ${scopedBatchProjects.length} projects in your state registry (${effectiveUser.state}), ranking works by risk score descending.`
+                      : effectiveUser?.role === "MP"
+                      ? `Execute live ML evaluation across all ${scopedBatchProjects.length} projects in your constituency, ranking works by risk score descending.`
+                      : "Execute live ML evaluation across all projects currently in the website registry, ranking works by risk score descending (as specified in Section 6.3 of TechStack doc)."}
                   </CardDescription>
                 </div>
                 <div className="flex flex-wrap items-center gap-2.5">
                   <Button
                     onClick={handleAuditAllProjects}
-                    disabled={batchLoading}
+                    disabled={batchLoading || scopedBatchProjects.length === 0}
                     className="gap-2 font-bold shadow-sm w-full sm:w-auto"
                   >
                     {batchLoading ? (
                       <>
                         <IconLoader2 className="size-4 animate-spin" />
-                        Evaluating All Projects...
+                        Evaluating {scopedBatchProjects.length} Projects...
                       </>
                     ) : (
                       <>
                         <IconPlayerPlay className="size-4" />
-                        Audit All Website Projects ({PROJECTS.length})
+                        {effectiveUser?.role === "District" && effectiveUser.district
+                          ? `Audit All District Projects (${scopedBatchProjects.length})`
+                          : effectiveUser?.role === "State" && effectiveUser.state
+                          ? `Audit All State Projects (${scopedBatchProjects.length})`
+                          : effectiveUser?.role === "MP"
+                          ? `Audit Constituency Projects (${scopedBatchProjects.length})`
+                          : `Audit All Website Projects (${scopedBatchProjects.length})`}
                       </>
                     )}
                   </Button>
-                  {batchResults && (
+                  {scopedBatchResults.length > 0 && (
                     <Button variant="outline" onClick={exportBatchToExcel} className="gap-1.5 text-xs w-full sm:w-auto">
                       <IconDownload className="size-3.5" />
                       Export Dossier (.xlsx)
@@ -1421,32 +1633,32 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              {batchResults ? (
+              {scopedBatchResults.length > 0 ? (
                 <>
                   {/* Summary Metric Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 rounded-xl border bg-card/60 backdrop-blur-sm space-y-1">
                       <span className="text-xs text-muted-foreground">Total Projects Audited</span>
                       <p className="text-2xl font-extrabold text-foreground">
-                        {batchResults.total_audited}
+                        {scopedBatchResults.length}
                       </p>
                     </div>
                     <div className="p-3.5 rounded-xl border bg-emerald-500/10 border-emerald-500/30 space-y-1">
                       <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Low Risk</span>
                       <p className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                        {batchResults.results.filter((r) => r.risk_tier === "LOW").length}
+                        {scopedBatchResults.filter((r) => r.risk_tier === "LOW").length}
                       </p>
                     </div>
                     <div className="p-3.5 rounded-xl border bg-amber-500/10 border-amber-500/30 space-y-1">
                       <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">Moderate Risk</span>
                       <p className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">
-                        {batchResults.results.filter((r) => r.risk_tier === "MODERATE").length}
+                        {scopedBatchResults.filter((r) => r.risk_tier === "MODERATE").length}
                       </p>
                     </div>
                     <div className="p-3.5 rounded-xl border bg-red-500/10 border-red-500/30 space-y-1">
                       <span className="text-xs text-red-600 dark:text-red-400 font-medium">Critical Risk</span>
                       <p className="text-2xl font-extrabold text-red-600 dark:text-red-400">
-                        {batchResults.results.filter((r) => r.risk_tier === "CRITICAL").length}
+                        {scopedBatchResults.filter((r) => r.risk_tier === "CRITICAL").length}
                       </p>
                     </div>
                   </div>
@@ -1490,8 +1702,8 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                             <span className="text-muted-foreground">High/Critical Risk Ratio</span>
                             <span className="font-bold text-red-500">
                               {(
-                                (batchResults.high_or_critical_count /
-                                  Math.max(1, batchResults.total_audited)) *
+                                (scopedBatchResults.filter((r) => r.risk_tier === "HIGH" || r.risk_tier === "CRITICAL").length /
+                                  Math.max(1, scopedBatchResults.length)) *
                                 100
                               ).toFixed(1)}
                               %
@@ -1502,8 +1714,8 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                               className="bg-red-500 h-full rounded-full transition-all"
                               style={{
                                 width: `${(
-                                  (batchResults.high_or_critical_count /
-                                    Math.max(1, batchResults.total_audited)) *
+                                  (scopedBatchResults.filter((r) => r.risk_tier === "HIGH" || r.risk_tier === "CRITICAL").length /
+                                    Math.max(1, scopedBatchResults.length)) *
                                   100
                                 ).toFixed(0)}%`,
                               }}
@@ -1512,8 +1724,13 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                         </div>
 
                         <p className="text-[11px] text-muted-foreground leading-relaxed pt-1">
-                          Batch inference finished for {batchResults.total_audited} projects.
-                          Evaluated against calibrated ML isolation and XGBoost decision surfaces.
+                          Batch inference finished for {scopedBatchResults.length}{" "}
+                          {effectiveUser?.role === "District" && effectiveUser.district
+                            ? `${effectiveUser.district} district`
+                            : effectiveUser?.role === "State" && effectiveUser.state
+                            ? `${effectiveUser.state} state`
+                            : "jurisdiction"}{" "}
+                          projects. Evaluated against calibrated ML isolation and XGBoost decision surfaces.
                         </p>
                       </CardContent>
                     </Card>
@@ -1557,7 +1774,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                         </TableHeader>
                         <TableBody>
                           {filteredBatchResults.map((r) => {
-                            const matched = projectsList.find((p) => p.id === r.work_id);
+                            const matched = scopedBatchProjects.find((p) => p.id === r.work_id);
                             const tc = tierColor(r.risk_tier);
                             return (
                               <TableRow key={r.work_id} className="hover:bg-muted/30">
@@ -1568,7 +1785,7 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                                       {matched?.name || "Public Works Project"}
                                     </p>
                                     <p className="text-[10px] text-muted-foreground">
-                                      {matched?.district}, {matched?.state} • {matched?.category} •{" "}
+                                      {matched?.district || effectiveUser?.district || "N/A"}, {matched?.state || effectiveUser?.state || "N/A"} • {matched?.category || "Infrastructure"} •{" "}
                                       {fmtLakhs(matched?.sanctionedAmount || 0)}
                                     </p>
                                   </div>
@@ -1605,14 +1822,36 @@ export default function AiAuditEngine({ initialProjectId }: { initialProjectId?:
                   <div className="p-3 rounded-2xl bg-primary/10 text-primary">
                     <IconFileSpreadsheet className="size-8" />
                   </div>
-                  <h4 className="font-bold text-base">National Database Batch Audit Ready</h4>
+                  <h4 className="font-bold text-base">
+                    {effectiveUser?.role === "District" && effectiveUser.district
+                      ? `${effectiveUser.district} District Batch Audit Ready`
+                      : effectiveUser?.role === "State" && effectiveUser.state
+                      ? `${effectiveUser.state} State Batch Audit Ready`
+                      : "Jurisdiction Database Batch Audit Ready"}
+                  </h4>
                   <p className="text-xs text-muted-foreground max-w-md">
-                    Click the button above to run real-time inference on all {projectsList.length} website projects simultaneously.
-                    The system will compute risk scores, archetypes, and component weights in milliseconds.
+                    Click the button below to run real-time ML inference on all {scopedBatchProjects.length}{" "}
+                    {effectiveUser?.role === "District" && effectiveUser.district
+                      ? `${effectiveUser.district} district`
+                      : effectiveUser?.role === "State" && effectiveUser.state
+                      ? `${effectiveUser.state} state`
+                      : "jurisdiction"}{" "}
+                    projects simultaneously. The system will compute risk scores, archetypes, and component weights in milliseconds.
                   </p>
-                  <Button onClick={handleAuditAllProjects} disabled={batchLoading} className="font-bold gap-2">
-                    <IconPlayerPlay className="size-4" />
-                    Run Batch Audit on All Projects
+                  <Button onClick={handleAuditAllProjects} disabled={batchLoading || scopedBatchProjects.length === 0} className="font-bold gap-2">
+                    {batchLoading ? (
+                      <>
+                        <IconLoader2 className="size-4 animate-spin" />
+                        Evaluating {scopedBatchProjects.length} Projects...
+                      </>
+                    ) : (
+                      <>
+                        <IconPlayerPlay className="size-4" />
+                        {scopedBatchProjects.length > 0
+                          ? `Run Batch Audit on ${scopedBatchProjects.length} Projects`
+                          : "No Projects in Jurisdiction"}
+                      </>
+                    )}
                   </Button>
                 </div>
               )}

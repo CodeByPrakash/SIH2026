@@ -180,7 +180,7 @@ export default function Alerts({ user }: AlertsProps = {}) {
           </div>
           <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
             Intelligent prioritization • Predictive risk detection • SLA breach prevention
-            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleTimeString()}`}
+            {lastUpdated && ` · Last synced: ${lastUpdated.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}, ${lastUpdated.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}`}
           </p>
         </div>
 

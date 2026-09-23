@@ -10,6 +10,7 @@ import { runAICrossCheck } from "./evidenceVerification.service";
 import { runEvidenceCrossCheck } from "./evidenceCrossCheck.service";
 import { createAlert } from "./alert.service";
 import { verifyPhotoLocation } from "@/lib/locationVerification";
+import { evaluateCalculationInconsistency } from "@/utils/calculationInconsistencyEvaluator";
 
 let memoryEvidenceStore: ICitizenEvidence[] = [...PROTOTYPE_SEED_EVIDENCE];
 
@@ -224,6 +225,14 @@ export async function createEvidence(input: {
       checkedAt: new Date().toISOString(),
     },
     duplicateCheck: input.duplicateCheck || undefined,
+    calculationInconsistency: evaluateCalculationInconsistency(
+      {
+        description: input.description,
+        category: input.category,
+        verificationCategory: aiResult.verificationCategory,
+      },
+      project
+    ),
   };
 
   // 2. Persist to MongoDB Atlas FIRST
@@ -321,6 +330,7 @@ function sanitizePrivacy(doc: any, userRole?: UserRole): ICitizenEvidence {
     verificationProcessedAt: doc.verificationProcessedAt || "",
     locationVerification: doc.locationVerification || undefined,
     duplicateCheck: doc.duplicateCheck || undefined,
+    calculationInconsistency: doc.calculationInconsistency || evaluateCalculationInconsistency(doc, null),
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   };

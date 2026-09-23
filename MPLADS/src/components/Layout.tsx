@@ -456,7 +456,7 @@ const buildNav = (role: UserRole, alertCount: number): NavGroup[] => {
           {
             id: "financial-analytics",
             label: "Financial Analytics",
-            sub: "Allocations, Releases & Trends",
+            sub: "District Works & Releases",
             icon: IconReceiptTax,
           },
           {

@@ -4,9 +4,25 @@ import { getAllProjects, getPaginatedProjects, createProject, isLastQueryFromCac
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const district = searchParams.get("district") || undefined;
-    const state = searchParams.get("state") || undefined;
-    const constituency = searchParams.get("constituency") || undefined;
+    const userRole = searchParams.get("role") || searchParams.get("userRole") || request.headers.get("x-user-role") || undefined;
+    const userDistrict = searchParams.get("userDistrict") || request.headers.get("x-user-district") || undefined;
+    const userState = searchParams.get("userState") || request.headers.get("x-user-state") || undefined;
+    const userConstituency = searchParams.get("userConstituency") || request.headers.get("x-user-constituency") || undefined;
+
+    let district = searchParams.get("district") || undefined;
+    let state = searchParams.get("state") || undefined;
+    let constituency = searchParams.get("constituency") || undefined;
+
+    // Strict area override for scoped roles
+    if (userRole === "District") {
+      district = userDistrict || district;
+      state = userState || state;
+    } else if (userRole === "State") {
+      state = userState || state;
+    } else if (userRole === "MP") {
+      constituency = userConstituency || constituency;
+    }
+
     const status = searchParams.get("status") || undefined;
     const riskLevel = searchParams.get("riskLevel") || undefined;
     const pageParam = searchParams.get("page");
@@ -33,6 +49,10 @@ export async function GET(request: Request) {
         search,
         forceRefresh: force,
         lightweight,
+        userRole,
+        userDistrict,
+        userState,
+        userConstituency,
       });
 
       const isCached = isLastQueryFromCache();
@@ -66,6 +86,10 @@ export async function GET(request: Request) {
       riskLevel,
       limit: limitParam ? parseInt(limitParam, 10) : undefined,
       forceRefresh: force,
+      userRole,
+      userDistrict,
+      userState,
+      userConstituency,
     });
 
     const isCached = isLastQueryFromCache();

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { RISK_FLAGS, PROJECTS } from "../data/mpladsData";
-import type { RiskFlag } from "../types";
+import type { RiskFlag, User } from "../types";
+import { useAuth } from "@/context/AuthContext";
 import {
   Card,
   CardHeader,
@@ -72,8 +73,53 @@ const SEVERITY_BADGES: Record<
   },
 };
 
-export default function Investigation() {
-  const [selectedId, setSelectedId] = useState<string>(RISK_FLAGS[0].id);
+interface InvestigationProps {
+  user?: User;
+}
+
+export default function Investigation({ user: propUser }: InvestigationProps = {}) {
+  const { user: authUser } = useAuth();
+  const effectiveUser = useMemo<User | null>(() => {
+    if (propUser) return propUser;
+    if (authUser) return authUser;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mplads_user");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  }, [propUser, authUser]);
+
+  const scopedRiskFlags = useMemo(() => {
+    if (!effectiveUser || effectiveUser.role === "Ministry") return RISK_FLAGS;
+    return RISK_FLAGS.filter((f) => {
+      const proj = PROJECTS.find((p) => p.id === f.projectId);
+      if (!proj) {
+        if (effectiveUser.district && f.projectName.toLowerCase().includes(effectiveUser.district.toLowerCase())) {
+          return true;
+        }
+        return false;
+      }
+      if (effectiveUser.role === "District" && effectiveUser.district) {
+        return proj.district.toLowerCase() === effectiveUser.district.toLowerCase();
+      }
+      if (effectiveUser.role === "State" && effectiveUser.state) {
+        return proj.state.toLowerCase() === effectiveUser.state.toLowerCase();
+      }
+      if (effectiveUser.role === "MP") {
+        return (
+          (effectiveUser.constituency && proj.constituency?.toLowerCase() === effectiveUser.constituency.toLowerCase()) ||
+          (effectiveUser.district && proj.district.toLowerCase() === effectiveUser.district.toLowerCase())
+        );
+      }
+      return true;
+    });
+  }, [effectiveUser]);
+
+  const [selectedId, setSelectedId] = useState<string>(() => scopedRiskFlags[0]?.id || RISK_FLAGS[0].id);
   const [stage, setStage] = useState<"review" | "field" | "report">("review");
   const [searchTerm, setSearchTerm] = useState("");
   const [fieldChecks, setFieldChecks] = useState<Record<number, string>>({
@@ -85,22 +131,28 @@ export default function Investigation() {
     5: "pending",
   });
 
+  useEffect(() => {
+    if (scopedRiskFlags.length > 0 && !scopedRiskFlags.some((f) => f.id === selectedId)) {
+      setSelectedId(scopedRiskFlags[0].id);
+    }
+  }, [scopedRiskFlags, selectedId]);
+
   const selected = useMemo(
-    () => RISK_FLAGS.find((f) => f.id === selectedId) || RISK_FLAGS[0],
-    [selectedId]
+    () => scopedRiskFlags.find((f) => f.id === selectedId) || scopedRiskFlags[0] || RISK_FLAGS[0],
+    [scopedRiskFlags, selectedId]
   );
 
   const filteredFlags = useMemo(() => {
-    if (!searchTerm.trim()) return RISK_FLAGS;
-    return RISK_FLAGS.filter(
+    if (!searchTerm.trim()) return scopedRiskFlags;
+    return scopedRiskFlags.filter(
       (f) =>
         f.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         f.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
         f.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [searchTerm]);
+  }, [scopedRiskFlags, searchTerm]);
 
-  const openCasesCount = RISK_FLAGS.filter((f) => f.status === "Open").length;
+  const openCasesCount = scopedRiskFlags.filter((f) => f.status === "Open").length;
 
   const toggleCheck = (idx: number) => {
     setFieldChecks((prev) => {
@@ -172,7 +224,7 @@ export default function Investigation() {
               Active Vigilance Cases
             </h2>
             <span className="text-[11px] font-mono text-muted-foreground">
-              {filteredFlags.length} of {RISK_FLAGS.length}
+              {filteredFlags.length} of {scopedRiskFlags.length}
             </span>
           </div>
 

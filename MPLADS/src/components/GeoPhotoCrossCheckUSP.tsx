@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useCitizenEvidence } from "@/hooks/useCitizenEvidence";
 import { useProjects } from "@/hooks/useProjects";
-import type { ICitizenEvidence, Project, CrossCheckResultStatus, IDuplicateCheckResult } from "@/types";
+import type { ICitizenEvidence, Project, CrossCheckResultStatus, IDuplicateCheckResult, User } from "@/types";
 import { extractExifFromFile } from "@/utils/exifExtractor";
 import type { LocationVerificationResult } from "@/lib/locationVerification";
 import {
@@ -47,10 +47,56 @@ import {
   IconPlayerPlay,
 } from "@tabler/icons-react";
 
-export default function GeoPhotoCrossCheckUSP() {
-  const { user } = useAuth();
+interface GeoPhotoCrossCheckProps {
+  user?: User;
+}
+
+export default function GeoPhotoCrossCheckUSP({ user: propUser }: GeoPhotoCrossCheckProps = {}) {
+  const { user: authUser } = useAuth();
+  const user = useMemo<User | null>(() => {
+    if (propUser) return propUser;
+    if (authUser) return authUser;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("mplads_user");
+        if (raw) return JSON.parse(raw);
+      } catch {
+        // ignore
+      }
+    }
+    return null;
+  }, [propUser, authUser]);
+
   const { evidenceList, refresh: refreshEvidence, submitEvidence } = useCitizenEvidence();
-  const { projects } = useProjects();
+  const { projects: allRawProjects } = useProjects({
+    user,
+    role: user?.role,
+    userRole: user?.role,
+    district: user?.role === "District" ? user?.district : undefined,
+    userDistrict: user?.district,
+    state: user?.role === "State" ? user?.state : (user?.role === "District" ? user?.state : undefined),
+    userState: user?.state,
+    constituency: user?.role === "MP" ? user?.constituency : undefined,
+    userConstituency: user?.constituency,
+  });
+
+  const projects = useMemo(() => {
+    if (!user || user.role === "Ministry") return allRawProjects;
+    if (user.role === "District" && user.district) {
+      return allRawProjects.filter((p) => p.district.toLowerCase() === user.district!.toLowerCase());
+    }
+    if (user.role === "State" && user.state) {
+      return allRawProjects.filter((p) => p.state.toLowerCase() === user.state!.toLowerCase());
+    }
+    if (user.role === "MP") {
+      return allRawProjects.filter(
+        (p) =>
+          (user.constituency && p.constituency?.toLowerCase() === user.constituency.toLowerCase()) ||
+          (user.district && p.district.toLowerCase() === user.district.toLowerCase())
+      );
+    }
+    return allRawProjects;
+  }, [allRawProjects, user]);
 
   // Filter & Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -423,12 +469,12 @@ export default function GeoPhotoCrossCheckUSP() {
                 AI Cross-Check Engine
               </Badge>
               <Badge variant="outline" className="bg-blue-500/20 text-blue-200 border-blue-400/40 text-xs">
-                Perceptual Hash & Haversine Distance
+                pHash & Haversine Distance
               </Badge>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Geo-Tagged Photo & Image Reuse AI</h1>
             <p className="text-indigo-200 text-sm mt-1 max-w-3xl">
-              AI cross-checks on-site photographs against recorded project GPS coordinates, historical evidence databases across all projects, and timeline records to detect location mismatches and reused evidence.
+              AI cross-checks on-site photographs against recorded project GPS , evidence history of all projects, and time to time updated records for location mismatches or reuploaded evidence.
             </p>
           </div>
 
@@ -647,8 +693,8 @@ export default function GeoPhotoCrossCheckUSP() {
                 {metadataSource === "EXIF"
                   ? "✓ Extracted from image EXIF metadata"
                   : metadataSource === "MANUAL"
-                  ? "⚠ Manually entered coordinates (not EXIF)"
-                  : "Optional EXIF GPS Latitude"}
+                    ? "⚠ Manually entered coordinates (not EXIF)"
+                    : "Optional EXIF GPS Latitude"}
               </span>
             </div>
 
@@ -667,8 +713,8 @@ export default function GeoPhotoCrossCheckUSP() {
                 {metadataSource === "EXIF"
                   ? "✓ Extracted from image EXIF metadata"
                   : metadataSource === "MANUAL"
-                  ? "⚠ Manually entered coordinates (not EXIF)"
-                  : "Optional EXIF GPS Longitude"}
+                    ? "⚠ Manually entered coordinates (not EXIF)"
+                    : "Optional EXIF GPS Longitude"}
               </span>
             </div>
           </div>
@@ -723,13 +769,12 @@ export default function GeoPhotoCrossCheckUSP() {
           {/* ── PHASE 2 LOCATION VERIFICATION RESULTS CARD ── */}
           {locationCheckResult && (
             <div
-              className={`p-4 rounded-xl border-2 space-y-3 transition-all text-xs ${
-                locationCheckResult.status === "MATCH"
-                  ? "bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-500/40"
-                  : locationCheckResult.status === "MISMATCH"
+              className={`p-4 rounded-xl border-2 space-y-3 transition-all text-xs ${locationCheckResult.status === "MATCH"
+                ? "bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-500/40"
+                : locationCheckResult.status === "MISMATCH"
                   ? "bg-amber-50/80 dark:bg-amber-950/20 border-amber-500/40"
                   : "bg-slate-50 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700"
-              }`}
+                }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
                 <div className="flex items-center gap-2">
@@ -744,15 +789,15 @@ export default function GeoPhotoCrossCheckUSP() {
                     locationCheckResult.status === "MATCH"
                       ? "bg-emerald-600 text-white font-bold text-xs px-3 py-1 gap-1"
                       : locationCheckResult.status === "MISMATCH"
-                      ? "bg-amber-600 text-white font-bold text-xs px-3 py-1 gap-1"
-                      : "bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-1 gap-1"
+                        ? "bg-amber-600 text-white font-bold text-xs px-3 py-1 gap-1"
+                        : "bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-1 gap-1"
                   }
                 >
                   {locationCheckResult.status === "MATCH"
                     ? "✓ Location Consistent"
                     : locationCheckResult.status === "MISMATCH"
-                    ? "⚠ Location Mismatch"
-                    : "○ Verification Unavailable"}
+                      ? "⚠ Location Mismatch"
+                      : "○ Verification Unavailable"}
                 </Badge>
               </div>
 
@@ -761,10 +806,10 @@ export default function GeoPhotoCrossCheckUSP() {
                   <span className="text-slate-500 text-[10px] block font-semibold uppercase">Photo GPS:</span>
                   <span className="font-mono font-medium text-xs">
                     {locationCheckResult.photoLocation.latitude !== null &&
-                    locationCheckResult.photoLocation.longitude !== null
+                      locationCheckResult.photoLocation.longitude !== null
                       ? `${locationCheckResult.photoLocation.latitude.toFixed(
-                          4
-                        )}, ${locationCheckResult.photoLocation.longitude.toFixed(4)}`
+                        4
+                      )}, ${locationCheckResult.photoLocation.longitude.toFixed(4)}`
                       : "Unavailable"}
                   </span>
                 </div>
@@ -773,10 +818,10 @@ export default function GeoPhotoCrossCheckUSP() {
                   <span className="text-slate-500 text-[10px] block font-semibold uppercase">Project GPS:</span>
                   <span className="font-mono font-medium text-xs">
                     {locationCheckResult.projectLocation.latitude !== null &&
-                    locationCheckResult.projectLocation.longitude !== null
+                      locationCheckResult.projectLocation.longitude !== null
                       ? `${locationCheckResult.projectLocation.latitude.toFixed(
-                          4
-                        )}, ${locationCheckResult.projectLocation.longitude.toFixed(4)}`
+                        4
+                      )}, ${locationCheckResult.projectLocation.longitude.toFixed(4)}`
                       : "Unavailable"}
                   </span>
                 </div>
@@ -802,15 +847,14 @@ export default function GeoPhotoCrossCheckUSP() {
           {/* ── PHASE 3 IMAGE REUSE & DUPLICATE CHECK RESULTS CARD ── */}
           {duplicateCheckResult && (
             <div
-              className={`p-4 rounded-xl border-2 space-y-3 transition-all text-xs ${
-                duplicateCheckResult.status === "EXACT_DUPLICATE"
-                  ? "bg-red-50/80 dark:bg-red-950/20 border-red-500/40"
-                  : duplicateCheckResult.status === "LIKELY_REUSED" || duplicateCheckResult.status === "SIMILAR_IMAGE"
+              className={`p-4 rounded-xl border-2 space-y-3 transition-all text-xs ${duplicateCheckResult.status === "EXACT_DUPLICATE"
+                ? "bg-red-50/80 dark:bg-red-950/20 border-red-500/40"
+                : duplicateCheckResult.status === "LIKELY_REUSED" || duplicateCheckResult.status === "SIMILAR_IMAGE"
                   ? "bg-amber-50/80 dark:bg-amber-950/20 border-amber-500/40"
                   : duplicateCheckResult.status === "NO_MATCH"
-                  ? "bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-500/40"
-                  : "bg-slate-50 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700"
-              }`}
+                    ? "bg-emerald-50/80 dark:bg-emerald-950/20 border-emerald-500/40"
+                    : "bg-slate-50 dark:bg-slate-800/40 border-slate-300 dark:border-slate-700"
+                }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
                 <div className="flex items-center gap-2">
@@ -830,19 +874,19 @@ export default function GeoPhotoCrossCheckUSP() {
                     duplicateCheckResult.status === "EXACT_DUPLICATE"
                       ? "bg-red-600 text-white font-bold text-xs px-3 py-1 gap-1"
                       : duplicateCheckResult.status === "LIKELY_REUSED" || duplicateCheckResult.status === "SIMILAR_IMAGE"
-                      ? "bg-amber-600 text-white font-bold text-xs px-3 py-1 gap-1"
-                      : duplicateCheckResult.status === "NO_MATCH"
-                      ? "bg-emerald-600 text-white font-bold text-xs px-3 py-1 gap-1"
-                      : "bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-1 gap-1"
+                        ? "bg-amber-600 text-white font-bold text-xs px-3 py-1 gap-1"
+                        : duplicateCheckResult.status === "NO_MATCH"
+                          ? "bg-emerald-600 text-white font-bold text-xs px-3 py-1 gap-1"
+                          : "bg-slate-200 text-slate-700 font-semibold text-xs px-3 py-1 gap-1"
                   }
                 >
                   {duplicateCheckResult.status === "EXACT_DUPLICATE"
                     ? "⚠ Exact Duplicate Detected"
                     : duplicateCheckResult.status === "LIKELY_REUSED" || duplicateCheckResult.status === "SIMILAR_IMAGE"
-                    ? "⚠ Potential Evidence Reuse Detected"
-                    : duplicateCheckResult.status === "NO_MATCH"
-                    ? "✓ No Previous Match Found"
-                    : "○ Image Reuse Verification Unavailable"}
+                      ? "⚠ Potential Evidence Reuse Detected"
+                      : duplicateCheckResult.status === "NO_MATCH"
+                        ? "✓ No Previous Match Found"
+                        : "○ Image Reuse Verification Unavailable"}
                 </Badge>
               </div>
 
@@ -954,13 +998,12 @@ export default function GeoPhotoCrossCheckUSP() {
               <Card
                 key={item.evidenceId}
                 onClick={() => setSelectedEvidence(item)}
-                className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${
-                  hasMultipleFlags || isLocationMismatch
-                    ? "border-l-red-500"
-                    : isReused
+                className={`cursor-pointer transition-all hover:shadow-md border-l-4 ${hasMultipleFlags || isLocationMismatch
+                  ? "border-l-red-500"
+                  : isReused
                     ? "border-l-amber-500"
                     : "border-l-emerald-500"
-                }`}
+                  }`}
               >
                 <CardHeader className="pb-2 bg-slate-50/50 dark:bg-slate-900/30">
                   <div className="flex justify-between items-center mb-1">
@@ -973,17 +1016,17 @@ export default function GeoPhotoCrossCheckUSP() {
                         hasMultipleFlags || isLocationMismatch
                           ? "bg-red-50 text-red-700 border-red-300 text-[10px] font-bold"
                           : isReused
-                          ? "bg-amber-50 text-amber-800 border-amber-300 text-[10px] font-bold"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-300 text-[10px]"
+                            ? "bg-amber-50 text-amber-800 border-amber-300 text-[10px] font-bold"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-300 text-[10px]"
                       }
                     >
                       {hasMultipleFlags
                         ? "⚠ Multiple Flags"
                         : isLocationMismatch
-                        ? "Location Mismatch"
-                        : isReused
-                        ? "Potentially Reused"
-                        : "Verified Consistent"}
+                          ? "Location Mismatch"
+                          : isReused
+                            ? "Potentially Reused"
+                            : "Verified Consistent"}
                     </Badge>
                   </div>
                   <CardTitle className="text-sm line-clamp-1">{item.projectName}</CardTitle>
@@ -1061,19 +1104,19 @@ export default function GeoPhotoCrossCheckUSP() {
                     selectedEvidence.verificationResultStatus === "MULTIPLE_FLAGS"
                       ? "border-red-500/50 text-red-700 bg-red-50 font-bold text-xs"
                       : selectedEvidence.verificationResultStatus === "LOCATION_MISMATCH"
-                      ? "border-red-500/50 text-red-700 bg-red-50 font-bold text-xs"
-                      : selectedEvidence.verificationResultStatus === "POTENTIAL_REUSED_EVIDENCE" || selectedEvidence.crossProjectReuse
-                      ? "border-amber-500/50 text-amber-800 bg-amber-50 font-bold text-xs"
-                      : "border-emerald-500/50 text-emerald-800 bg-emerald-50 font-bold text-xs"
+                        ? "border-red-500/50 text-red-700 bg-red-50 font-bold text-xs"
+                        : selectedEvidence.verificationResultStatus === "POTENTIAL_REUSED_EVIDENCE" || selectedEvidence.crossProjectReuse
+                          ? "border-amber-500/50 text-amber-800 bg-amber-50 font-bold text-xs"
+                          : "border-emerald-500/50 text-emerald-800 bg-emerald-50 font-bold text-xs"
                   }
                 >
                   {selectedEvidence.verificationResultStatus === "MULTIPLE_FLAGS"
                     ? "MULTIPLE VERIFICATION FLAGS"
                     : selectedEvidence.verificationResultStatus === "LOCATION_MISMATCH"
-                    ? "LOCATION MISMATCH"
-                    : selectedEvidence.verificationResultStatus === "POTENTIAL_REUSED_EVIDENCE" || selectedEvidence.crossProjectReuse
-                    ? "POTENTIAL REUSED EVIDENCE"
-                    : "VERIFIED / CONSISTENT"}
+                      ? "LOCATION MISMATCH"
+                      : selectedEvidence.verificationResultStatus === "POTENTIAL_REUSED_EVIDENCE" || selectedEvidence.crossProjectReuse
+                        ? "POTENTIAL REUSED EVIDENCE"
+                        : "VERIFIED / CONSISTENT"}
                 </Badge>
               </div>
 
@@ -1118,15 +1161,15 @@ export default function GeoPhotoCrossCheckUSP() {
                       selectedEvidence.geoStatus === "VERIFIED"
                         ? "bg-emerald-50 text-emerald-700 border-emerald-300 text-[10px]"
                         : selectedEvidence.geoStatus === "MISMATCH"
-                        ? "bg-red-50 text-red-700 border-red-300 text-[10px]"
-                        : "bg-slate-100 text-slate-600 border-slate-300 text-[10px]"
+                          ? "bg-red-50 text-red-700 border-red-300 text-[10px]"
+                          : "bg-slate-100 text-slate-600 border-slate-300 text-[10px]"
                     }
                   >
                     {selectedEvidence.geoStatus === "VERIFIED"
                       ? "✓ Location Consistent"
                       : selectedEvidence.geoStatus === "MISMATCH"
-                      ? "⚠ Location Mismatch"
-                      : "GPS Metadata Unavailable"}
+                        ? "⚠ Location Mismatch"
+                        : "GPS Metadata Unavailable"}
                   </Badge>
                 </div>
                 <div className="text-slate-600 space-y-0.5 text-[11px] pt-1">
@@ -1157,10 +1200,10 @@ export default function GeoPhotoCrossCheckUSP() {
                     {selectedEvidence.crossProjectReuse
                       ? "⚠ Potentially Reused Evidence"
                       : selectedEvidence.duplicateStatus === "EXACT_DUPLICATE"
-                      ? "⚠ Exact Duplicate Detected"
-                      : selectedEvidence.duplicateStatus === "NEAR_DUPLICATE"
-                      ? "⚠ Possible Duplicate Detected"
-                      : "✓ No Duplicate Detected"}
+                        ? "⚠ Exact Duplicate Detected"
+                        : selectedEvidence.duplicateStatus === "NEAR_DUPLICATE"
+                          ? "⚠ Possible Duplicate Detected"
+                          : "✓ No Duplicate Detected"}
                   </Badge>
                 </div>
                 <div className="text-slate-600 space-y-0.5 text-[11px] pt-1">
