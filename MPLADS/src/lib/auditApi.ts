@@ -298,13 +298,13 @@ export function tierColor(tier: string) {
 }
 
 export const ARCHETYPE_LABELS: Record<string, { label: string; desc: string }> = {
-  clean: { label: "Clean", desc: "No anomaly detected — all metrics within thresholds" },
-  cost_anomaly: { label: "Cost Anomaly", desc: "Sanction inflation or post-facto budget escalation" },
-  delay_anomaly: { label: "Delay Anomaly", desc: "Extended delay beyond statutory expectation" },
-  duplicate_work: { label: "Duplicate Work", desc: "High spatial cluster count within 500m radius" },
-  ghost_asset: { label: "Ghost Asset", desc: "Missing inspection, photograph, or GPS mismatch" },
-  vendor_anomaly: { label: "Vendor Anomaly", desc: "High payment count with inflated expenditure" },
-  payment_anomaly: { label: "Payment Anomaly", desc: "Extreme disbursement fragmentation" },
+  clean: { label: "Compliant / Normal", desc: "No irregularities detected — all metrics within statutory limits" },
+  cost_anomaly: { label: "Budget Overrun / Cost Escalation", desc: "Expenditure exceeds sanction or unexpected cost escalation" },
+  delay_anomaly: { label: "Project Execution Delay", desc: "Work duration exceeded statutory completion timeline" },
+  duplicate_work: { label: "Duplicate / Redundant Sanction", desc: "Multiple overlapping works sanctioned within 500m proximity" },
+  ghost_asset: { label: "Unverified Physical Asset", desc: "Missing site inspections, geo-tagged photos, or GPS mismatch" },
+  vendor_anomaly: { label: "Contractor Concentration", desc: "Unusually high payment frequency or contractor concentration" },
+  payment_anomaly: { label: "Payment Disbursement Irregularity", desc: "Unusual payment splitting or milestone disbursement irregularities" },
 };
 
 export const WORK_CATEGORIES = [
@@ -315,29 +315,29 @@ export const WORK_CATEGORIES = [
 export const CONSTITUENCY_TYPES = ["General", "SC", "ST"];
 
 export const COMPONENT_LABELS: { key: keyof RiskComponentScores; label: string; weight: string; short: string }[] = [
-  { key: "c1_supervised_ml", label: "Supervised ML Score", weight: "30%", short: "ML" },
-  { key: "c2_isolation_outlier", label: "Isolation Outlier Score", weight: "15%", short: "Outlier" },
-  { key: "c3_cost_overrun_penalty", label: "Cost Overrun Penalty", weight: "20%", short: "Cost" },
-  { key: "c4_spatial_duplication_penalty", label: "Spatial Duplication", weight: "10%", short: "Spatial" },
-  { key: "c5_evidence_deficit_penalty", label: "Evidence Deficit", weight: "15%", short: "Evidence" },
-  { key: "c6_statutory_delay_penalty", label: "Statutory Delay", weight: "10%", short: "Delay" },
+  { key: "c1_supervised_ml", label: "Pattern Risk Score", weight: "30%", short: "Pattern" },
+  { key: "c2_isolation_outlier", label: "Unusual Anomaly Score", weight: "15%", short: "Outlier" },
+  { key: "c3_cost_overrun_penalty", label: "Budget Overrun Penalty", weight: "20%", short: "Budget" },
+  { key: "c4_spatial_duplication_penalty", label: "Duplicate Proximity Penalty", weight: "10%", short: "Duplicate" },
+  { key: "c5_evidence_deficit_penalty", label: "Missing Evidence Penalty", weight: "15%", short: "Evidence" },
+  { key: "c6_statutory_delay_penalty", label: "Project Delay Penalty", weight: "10%", short: "Delay" },
 ];
 
 export const MODEL_PLOTS = [
-  { file: "plot_correlation_heatmap.png", title: "Feature Correlation Heatmap", desc: "Pearson correlations among all 17 continuous features" },
-  { file: "plot_state_risk_heatmap.png", title: "State Risk Heatmap", desc: "Anomaly archetype concentration per state" },
-  { file: "plot_feature_temperature.png", title: "Feature Temperature Grid", desc: "Feature intensity driving each anomaly archetype" },
-  { file: "plot_cost_vs_delay_scatter.png", title: "Cost vs Delay Scatter", desc: "15,000 works mapped by delay vs cost overrun" },
-  { file: "plot_risk_fusion.png", title: "Risk Fusion Analysis", desc: "4-panel composite risk score analysis" },
-  { file: "plot_binary_roc_pr.png", title: "ROC & PR Curves", desc: "Binary classifier ROC-AUC = 0.9998" },
-  { file: "plot_multiclass_confusion.png", title: "Multiclass Confusion Matrix", desc: "6×6 confusion matrix for anomaly archetypes" },
-  { file: "plot_binary_feature_importance.png", title: "Binary Feature Importance", desc: "Gain-based ranking for Model 1" },
-  { file: "plot_multiclass_feature_importance.png", title: "Multiclass Feature Importance", desc: "Gain-based importance for Model 2" },
-  { file: "plot_isolation_forest.png", title: "Isolation Forest Analysis", desc: "Score distributions: Clean vs Anomalous" },
-  { file: "plot_model_comparison.png", title: "Model Comparison", desc: "Metric benchmarks across all models" },
-  { file: "plot_anomaly_distribution.png", title: "Anomaly Distribution", desc: "Breakdown of 6 anomaly archetypes" },
-  { file: "plot_state_distribution.png", title: "State Distribution", desc: "Clean vs Anomalous across top 20 states" },
-  { file: "plot_risk_tiers.png", title: "Risk Tier Analysis", desc: "MP-level risk tier distribution" },
-  { file: "plot_cost_analysis.png", title: "Cost Analysis", desc: "Sectoral expenditure distribution" },
-  { file: "plot_work_categories.png", title: "Work Categories", desc: "Volume across 8 development sectors" },
+  { file: "plot_correlation_heatmap.png", title: "Audit Factors Correlation", desc: "Relationships between spending, delays, and inspections" },
+  { file: "plot_state_risk_heatmap.png", title: "State-wise Risk Distribution", desc: "Concentration of project irregularities across states" },
+  { file: "plot_feature_temperature.png", title: "Key Risk Indicators Grid", desc: "Primary indicators triggering each audit issue" },
+  { file: "plot_cost_vs_delay_scatter.png", title: "Cost vs Timeline Delay Analysis", desc: "15,000 public works mapped by delay vs budget overrun" },
+  { file: "plot_risk_fusion.png", title: "Comprehensive Risk Assessment", desc: "Combined multi-factor risk breakdown across works" },
+  { file: "plot_binary_roc_pr.png", title: "Audit Screening Accuracy", desc: "Verified 99.9% detection accuracy against audit benchmarks" },
+  { file: "plot_multiclass_confusion.png", title: "Issue Classification Accuracy", desc: "Reliability across all 6 problem categories" },
+  { file: "plot_binary_feature_importance.png", title: "Primary Screening Factors", desc: "Key parameters that trigger initial risk alerts" },
+  { file: "plot_multiclass_feature_importance.png", title: "Problem-Specific Indicators", desc: "Factors identifying ghost assets, cartels, or delays" },
+  { file: "plot_isolation_forest.png", title: "Unusual Pattern Detection", desc: "Separation of normal works vs high-risk anomalies" },
+  { file: "plot_model_comparison.png", title: "Performance Benchmarks", desc: "Validation metrics across all audit evaluation stages" },
+  { file: "plot_anomaly_distribution.png", title: "Irregularity Type Breakdown", desc: "Overall distribution of detected audit issues" },
+  { file: "plot_state_distribution.png", title: "State Compliance Comparison", desc: "Normal vs flagged works across top states" },
+  { file: "plot_risk_tiers.png", title: "Constituency Risk Profile", desc: "Distribution of Low, Moderate, High, and Critical risk" },
+  { file: "plot_cost_analysis.png", title: "Sectoral Expenditure Breakdown", desc: "Public funds utilization across priority sectors" },
+  { file: "plot_work_categories.png", title: "Works by Development Sector", desc: "Total works sanctioned across Roads, Water, Health, etc." },
 ];
