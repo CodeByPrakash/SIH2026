@@ -201,136 +201,806 @@ const RESP: Record<Lang, {
   },
 };
 
-// ── Role × Language suggested questions ──────────────────────────────────────
+// ── Quick Questions & Actions per Role & Language ─────────────────────────────
 
-const ROLE_SUGGESTED: Record<UserRole, Record<Lang, string[]>> = {
-  Citizen: {
-    EN: ["Show MPLADS projects near my area","Status of road works in my district?","How much fund was utilized in my constituency?","Which projects are completed near me?","How do I file a grievance for a stalled project?","Show drinking water projects in my block"],
-    HI: ["मेरे क्षेत्र के पास MPLADS परियोजनाएं दिखाएं","मेरे जिले में सड़क कार्यों की स्थिति?","मेरे निर्वाचन क्षेत्र में कितना फंड उपयोग हुआ?","मेरे पास कौन सी परियोजनाएं पूर्ण हुई हैं?","रुकी हुई परियोजना के लिए शिकायत कैसे करें?","मेरे ब्लॉक में पेयजल परियोजनाएं दिखाएं"],
-    MR: ["माझ्या परिसराजवळील MPLADS प्रकल्प दाखवा","माझ्या जिल्ह्यातील रस्ते कार्यांची स्थिती?","माझ्या मतदारसंघात किती निधी वापरला?","माझ्याजवळ कोणते प्रकल्प पूर्ण झाले?","थांबलेल्या प्रकल्पासाठी तक्रार कशी करावी?","माझ्या ब्लॉकमधील पिण्याचे पाणी प्रकल्प दाखवा"],
-    TA: ["என் பகுதி அருகில் MPLADS திட்டங்கள் காட்டு","என் மாவட்டத்தில் சாலை பணிகளின் நிலை?","என் தொகுதியில் எவ்வளவு நிதி பயன்படுத்தப்பட்டது?","என் அருகில் எந்த திட்டங்கள் நிறைவடைந்தன?","நிறுத்தப்பட்ட திட்டத்திற்கு புகார் எப்படி?","என் பகுதியில் குடிநீர் திட்டங்கள் காட்டு"],
-    BN: ["আমার এলাকার কাছে MPLADS প্রকল্প দেখান","আমার জেলায় রাস্তার কাজের অবস্থা?","আমার নির্বাচনী এলাকায় কত তহবিল ব্যবহৃত?","আমার কাছে কোন প্রকল্পগুলো সম্পন্ন হয়েছে?","স্থগিত প্রকল্পে অভিযোগ কিভাবে করব?","আমার ব্লকে পানীয় জল প্রকল্প দেখান"],
-    KA: ["ನನ್ನ ಪ್ರದೇಶದ ಬಳಿ MPLADS ಯೋಜನೆಗಳು ತೋರಿಸಿ","ನನ್ನ ಜಿಲ್ಲೆಯಲ್ಲಿ ರಸ್ತೆ ಕಾಮಗಾರಿ ಸ್ಥಿತಿ?","ನನ್ನ ಕ್ಷೇತ್ರದಲ್ಲಿ ಎಷ್ಟು ನಿಧಿ ಬಳಸಲಾಗಿದೆ?","ನನ್ನ ಬಳಿ ಯಾವ ಯೋಜನೆಗಳು ಪೂರ್ಣಗೊಂಡಿವೆ?","ನಿಂತ ಯೋಜನೆಗೆ ದೂರು ಹೇಗೆ ನೀಡುವುದು?","ನನ್ನ ಬ್ಲಾಕ್‌ನಲ್ಲಿ ಕುಡಿಯುವ ನೀರು ಯೋಜನೆಗಳು"],
-    TE: ["నా ప్రాంతం దగ్గర MPLADS ప్రాజెక్టులు చూపించు","నా జిల్లాలో రోడ్డు పనుల స్థితి?","నా నియోజకవర్గంలో ఎంత నిధి వినియోగించారు?","నా దగ్గర ఏ ప్రాజెక్టులు పూర్తయ్యాయి?","ఆగిన ప్రాజెక్టుపై ఫిర్యాదు ఎలా చేయాలి?","నా బ్లాక్‌లో తాగునీటి ప్రాజెక్టులు చూపించు"],
-  },
-  MP: {
-    EN: ["Show all projects in my constituency","How much of my MPLADS fund is still unspent?","Which of my works are delayed beyond deadline?","List projects pending Utilization Certificates","Show my constituency's high-risk projects","What is my fund utilization rate this year?"],
-    HI: ["मेरे निर्वाचन क्षेत्र की सभी परियोजनाएं दिखाएं","मेरा कितना MPLADS फंड अभी बाकी है?","मेरे कौन से कार्य समयसीमा पार हो गए हैं?","उपयोगिता प्रमाणपत्र लंबित परियोजनाओं की सूची","मेरे क्षेत्र की उच्च जोखिम परियोजनाएं दिखाएं","इस वर्ष मेरी निधि उपयोग दर क्या है?"],
-    MR: ["माझ्या मतदारसंघातील सर्व प्रकल्प दाखवा","माझा किती MPLADS निधी अजून बाकी आहे?","माझे कोणते कार्य मुदतीपलीकडे गेले आहे?","UC प्रलंबित प्रकल्पांची यादी","माझ्या क्षेत्रातील उच्च जोखीम प्रकल्प","या वर्षी माझा निधी वापर दर काय आहे?"],
-    TA: ["என் தொகுதியின் அனைத்து திட்டங்களும் காட்டு","என் MPLADS நிதியில் எவ்வளவு செலவழிக்கப்படவில்லை?","என் எந்த பணிகள் காலக்கெடுவை தாண்டியுள்ளன?","UC நிலுவையில் உள்ள திட்டங்களின் பட்டியல்","என் தொகுதியின் உயர் ஆபத்து திட்டங்கள்","இந்த ஆண்டு என் நிதி பயன்பாட்டு விகிதம்?"],
-    BN: ["আমার নির্বাচনী এলাকার সব প্রকল্প দেখান","আমার MPLADS তহবিলের কত এখনও অব্যয়িত?","আমার কোন কাজগুলো সময়সীমা পার করেছে?","UC বিচারাধীন প্রকল্পের তালিকা","আমার এলাকার উচ্চ ঝুঁকি প্রকল্প","এই বছর আমার তহবিল ব্যবহারের হার কত?"],
-    KA: ["ನನ್ನ ಕ್ಷೇತ್ರದ ಎಲ್ಲ ಯೋಜನೆಗಳು ತೋರಿಸಿ","ನನ್ನ MPLADS ನಿಧಿಯಲ್ಲಿ ಎಷ್ಟು ಇನ್ನೂ ಬಾಕಿಯಿದೆ?","ನನ್ನ ಯಾವ ಕೆಲಸಗಳು ಗಡುವು ಮೀರಿವೆ?","UC ಬಾಕಿ ಯೋಜನೆಗಳ ಪಟ್ಟಿ","ನನ್ನ ಕ್ಷೇತ್ರದ ಹೆಚ್ಚಿನ ಅಪಾಯ ಯೋಜನೆಗಳು","ಈ ವರ್ಷ ನನ್ನ ನಿಧಿ ಬಳಕೆ ದರ ಎಷ್ಟು?"],
-    TE: ["నా నియోజకవర్గంలోని అన్ని ప్రాజెక్టులు చూపించు","నా MPLADS నిధిలో ఎంత ఇంకా ఖర్చు కాలేదు?","నా ఏ పనులు గడువు మించాయి?","UC పెండింగ్ ప్రాజెక్టుల జాబితా","నా నియోజకవర్గంలో అధిక రిస్క్ ప్రాజెక్టులు","ఈ సంవత్సరం నా నిధి వినియోగ రేటు ఏమిటి?"],
-  },
-  District: {
-    EN: ["Which works are due for field inspection this week?","Show projects with missing geo-tagged photos","List delayed works in my district","Projects with no inspection in 60+ days","Show compliance gaps in my district","Which contractors have flagged irregularities?"],
-    HI: ["इस सप्ताह कौन से कार्यों का क्षेत्र निरीक्षण होना है?","गुम जियो-टैग फ़ोटो वाले प्रोजेक्ट दिखाएं","मेरे जिले में विलंबित कार्यों की सूची","60+ दिनों में निरीक्षण नहीं हुए प्रोजेक्ट","मेरे जिले में अनुपालन अंतराल दिखाएं","कौन से ठेकेदारों पर अनियमितताएं पाई गई हैं?"],
-    MR: ["या आठवड्यात कोणत्या कामांचे क्षेत्र निरीक्षण आहे?","गहाळ जिओ-टॅग फोटो असलेले प्रकल्प","माझ्या जिल्ह्यातील विलंबित कामांची यादी","60+ दिवसांत तपासणी न झालेले प्रकल्प","माझ्या जिल्ह्यातील अनुपालन अंतर दाखवा","कोणत्या कंत्राटदारांवर अनियमितता आढळली?"],
-    TA: ["இந்த வாரம் எந்த பணிகளுக்கு களப் ஆய்வு உள்ளது?","ஜியோ-டேக் புகைப்படங்கள் இல்லாத திட்டங்கள்","என் மாவட்டத்தில் தாமதமான பணிகளின் பட்டியல்","60+ நாட்களில் ஆய்வு இல்லாத திட்டங்கள்","என் மாவட்டத்தில் இணக்க இடைவெளிகள்","எந்த ஒப்பந்ததாரர்களுக்கு முறைகேடுகள் குறிக்கப்பட்டுள்ளன?"],
-    BN: ["এই সপ্তাহে কোন কাজগুলোর মাঠ পরিদর্শন আছে?","জিও-ট্যাগ ছবি অনুপস্থিত প্রকল্প দেখান","আমার জেলায় বিলম্বিত কাজের তালিকা","৬০+ দিনে পরিদর্শন হয়নি এমন প্রকল্প","আমার জেলায় সম্মতির ফাঁক দেখান","কোন ঠিকাদারদের অনিয়ম চিহ্নিত হয়েছে?"],
-    KA: ["ಈ ವಾರ ಯಾವ ಕೆಲಸಗಳಿಗೆ ಕ್ಷೇತ್ರ ತಪಾಸಣೆ ಇದೆ?","ಜಿಯೋ-ಟ್ಯಾಗ್ ಫೋಟೋ ಇಲ್ಲದ ಯೋಜನೆಗಳು","ನನ್ನ ಜಿಲ್ಲೆಯ ವಿಳಂಬಿತ ಕೆಲಸಗಳ ಪಟ್ಟಿ","60+ ದಿನ ತಪಾಸಣೆ ಆಗದ ಯೋಜನೆಗಳು","ನನ್ನ ಜಿಲ್ಲೆಯ ಅನುಪಾಲನ ಅಂತರ ತೋರಿಸಿ","ಯಾವ ಗುತ್ತಿಗೆದಾರರಿಗೆ ಅನಿಯಮಿತತೆ ಇದೆ?"],
-    TE: ["ఈ వారం ఏ పనులకు ఫీల్డ్ తనిఖీ ఉంది?","జియో-టాగ్ ఫోటోలు లేని ప్రాజెక్టులు","నా జిల్లాలో జాప్యమైన పనుల జాబితా","60+ రోజులలో తనిఖీ లేని ప్రాజెక్టులు","నా జిల్లాలో సమ్మతి అంతరాలు చూపించు","ఏ కాంట్రాక్టర్లపై అక్రమాలు గుర్తించారు?"],
-  },
-  State: {
-    EN: ["Which districts have lowest fund utilization?","Show all high-risk projects across the state","How many UCs are pending statewide?","List MPs with highest delayed project count","State-wise compliance status summary","Which districts need urgent intervention?"],
-    HI: ["किन जिलों में सबसे कम निधि उपयोग है?","राज्य भर में सभी उच्च जोखिम परियोजनाएं दिखाएं","राज्यभर में कितने UC लंबित हैं?","सबसे अधिक विलंबित परियोजनाओं वाले सांसदों की सूची","राज्यवार अनुपालन स्थिति सारांश","किन जिलों को तत्काल हस्तक्षेप की जरूरत है?"],
-    MR: ["कोणत्या जिल्ह्यांमध्ये सर्वात कमी निधी वापर आहे?","राज्यभर सर्व उच्च जोखीम प्रकल्प दाखवा","राज्यभर किती UC प्रलंबित आहेत?","सर्वाधिक विलंबित प्रकल्प असलेल्या खासदारांची यादी","राज्यनिहाय अनुपालन स्थिती सारांश","कोणत्या जिल्ह्यांना तातडीने हस्तक्षेप हवा?"],
-    TA: ["எந்த மாவட்டங்களில் நிதி பயன்பாடு குறைவாக உள்ளது?","மாநிலம் முழுவதும் உயர் ஆபத்து திட்டங்கள்","மாநிலம் முழுவதும் எத்தனை UCகள் நிலுவையில்?","அதிக தாமதமான திட்டங்கள் கொண்ட MPகளின் பட்டியல்","மாவட்டவாரியான இணக்க நிலை சுருக்கம்","எந்த மாவட்டங்களுக்கு அவசர தலையீடு தேவை?"],
-    BN: ["কোন জেলায় সবচেয়ে কম তহবিল ব্যবহার?","রাজ্যজুড়ে সব উচ্চ ঝুঁকি প্রকল্প দেখান","রাজ্যজুড়ে কতটি UC বিচারাধীন?","সর্বাধিক বিলম্বিত প্রকল্পের MPদের তালিকা","জেলাভিত্তিক সম্মতি অবস্থার সারসংক্ষেপ","কোন জেলায় জরুরি হস্তক্ষেপ প্রয়োজন?"],
-    KA: ["ಯಾವ ಜಿಲ್ಲೆಗಳಲ್ಲಿ ನಿಧಿ ಬಳಕೆ ಕಡಿಮೆ ಇದೆ?","ರಾಜ್ಯಾದ್ಯಂತ ಎಲ್ಲ ಹೆಚ್ಚಿನ ಅಪಾಯ ಯೋಜನೆಗಳು","ರಾಜ್ಯಾದ್ಯಂತ ಎಷ್ಟು UCಗಳು ಬಾಕಿಯಿದೆ?","ಅತಿ ಹೆಚ್ಚು ವಿಳಂಬಿತ ಯೋಜನೆ ಹೊಂದಿರುವ MPಗಳ ಪಟ್ಟಿ","ಜಿಲ್ಲಾವಾರು ಅನುಪಾಲನ ಸ್ಥಿತಿ ಸಾರಾಂಶ","ಯಾವ ಜಿಲ್ಲೆಗಳಿಗೆ ತಕ್ಷಣ ಮಧ್ಯಪ್ರವೇಶ ಬೇಕು?"],
-    TE: ["ఏ జిల్లాలలో నిధి వినియోగం అత్యల్పంగా ఉంది?","రాష్ట్రమంతటా అన్ని అధిక రిస్క్ ప్రాజెక్టులు","రాష్ట్రమంతటా ఎన్ని UCలు పెండింగ్‌లో ఉన్నాయి?","అత్యధిక జాప్య ప్రాజెక్టులు కలిగిన MPల జాబితా","జిల్లావారీ సమ్మతి స్థితి సారాంశం","ఏ జిల్లాలకు అత్యవసర జోక్యం అవసరం?"],
-  },
-  Ministry: {
-    EN: ["National fund utilization trend this quarter","Which states have critical risk concentration?","Show anomalies detected by AI this month","Top 5 states by delayed project count","National UC pendency report","Which works show contractor cost inflation?"],
-    HI: ["इस तिमाही राष्ट्रीय निधि उपयोग प्रवृत्ति","किन राज्यों में गंभीर जोखिम केंद्रित है?","इस माह AI द्वारा पाई गई विसंगतियां दिखाएं","विलंबित परियोजना संख्या में शीर्ष 5 राज्य","राष्ट्रीय UC बकाया रिपोर्ट","किन कार्यों में ठेकेदार लागत मुद्रास्फीति है?"],
-    MR: ["या तिमाहीत राष्ट्रीय निधी वापर प्रवृत्ती","कोणत्या राज्यांमध्ये गंभीर जोखीम एकवटले आहे?","या महिन्यात AI ने शोधलेल्या विसंगती","विलंबित प्रकल्प संख्येत शीर्ष 5 राज्ये","राष्ट्रीय UC थकबाकी अहवाल","कोणत्या कामांमध्ये कंत्राटदार खर्च महागाई आहे?"],
-    TA: ["இந்த காலாண்டில் தேசிய நிதி பயன்பாட்டு போக்கு","எந்த மாநிலங்களில் முக்கியமான ஆபத்து குவிந்துள்ளது?","இந்த மாதம் AI கண்டறிந்த முறைகேடுகள்","தாமத திட்ட எண்ணிக்கையில் முதல் 5 மாநிலங்கள்","தேசிய UC நிலுவை அறிக்கை","எந்த பணிகளில் ஒப்பந்ததாரர் செலவு பெருக்கம்?"],
-    BN: ["এই ত্রৈমাসিকে জাতীয় তহবিল ব্যবহারের প্রবণতা","কোন রাজ্যে সঙ্কটজনক ঝুঁকি কেন্দ্রীভূত?","এই মাসে AI শনাক্তকৃত অসঙ্গতি দেখান","বিলম্বিত প্রকল্পে শীর্ষ ৫ রাজ্য","জাতীয় UC বকেয়া প্রতিবেদন","কোন কাজে ঠিকাদার খরচ স্ফীতি আছে?"],
-    KA: ["ಈ ತ್ರೈಮಾಸಿಕದಲ್ಲಿ ರಾಷ್ಟ್ರೀಯ ನಿಧಿ ಬಳಕೆ ಪ್ರವೃತ್ತಿ","ಯಾವ ರಾಜ್ಯಗಳಲ್ಲಿ ಗಂಭೀರ ಅಪಾಯ ಕೇಂದ್ರೀಕೃತ?","ಈ ತಿಂಗಳು AI ಪತ್ತೆ ಮಾಡಿದ ವಿಚಲನಗಳು","ವಿಳಂಬಿತ ಯೋಜನೆ ಸಂಖ್ಯೆಯಲ್ಲಿ ಶೀರ್ಷ 5 ರಾಜ್ಯಗಳು","ರಾಷ್ಟ್ರೀಯ UC ಬಾಕಿ ವರದಿ","ಯಾವ ಕೆಲಸಗಳಲ್ಲಿ ಗುತ್ತಿಗೆದಾರ ವೆಚ್ಚ ಏರಿಕೆ?"],
-    TE: ["ఈ త్రైమాసికంలో జాతీయ నిధి వినియోగ ధోరణి","ఏ రాష్ట్రాలలో క్రిటికల్ రిస్క్ కేంద్రీకృతమైంది?","ఈ నెల AI గుర్తించిన అక్రమాలు చూపించు","జాప్య ప్రాజెక్టు సంఖ్యలో టాప్ 5 రాష్ట్రాలు","జాతీయ UC పెండెన్సీ నివేదిక","ఏ పనులలో కాంట్రాక్టర్ వ్యయ ద్రవ్యోల్బణం ఉంది?"],
-  },
-};
-
-const FALLBACK_SUGGESTED: Record<Lang, string[]> = {
-  EN: ["Show all critical risk projects","Which states have lowest fund utilization?","List delayed projects in Rajasthan","How many projects have pending UCs?","Show projects with cost overrun","What are today's top alerts?"],
-  HI: ["सभी गंभीर जोखिम परियोजनाएं दिखाएं","सबसे कम निधि उपयोग वाले राज्य?","राजस्थान में विलंबित परियोजनाएं","कितने प्रोजेक्ट में UC लंबित है?","अतिरिक्त खर्च वाले प्रोजेक्ट दिखाएं","आज के शीर्ष अलर्ट क्या हैं?"],
-  MR: ["सर्व गंभीर जोखीम प्रकल्प दाखवा","सर्वात कमी निधी वापर असलेले राज्य?","राजस्थानमधील विलंबित प्रकल्प","किती प्रकल्पांमध्ये UC प्रलंबित आहे?","अतिरिक्त खर्च असलेले प्रकल्प दाखवा","आजचे शीर्ष अलर्ट कोणते आहेत?"],
-  TA: ["அனைத்து முக்கியமான ஆபத்து திட்டங்கள்","குறைந்த நிதி பயன்பாடு கொண்ட மாநிலங்கள்?","ராஜஸ்தானில் தாமதமான திட்டங்கள்","எத்தனை திட்டங்களில் UC நிலுவையில்?","மிகை செலவு திட்டங்கள் காட்டு","இன்றைய முக்கிய எச்சரிக்கைகள் என்ன?"],
-  BN: ["সব সঙ্কটজনক ঝুঁকি প্রকল্প দেখান","সবচেয়ে কম তহবিল ব্যবহারের রাজ্য?","রাজস্থানে বিলম্বিত প্রকল্প","কতটি প্রকল্পে UC বিচারাধীন?","অতিরিক্ত ব্যয়ের প্রকল্প দেখান","আজকের শীর্ষ সতর্কতা কী?"],
-  KA: ["ಎಲ್ಲ ಗಂಭೀರ ಅಪಾಯ ಯೋಜನೆಗಳು","ಕಡಿಮೆ ನಿಧಿ ಬಳಕೆ ಹೊಂದಿರುವ ರಾಜ್ಯಗಳು?","ರಾಜಸ್ಥಾನದ ವಿಳಂಬಿತ ಯೋಜನೆಗಳು","ಎಷ್ಟು ಯೋಜನೆಗಳಲ್ಲಿ UC ಬಾಕಿಯಿದೆ?","ಅಧಿಕ ವೆಚ್ಚ ಯೋಜನೆಗಳು ತೋರಿಸಿ","ಇಂದಿನ ಶೀರ್ಷ ಎಚ್ಚರಿಕೆಗಳು ಏನು?"],
-  TE: ["అన్ని క్రిటికల్ రిస్క్ ప్రాజెక్టులు","అత్యల్ప నిధి వినియోగం ఉన్న రాష్ట్రాలు?","రాజస్థాన్‌లో జాప్యమైన ప్రాజెక్టులు","ఎన్ని ప్రాజెక్టులలో UC పెండింగ్‌లో ఉంది?","అదనపు వ్యయ ప్రాజెక్టులు చూపించు","ఈరోజు టాప్ హెచ్చరికలు ఏమిటి?"],
-};
-
-function getSuggested(role: UserRole | undefined, lang: Lang): string[] {
-  if (role && ROLE_SUGGESTED[role]) return ROLE_SUGGESTED[role][lang] ?? ROLE_SUGGESTED[role].EN;
-  return FALLBACK_SUGGESTED[lang] ?? FALLBACK_SUGGESTED.EN;
+export interface QuickAction {
+  id: string;
+  icon: string;
+  label: string;
+  query: string;
 }
 
-// ── Response engine ───────────────────────────────────────────────────────────
+const ROLE_QUICK_ACTIONS: Record<UserRole, Record<Lang, QuickAction[]>> = {
+  Citizen: {
+    EN: [
+      { id: "area_status", icon: "📍", label: "My Area Work Status", query: "Show my area work status" },
+      { id: "area_risk", icon: "⚠️", label: "Area Risks & Flags", query: "Show my area project risks and alerts" },
+      { id: "area_funds", icon: "💰", label: "Area Fund Utilization", query: "How much fund was utilized in my area?" },
+      { id: "completed_works", icon: "✅", label: "Completed Community Works", query: "Which projects are completed near my area?" },
+      { id: "file_grievance", icon: "📝", label: "File a Grievance", query: "How do I file a grievance for a stalled project?" },
+    ],
+    HI: [
+      { id: "area_status", icon: "📍", label: "मेरे क्षेत्र के कार्य", query: "मेरे क्षेत्र में कार्यों की स्थिति दिखाएं" },
+      { id: "area_risk", icon: "⚠️", label: "क्षेत्रीय जोखिम व अलर्ट", query: "मेरे क्षेत्र के प्रोजेक्ट जोखिम और अलर्ट दिखाएं" },
+      { id: "area_funds", icon: "💰", label: "फंड उपयोग", query: "मेरे क्षेत्र में कितना फंड उपयोग हुआ?" },
+      { id: "completed_works", icon: "✅", label: "पूर्ण सामुदायिक कार्य", query: "मेरे क्षेत्र में कौन से कार्य पूर्ण हुए हैं?" },
+      { id: "file_grievance", icon: "📝", label: "शिकायत दर्ज करें", query: "रुके हुए कार्य के लिए शिकायत कैसे दर्ज करें?" },
+    ],
+    MR: [
+      { id: "area_status", icon: "📍", label: "माझ्या परिसराची स्थिती", query: "माझ्या परिसरातील कामांची स्थिती दाखवा" },
+      { id: "area_risk", icon: "⚠️", label: "परिसरातील जोखीम व अलर्ट", query: "माझ्या भागातील प्रकल्प जोखीम आणि अलर्ट दाखवा" },
+      { id: "area_funds", icon: "💰", label: "निधी वापर", query: "माझ्या मतदारसंघात किती निधी वापरला?" },
+      { id: "completed_works", icon: "✅", label: "पूर्ण झालेली कामे", query: "माझ्याजवळ कोणते प्रकल्प पूर्ण झाले?" },
+      { id: "file_grievance", icon: "📝", label: "तक्रार नोंदवा", query: "थांबलेल्या प्रकल्पासाठी तक्रार कशी करावी?" },
+    ],
+    TA: [
+      { id: "area_status", icon: "📍", label: "என் பகுதி பணிகள்", query: "என் பகுதியில் பணிகளின் நிலை காட்டு" },
+      { id: "area_risk", icon: "⚠️", label: "பகுதி ஆபத்து & எச்சரிக்கை", query: "என் பகுதி திட்ட ஆபத்துகள் மற்றும் எச்சரிக்கைகள் காட்டு" },
+      { id: "area_funds", icon: "💰", label: "நிதி பயன்பாடு", query: "என் தொகுதியில் எவ்வளவு நிதி பயன்படுத்தப்பட்டது?" },
+      { id: "completed_works", icon: "✅", label: "நிறைவடைந்த பணிகள்", query: "என் அருகில் எந்த திட்டங்கள் நிறைவடைந்தன?" },
+      { id: "file_grievance", icon: "📝", label: "புகார் பதிவு செய்க", query: "நிறுத்தப்பட்ட திட்டத்திற்கு புகார் எப்படி?" },
+    ],
+    BN: [
+      { id: "area_status", icon: "📍", label: "আমার এলাকার কাজের অবস্থা", query: "আমার এলাকার কাজের অবস্থা দেখান" },
+      { id: "area_risk", icon: "⚠️", label: "এলাকার ঝুঁকি ও সতর্কতা", query: "আমার এলাকার প্রকল্পের ঝুঁকি এবং সতর্কতা দেখান" },
+      { id: "area_funds", icon: "💰", label: "তহবিল ব্যবহার", query: "আমার নির্বাচনী এলাকায় কত তহবিল ব্যবহৃত?" },
+      { id: "completed_works", icon: "✅", label: "সম্পন্ন প্রকল্পসমূহ", query: "আমার কাছে কোন প্রকল্পগুলো সম্পন্ন হয়েছে?" },
+      { id: "file_grievance", icon: "📝", label: "অভিযোগ দায়ের করুন", query: "স্থগিত প্রকল্পে অভিযোগ কিভাবে করব?" },
+    ],
+    KA: [
+      { id: "area_status", icon: "📍", label: "ನನ್ನ ಪ್ರದೇಶದ ಕಾಮಗಾರಿ", query: "ನನ್ನ ಪ್ರದೇಶದ ಕಾಮಗಾರಿಗಳ ಸ್ಥಿತಿ ತೋರಿಸಿ" },
+      { id: "area_risk", icon: "⚠️", label: "ಪ್ರದೇಶದ ಅಪಾಯ & ಎಚ್ಚರಿಕೆ", query: "ನನ್ನ ಪ್ರದೇಶದ ಯೋಜನೆಗಳ ಅಪಾಯ ಮತ್ತು ಎಚ್ಚರಿಕೆ ತೋರಿಸಿ" },
+      { id: "area_funds", icon: "💰", label: "ನಿಧಿ ಬಳಕೆ", query: "ನನ್ನ ಕ್ಷೇತ್ರದಲ್ಲಿ ಎಷ್ಟು ನಿಧಿ ಬಳಸಲಾಗಿದೆ?" },
+      { id: "completed_works", icon: "✅", label: "ಪೂರ್ಣಗೊಂಡ ಕಾಮಗಾರಿಗಳು", query: "ನನ್ನ ಬಳಿ ಯಾವ ಯೋಜನೆಗಳು ಪೂರ್ಣಗೊಂಡಿವೆ?" },
+      { id: "file_grievance", icon: "📝", label: "ದೂರು ದಾಖಲಿಸಿ", query: "ನಿಂತ ಯೋಜನೆಗೆ ದೂರು ಹೇಗೆ ನೀಡುವುದು?" },
+    ],
+    TE: [
+      { id: "area_status", icon: "📍", label: "నా ప్రాంతం పనుల స్థితి", query: "నా ప్రాంతంలో పనుల స్థితి చూపించు" },
+      { id: "area_risk", icon: "⚠️", label: "ప్రాంత రిస్క్ & హెచ్చరికలు", query: "నా ప్రాంత ప్రాజెక్టుల రిస్క్ మరియు హెచ్చరికలు చూపించు" },
+      { id: "area_funds", icon: "💰", label: "నిధి వినియోగం", query: "నా నియోజకవర్గంలో ఎంత నిధి వినియోగించారు?" },
+      { id: "completed_works", icon: "✅", label: "పూర్తయిన పనులు", query: "నా దగ్గర ఏ ప్రాజెక్టులు పూర్తయ్యాయి?" },
+      { id: "file_grievance", icon: "📝", label: "ఫిర్యాదు చేయండి", query: "ఆగిన ప్రాజెక్టుపై ఫిర్యాదు ఎలా చేయాలి?" },
+    ],
+  },
+  MP: {
+    EN: [
+      { id: "area_status", icon: "🏛️", label: "Constituency Work Status", query: "Show all projects and work status in my constituency" },
+      { id: "area_risk", icon: "⚠️", label: "Constituency High-Risk Works", query: "Show high-risk projects in my constituency" },
+      { id: "area_funds", icon: "💰", label: "Unspent MPLADS Funds", query: "How much of my MPLADS fund is still unspent?" },
+      { id: "delayed_works", icon: "⏳", label: "Delayed Works & Bottlenecks", query: "Which works in my constituency are delayed beyond deadline?" },
+      { id: "pending_uc", icon: "📄", label: "Pending UCs", query: "List projects pending Utilization Certificates in my constituency" },
+    ],
+    HI: [
+      { id: "area_status", icon: "🏛️", label: "निर्वाचन क्षेत्र कार्य स्थिति", query: "मेरे निर्वाचन क्षेत्र के सभी कार्यों की स्थिति दिखाएं" },
+      { id: "area_risk", icon: "⚠️", label: "उच्च जोखिम परियोजनाएं", query: "मेरे निर्वाचन क्षेत्र की उच्च जोखिम परियोजनाएं दिखाएं" },
+      { id: "area_funds", icon: "💰", label: "अव्ययित MPLADS फंड", query: "मेरा कितना MPLADS फंड अभी बाकी है?" },
+      { id: "delayed_works", icon: "⏳", label: "समयसीमा पार कार्य", query: "मेरे कौन से कार्य समयसीमा पार हो गए हैं?" },
+      { id: "pending_uc", icon: "📄", label: "लंबित UC सूची", query: "उपयोगिता प्रमाणपत्र लंबित परियोजनाओं की सूची" },
+    ],
+    MR: [
+      { id: "area_status", icon: "🏛️", label: "मतदारसंघ कार्य स्थिती", query: "माझ्या मतदारसंघातील सर्व कामांची स्थिती दाखवा" },
+      { id: "area_risk", icon: "⚠️", label: "उच्च जोखीम प्रकल्प", query: "माझ्या क्षेत्रातील उच्च जोखीम प्रकल्प दाखवा" },
+      { id: "area_funds", icon: "💰", label: "शिल्लक MPLADS निधी", query: "माझा किती MPLADS निधी अजून बाकी आहे?" },
+      { id: "delayed_works", icon: "⏳", label: "विलंबित कार्ये", query: "माझे कोणते कार्य मुदतीपलीकडे गेले आहे?" },
+      { id: "pending_uc", icon: "📄", label: "प्रलंबित UC यादी", query: "UC प्रलंबित प्रकल्पांची यादी" },
+    ],
+    TA: [
+      { id: "area_status", icon: "🏛️", label: "தொகுதி பணிகள் நிலை", query: "என் தொகுதியின் அனைத்து திட்டங்கள் மற்றும் பணிகள் நிலை காட்டு" },
+      { id: "area_risk", icon: "⚠️", label: "தொகுதி உயர் ஆபத்து திட்டங்கள்", query: "என் தொகுதியின் உயர் ஆபத்து திட்டங்கள் காட்டு" },
+      { id: "area_funds", icon: "💰", label: "செலவிடப்படாத நிதி", query: "என் MPLADS நிதியில் எவ்வளவு செலவழிக்கப்படவில்லை?" },
+      { id: "delayed_works", icon: "⏳", label: "தாமதமான பணிகள்", query: "என் எந்த பணிகள் காலக்கெடுவை தாண்டியுள்ளன?" },
+      { id: "pending_uc", icon: "📄", label: "நிலுவை UC பட்டியல்", query: "UC நிலுவையில் உள்ள திட்டங்களின் பட்டியல்" },
+    ],
+    BN: [
+      { id: "area_status", icon: "🏛️", label: "নির্বাচনী এলাকা কাজের অবস্থা", query: "আমার নির্বাচনী এলাকার সব প্রকল্পের অবস্থা দেখান" },
+      { id: "area_risk", icon: "⚠️", label: "উচ্চ ঝুঁকি প্রকল্প", query: "আমার এলাকার উচ্চ ঝুঁকি প্রকল্প দেখান" },
+      { id: "area_funds", icon: "💰", label: "অব্যয়িত MPLADS তহবিল", query: "আমার MPLADS তহবিলের কত এখনও অব্যয়িত?" },
+      { id: "delayed_works", icon: "⏳", label: "বিলম্বিত কাজ", query: "আমার কোন কাজগুলো সময়সীমা পার করেছে?" },
+      { id: "pending_uc", icon: "📄", label: "বিচারাধীন UC তালিকা", query: "UC বিচারাধীন প্রকল্পের তালিকা" },
+    ],
+    KA: [
+      { id: "area_status", icon: "🏛️", label: "ಕ್ಷೇತ್ರದ ಕಾಮಗಾರಿ ಸ್ಥಿತಿ", query: "ನನ್ನ ಕ್ಷೇತ್ರದ ಎಲ್ಲ ಕಾಮಗಾರಿಗಳ ಸ್ಥಿತಿ ತೋರಿಸಿ" },
+      { id: "area_risk", icon: "⚠️", label: "ಹೆಚ್ಚಿನ ಅಪಾಯದ ಕಾಮಗಾರಿ", query: "ನನ್ನ ಕ್ಷೇತ್ರದ ಹೆಚ್ಚಿನ ಅಪಾಯ ಯೋಜನೆಗಳು ತೋರಿಸಿ" },
+      { id: "area_funds", icon: "💰", label: "ಬಳಕೆಯಾಗದ ನಿಧಿ", query: "ನನ್ನ MPLADS ನಿಧಿಯಲ್ಲಿ ಎಷ್ಟು ಇನ್ನೂ ಬಾಕಿಯಿದೆ?" },
+      { id: "delayed_works", icon: "⏳", label: "ವಿಳಂಬಿತ ಕೆಲಸಗಳು", query: "ನನ್ನ ಯಾವ ಕೆಲಸಗಳು ಗಡುವು ಮೀರಿವೆ?" },
+      { id: "pending_uc", icon: "📄", label: "ಬಾಕಿ UC ಪಟ್ಟಿ", query: "UC ಬಾಕಿ ಯೋಜನೆಗಳ ಪಟ್ಟಿ" },
+    ],
+    TE: [
+      { id: "area_status", icon: "🏛️", label: "నియోజకవర్గ పనుల స్థితి", query: "నా నియోజకవర్గంలోని అన్ని పనుల స్థితి చూపించు" },
+      { id: "area_risk", icon: "⚠️", label: "అధిక రిస్క్ ప్రాజెక్టులు", query: "నా నియోజకవర్గంలో అధిక రిస్క్ ప్రాజెక్టులు చూపించు" },
+      { id: "area_funds", icon: "💰", label: "మిగిలిన నిధులు", query: "నా MPLADS నిధిలో ఎంత ఇంకా ఖర్చు కాలేదు?" },
+      { id: "delayed_works", icon: "⏳", label: "జాప్యమైన పనులు", query: "నా ఏ పనులు గడువు మించాయి?" },
+      { id: "pending_uc", icon: "📄", label: "పెండింగ్ UC జాబితా", query: "UC పెండింగ్ ప్రాజెక్టుల జాబితా" },
+    ],
+  },
+  District: {
+    EN: [
+      { id: "area_status", icon: "📋", label: "District Works Status", query: "Show district works status and progress" },
+      { id: "area_risk", icon: "⚠️", label: "High-Risk & Delayed Works", query: "Show high-risk and delayed works in my district" },
+      { id: "pending_inspections", icon: "🔍", label: "Pending Field Inspections", query: "Which works are overdue for 60-day field inspection?" },
+      { id: "pending_uc", icon: "📄", label: "Overdue UCs & Compliance", query: "Show overdue UCs and compliance gaps in my district" },
+      { id: "contractors", icon: "🚜", label: "Flagged Contractors", query: "Which contractors have flagged irregularities or delays?" },
+    ],
+    HI: [
+      { id: "area_status", icon: "📋", label: "जिला कार्य प्रगति", query: "जिले के कार्यों की स्थिति और प्रगति दिखाएं" },
+      { id: "area_risk", icon: "⚠️", label: "जोखिम व विलंबित कार्य", query: "जिले के उच्च जोखिम और विलंबित कार्य दिखाएं" },
+      { id: "pending_inspections", icon: "🔍", label: "लंबित क्षेत्र निरीक्षण", query: "60+ दिनों से निरीक्षण न हुए कार्य कौन से हैं?" },
+      { id: "pending_uc", icon: "📄", label: "बकाया UC व अनुपालन", query: "जिले में बकाया UC और अनुपालन अंतराल दिखाएं" },
+      { id: "contractors", icon: "🚜", label: "फ्लैग ठेकेदार", query: "किन ठेकेदारों पर अनियमितताएं या देरी पाई गई है?" },
+    ],
+    MR: [
+      { id: "area_status", icon: "📋", label: "जिल्हा कार्य प्रगती", query: "जिल्ह्यातील कामांची स्थिती आणि प्रगती दाखवा" },
+      { id: "area_risk", icon: "⚠️", label: "जोखीम व विलंबित कामे", query: "जिल्ह्यातील उच्च जोखीम आणि विलंबित कामे दाखवा" },
+      { id: "pending_inspections", icon: "🔍", label: "प्रलंबित तपासणी", query: "60+ दिवसांत तपासणी न झालेले प्रकल्प" },
+      { id: "pending_uc", icon: "📄", label: "थकबाकी UC व अनुपालन", query: "माझ्या जिल्ह्यातील अनुपालन अंतर दाखवा" },
+      { id: "contractors", icon: "🚜", label: "फ्लॅग कंत्राटदार", query: "कोणत्या कंत्राटदारांवर अनियमितता आढळली?" },
+    ],
+    TA: [
+      { id: "area_status", icon: "📋", label: "மாவட்ட பணிகள் முன்னேற்றம்", query: "மாவட்ட பணிகள் நிலை மற்றும் முன்னேற்றம் காட்டு" },
+      { id: "area_risk", icon: "⚠️", label: "ஆபத்து & தாமதமானவை", query: "என் மாவட்டத்தில் தாமதமான மற்றும் ஆபத்து பணிகள்" },
+      { id: "pending_inspections", icon: "🔍", label: "நிலுவை கள ஆய்வுகள்", query: "60+ நாட்களில் ஆய்வு இல்லாத திட்டங்கள்" },
+      { id: "pending_uc", icon: "📄", label: "நிலுவை UC இணக்கம்", query: "என் மாவட்டத்தில் இணக்க இடைவெளிகள்" },
+      { id: "contractors", icon: "🚜", label: "முறைகேடு ஒப்பந்ததாரர்கள்", query: "எந்த ஒப்பந்ததாரர்களுக்கு முறைகேடுகள் குறிக்கப்பட்டுள்ளன?" },
+    ],
+    BN: [
+      { id: "area_status", icon: "📋", label: "জেলা কাজের অগ্রগতি", query: "জেলার কাজের অবস্থা এবং অগ্রগতি দেখান" },
+      { id: "area_risk", icon: "⚠️", label: "ঝুঁকি ও বিলম্বিত কাজ", query: "জেলার উচ্চ ঝুঁকি এবং বিলম্বিত কাজ দেখান" },
+      { id: "pending_inspections", icon: "🔍", label: "বিচারাধীন মাঠ পরিদর্শন", query: "৬০+ দিনে পরিদর্শন হয়নি এমন প্রকল্প" },
+      { id: "pending_uc", icon: "📄", label: "বকেয়া UC ও সম্মতি", query: "আমার জেলায় সম্মতির ফাঁক দেখান" },
+      { id: "contractors", icon: "🚜", label: "চিহ্নিত ঠিকাদার", query: "কোন ঠিকাদারদের অনিয়ম চিহ্নিত হয়েছে?" },
+    ],
+    KA: [
+      { id: "area_status", icon: "📋", label: "ಜಿಲ್ಲಾ ಕಾಮಗಾರಿ ಪ್ರಗತಿ", query: "ಜಿಲ್ಲೆಯ ಕಾಮಗಾರಿಗಳ ಸ್ಥಿತಿ ಮತ್ತು ಪ್ರಗತಿ ತೋರಿಸಿ" },
+      { id: "area_risk", icon: "⚠️", label: "ಅಪಾಯ & ವಿಳಂಬಿತ ಕೆಲಸ", query: "ಜಿಲ್ಲೆಯ ಹೆಚ್ಚಿನ ಅಪಾಯ ಮತ್ತು ವಿಳಂಬಿತ ಕೆಲಸಗಳು" },
+      { id: "pending_inspections", icon: "🔍", label: "ಬಾಕಿ ಕ್ಷೇತ್ರ ತಪಾಸಣೆ", query: "60+ ದಿನ ತಪಾಸಣೆ ಆಗದ ಯೋಜನೆಗಳು" },
+      { id: "pending_uc", icon: "📄", label: "ಬಾಕಿ UC ಅನುಪಾಲನೆ", query: "ನನ್ನ ಜಿಲ್ಲೆಯ ಅನುಪಾಲನ ಅಂತರ ತೋರಿಸಿ" },
+      { id: "contractors", icon: "🚜", label: "ಅನರ್ಹ ಗುತ್ತಿಗೆದಾರರು", query: "ಯಾವ ಗುತ್ತಿಗೆದಾರರಿಗೆ ಅನಿಯಮಿತತೆ ಇದೆ?" },
+    ],
+    TE: [
+      { id: "area_status", icon: "📋", label: "జిల్లా పనుల పురోగతి", query: "జిల్లా పనుల స్థితి మరియు పురోగతి చూపించు" },
+      { id: "area_risk", icon: "⚠️", label: "రిస్క్ & జాప్య పనులు", query: "జిల్లాలో అధిక రిస్క్ మరియు జాప్య పనులు చూపించు" },
+      { id: "pending_inspections", icon: "🔍", label: "పెండింగ్ ఫీల్డ్ తనిఖీలు", query: "60+ రోజులలో తనిఖీ లేని ప్రాజెక్టులు" },
+      { id: "pending_uc", icon: "📄", label: "బకాయి UC & సమ్మతి", query: "నా జిల్లాలో సమ్మతి అంతరాలు చూపించు" },
+      { id: "contractors", icon: "🚜", label: "ఫ్లాగ్డ్ కాంట్రాక్టర్లు", query: "ఏ కాంట్రాక్టర్లపై అక్రమాలు గుర్తించారు?" },
+    ],
+  },
+  State: {
+    EN: [
+      { id: "area_status", icon: "🗺️", label: "Statewide Work Status", query: "Show statewide works summary and status" },
+      { id: "area_risk", icon: "⚠️", label: "State High-Risk Projects", query: "Show all high-risk projects across the state" },
+      { id: "lowest_utilization", icon: "📉", label: "Lowest Utilization Districts", query: "Which districts have lowest fund utilization?" },
+      { id: "pending_uc", icon: "📄", label: "Pending Statewide UCs", query: "How many UCs are pending statewide?" },
+      { id: "district_ranking", icon: "📊", label: "District Performance Ranking", query: "Rank districts by completion rate and compliance" },
+    ],
+    HI: [
+      { id: "area_status", icon: "🗺️", label: "राज्यव्यापी कार्य स्थिति", query: "राज्य भर के कार्यों की स्थिति और सारांश दिखाएं" },
+      { id: "area_risk", icon: "⚠️", label: "राज्य उच्च जोखिम कार्य", query: "राज्य भर में सभी उच्च जोखिम परियोजनाएं दिखाएं" },
+      { id: "lowest_utilization", icon: "📉", label: "कम उपयोग वाले जिले", query: "किन जिलों में सबसे कम निधि उपयोग है?" },
+      { id: "pending_uc", icon: "📄", label: "राज्य में लंबित UC", query: "राज्यभर में कितने UC लंबित हैं?" },
+      { id: "district_ranking", icon: "📊", label: "जिला रैंकिंग", query: "पूर्णता दर और अनुपालन अनुसार जिला रैंकिंग" },
+    ],
+    MR: [
+      { id: "area_status", icon: "🗺️", label: "राज्यव्यापी कार्य स्थिती", query: "राज्यभर कामांची स्थिती आणि सारांश दाखवा" },
+      { id: "area_risk", icon: "⚠️", label: "राज्य उच्च जोखीम कामे", query: "राज्यभर सर्व उच्च जोखीम प्रकल्प दाखवा" },
+      { id: "lowest_utilization", icon: "📉", label: "कमी वापर असलेले जिल्हे", query: "कोणत्या जिल्ह्यांमध्ये सर्वात कमी निधी वापर आहे?" },
+      { id: "pending_uc", icon: "📄", label: "राज्यात प्रलंबित UC", query: "राज्यभर किती UC प्रलंबित आहेत?" },
+      { id: "district_ranking", icon: "📊", label: "जिल्हा क्रमवारी", query: "जिल्ह्यांची प्रगती क्रमवारी दाखवा" },
+    ],
+    TA: [
+      { id: "area_status", icon: "🗺️", label: "மாநில அளவிலான பணிகள்", query: "மாநில அளவிலான பணிகள் சுருக்கம் மற்றும் நிலை" },
+      { id: "area_risk", icon: "⚠️", label: "மாநில உயர் ஆபத்து திட்டங்கள்", query: "மாநிலம் முழுவதும் உயர் ஆபத்து திட்டங்கள்" },
+      { id: "lowest_utilization", icon: "📉", label: "குறைந்த பயன்பாட்டு மாவட்டங்கள்", query: "எந்த மாவட்டங்களில் நிதி பயன்பாடு குறைவாக உள்ளது?" },
+      { id: "pending_uc", icon: "📄", label: "மாநில நிலுவை UCகள்", query: "மாநிலம் முழுவதும் எத்தனை UCகள் நிலுவையில்?" },
+      { id: "district_ranking", icon: "📊", label: "மாவட்ட தரவரிசை", query: "மாவட்டங்களின் செயல்திறன் தரவரிசை" },
+    ],
+    BN: [
+      { id: "area_status", icon: "🗺️", label: "রাজ্যব্যাপী কাজের অবস্থা", query: "রাজ্যব্যাপী কাজের সারসংক্ষেপ ও অবস্থা দেখান" },
+      { id: "area_risk", icon: "⚠️", label: "রাজ্যের উচ্চ ঝুঁকি প্রকল্প", query: "রাজ্যজুড়ে সব উচ্চ ঝুঁকি প্রকল্প দেখান" },
+      { id: "lowest_utilization", icon: "📉", label: "কম ব্যবহারের জেলাসমূহ", query: "কোন জেলায় সবচেয়ে কম তহবিল ব্যবহার?" },
+      { id: "pending_uc", icon: "📄", label: "রাজ্যে বিচারাধীন UC", query: "রাজ্যজুড়ে কতটি UC বিচারাধীন?" },
+      { id: "district_ranking", icon: "📊", label: "জেলা র‍্যাঙ্কিং", query: "জেলার কর্মক্ষমতা র‍্যাঙ্কিং দেখান" },
+    ],
+    KA: [
+      { id: "area_status", icon: "🗺️", label: "ರಾಜ್ಯಾದ್ಯಂತ ಕಾಮಗಾರಿ", query: "ರಾಜ್ಯಾದ್ಯಂತ ಕಾಮಗಾರಿಗಳ ಸಾರಾಂಶ ಮತ್ತು ಸ್ಥಿತಿ" },
+      { id: "area_risk", icon: "⚠️", label: "ರಾಜ್ಯದ ಅಪಾಯ ಯೋಜನೆಗಳು", query: "ರಾಜ್ಯಾದ್ಯಂತ ಎಲ್ಲ ಹೆಚ್ಚಿನ ಅಪಾಯ ಯೋಜನೆಗಳು" },
+      { id: "lowest_utilization", icon: "📉", label: "ಕಡಿಮೆ ಬಳಕೆಯ ಜಿಲ್ಲೆಗಳು", query: "ಯಾವ ಜಿಲ್ಲೆಗಳಲ್ಲಿ ನಿಧಿ ಬಳಕೆ ಕಡಿಮೆ ಇದೆ?" },
+      { id: "pending_uc", icon: "📄", label: "ರಾಜ್ಯದಲ್ಲಿ ಬಾಕಿ UC", query: "ರಾಜ್ಯಾದ್ಯಂತ ಎಷ್ಟು UCಗಳು ಬಾಕಿಯಿದೆ?" },
+      { id: "district_ranking", icon: "📊", label: "ಜಿಲ್ಲಾ ಶ್ರೇಯಾಂಕ", query: "ಜಿಲ್ಲಾ ಕಾರ್ಯಕ್ಷಮತೆ ಶ್ರೇಯಾಂಕ" },
+    ],
+    TE: [
+      { id: "area_status", icon: "🗺️", label: "రాష్ట్రవ్యాప్త పనుల స్థితి", query: "రాష్ట్రవ్యాప్త పనుల సారాంశం మరియు స్థితి" },
+      { id: "area_risk", icon: "⚠️", label: "రాష్ట్రంలో అధిక రిస్క్ పనులు", query: "రాష్ట్రమంతటా అన్ని అధిక రిస్క్ ప్రాజెక్టులు" },
+      { id: "lowest_utilization", icon: "📉", label: "తక్కువ వినియోగ జిల్లాలు", query: "ఏ జిల్లాలలో నిధి వినియోగం అత్యల్పంగా ఉంది?" },
+      { id: "pending_uc", icon: "📄", label: "రాష్ట్రంలో పెండింగ్ UCలు", query: "రాష్ట్రమంతటా ఎన్ని UCలు పెండింగ్‌లో ఉన్నాయి?" },
+      { id: "district_ranking", icon: "📊", label: "జిల్లాల ర్యాంకింగ్", query: "జిల్లాల పనితీరు ర్యాంకింగ్ చూపించు" },
+    ],
+  },
+  Ministry: {
+    EN: [
+      { id: "area_status", icon: "🇮🇳", label: "National Work Status & KPIs", query: "Show national work status and key performance indicators" },
+      { id: "area_risk", icon: "🚨", label: "Critical National Risk Alerts", query: "Show critical risk concentration and alerts nationwide" },
+      { id: "area_funds", icon: "📊", label: "State-wise Fund Utilization", query: "Show state-wise fund utilization rankings" },
+      { id: "delayed_works", icon: "⏳", label: "Top Delayed Works Nationwide", query: "Top states and works with highest delays" },
+      { id: "vigilance", icon: "🔍", label: "Vigilance & Cost Anomalies", query: "Show contractor cost inflation and duplication anomalies" },
+    ],
+    HI: [
+      { id: "area_status", icon: "🇮🇳", label: "राष्ट्रीय कार्य स्थिति व KPI", query: "राष्ट्रीय कार्य स्थिति और मुख्य प्रदर्शन संकेतक दिखाएं" },
+      { id: "area_risk", icon: "🚨", label: "राष्ट्रीय गंभीर अलर्ट", query: "देशभर में गंभीर जोखिम और अलर्ट दिखाएं" },
+      { id: "area_funds", icon: "📊", label: "राज्यवार निधि उपयोग", query: "राज्यवार निधि उपयोग रैंकिंग दिखाएं" },
+      { id: "delayed_works", icon: "⏳", label: "देश में शीर्ष विलंबित कार्य", query: "देश में सबसे अधिक विलंबित कार्य और राज्य" },
+      { id: "vigilance", icon: "🔍", label: "सतर्कता व लागत विसंगतियां", query: "लागत वृद्धि और दोहराव विसंगतियां दिखाएं" },
+    ],
+    MR: [
+      { id: "area_status", icon: "🇮🇳", label: "राष्ट्रीय कार्य स्थिती व KPI", query: "राष्ट्रीय कार्य स्थिती आणि मुख्य कामगिरी निर्देशक" },
+      { id: "area_risk", icon: "🚨", label: "राष्ट्रीय गंभीर सूचना", query: "देशभरात गंभीर जोखीम आणि सूचना दाखवा" },
+      { id: "area_funds", icon: "📊", label: "राज्यनिहाय निधी वापर", query: "राज्यनिहाय निधी वापर क्रमवारी दाखवा" },
+      { id: "delayed_works", icon: "⏳", label: "देशातील विलंबित कामे", query: "देशात सर्वाधिक विलंबित कामे आणि राज्ये" },
+      { id: "vigilance", icon: "🔍", label: "दक्षता व विसंगती", query: "खर्च वाढ आणि पुनरावृत्ती विसंगती दाखवा" },
+    ],
+    TA: [
+      { id: "area_status", icon: "🇮🇳", label: "தேசிய பணிகள் & KPI", query: "தேசிய பணிகள் நிலை மற்றும் முக்கிய செயல்திறன் குறிகாட்டிகள்" },
+      { id: "area_risk", icon: "🚨", label: "தேசிய முக்கிய எச்சரிக்கைகள்", query: "நாடு தழுவிய முக்கியமான ஆபத்து எச்சரிக்கைகள்" },
+      { id: "area_funds", icon: "📊", label: "மாநிலவாரியான நிதி பயன்பாடு", query: "மாநிலவாரியான நிதி பயன்பாட்டு தரவரிசை" },
+      { id: "delayed_works", icon: "⏳", label: "அதிக தாமதமான பணிகள்", query: "அதிக தாமதங்கள் கொண்ட மாநிலங்கள் மற்றும் பணிகள்" },
+      { id: "vigilance", icon: "🔍", label: "கண்காணிப்பு முறைகேடுகள்", query: "செலவு பெருக்கம் மற்றும் போலி பணிகள் விसंगதிகள்" },
+    ],
+    BN: [
+      { id: "area_status", icon: "🇮🇳", label: "জাতীয় কাজের অবস্থা ও KPI", query: "জাতীয় কাজের অবস্থা এবং মূল কর্মক্ষমতা সূচক" },
+      { id: "area_risk", icon: "🚨", label: "জাতীয় সঙ্কটজনক সতর্কতা", query: "দেশব্যাপী সঙ্কটজনক ঝুঁকি এবং সতর্কতা দেখান" },
+      { id: "area_funds", icon: "📊", label: "রাজ্যভিত্তিক তহবিল ব্যবহার", query: "রাজ্যভিত্তিক তহবিল ব্যবহারের র‍্যাঙ্কিং" },
+      { id: "delayed_works", icon: "⏳", label: "শীর্ষ বিলম্বিত কাজ", query: "সর্বাধিক বিলম্বিত কাজ ও রাজ্যসমূহ" },
+      { id: "vigilance", icon: "🔍", label: "তদারকি ও অসঙ্গতি", query: "খরচ স্ফীতি এবং কাজের অনিয়ম অসঙ্গতি" },
+    ],
+    KA: [
+      { id: "area_status", icon: "🇮🇳", label: "ರಾಷ್ಟ್ರೀಯ ಕಾಮಗಾರಿ & KPI", query: "ರಾಷ್ಟ್ರೀಯ ಕಾಮಗಾರಿ ಸ್ಥಿತಿ ಮತ್ತು ಪ್ರಮುಖ ಸಾಧನೆ ಸೂಚಕಗಳು" },
+      { id: "area_risk", icon: "🚨", label: "ರಾಷ್ಟ್ರೀಯ ಗಂಭೀರ ಎಚ್ಚರಿಕೆ", query: "ದೇಶಾದ್ಯಂತ ಗಂಭೀರ ಅಪಾಯ ಮತ್ತು ಎಚ್ಚರಿಕೆಗಳು" },
+      { id: "area_funds", icon: "📊", label: "ರಾಜ್ಯವಾರು ನಿಧಿ ಬಳಕೆ", query: "ರಾಜ್ಯವಾರು ನಿಧಿ ಬಳಕೆಯ ಶ್ರೇಯಾಂಕ" },
+      { id: "delayed_works", icon: "⏳", label: "ದೇಶದ ವಿಳಂಬಿತ ಕೆಲಸಗಳು", query: "ಅತಿ ಹೆಚ್ಚು ವಿಳಂಬಿತ ಕಾಮಗಾರಿಗಳು ಮತ್ತು ರಾಜ್ಯಗಳು" },
+      { id: "vigilance", icon: "🔍", label: "ಜಾಗರೂಕತೆ & ವಿಚಲನಗಳು", query: "ವೆಚ್ಚ ಏರಿಕೆ ಮತ್ತು ನಕಲಿ ಕಾಮಗಾರಿ ವಿಚಲನಗಳು" },
+    ],
+    TE: [
+      { id: "area_status", icon: "🇮🇳", label: "జాతీయ పనుల స్థితి & KPI", query: "జాతీయ పనుల స్థితి మరియు కీలక పనితీరు సూచికలు" },
+      { id: "area_risk", icon: "🚨", label: "జాతీయ క్రిటికల్ హెచ్చరికలు", query: "దేశవ్యాప్తంగా క్రిటికల్ రిస్క్ మరియు హెచ్చరికలు" },
+      { id: "area_funds", icon: "📊", label: "రాష్ట్రాలవారీ నిధి వినియోగం", query: "రాష్ట్రాలవారీ నిధి వినియోగ ర్యాంకింగ్స్" },
+      { id: "delayed_works", icon: "⏳", label: "దేశంలో జాప్యమైన పనులు", query: "అత్యధిక జాప్యాలు కలిగిన రాష్ట్రాలు మరియు పనులు" },
+      { id: "vigilance", icon: "🔍", label: "విజిలెన్స్ & వ్యయ అక్రమాలు", query: "కాంట్రాక్టర్ వ్యయ ద్రవ్యోల్బణం మరియు నకిలీ పనుల అక్రమాలు" },
+    ],
+  },
+};
 
-function generateResponse(query: string, lang: Lang): Omit<Message, "id" | "role" | "timestamp"> {
-  const q = query.toLowerCase();
-  const R = RESP[lang];
-  const B = BTN[lang];
-  const SL = STATE_LABELS[lang];
+export function getQuickActions(role: UserRole | undefined, lang: Lang): QuickAction[] {
+  const activeRole: UserRole = role && ROLE_QUICK_ACTIONS[role] ? role : "Citizen";
+  return ROLE_QUICK_ACTIONS[activeRole][lang] ?? ROLE_QUICK_ACTIONS[activeRole].EN;
+}
 
-  const hasAny = (...terms: string[]) => terms.some(t => q.includes(t));
+export function getSuggested(role: UserRole | undefined, lang: Lang): string[] {
+  const actions = getQuickActions(role, lang);
+  return actions.map((a) => a.query);
+}
 
-  if (hasAny("risk","critical","जोखिम","गंभीर","ஆபத்து","ঝুঁকি","ಅಪಾಯ","రిస్క్","జోఖీమ్","जोखीम")) {
-    const crit = PROJECTS.filter(p => p.riskLevel === "Critical" || p.riskLevel === "High").sort((a, b) => b.riskScore - a.riskScore);
-    return { text: R.risk(crit.length), cards: crit.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + (p.name.split(",")[0].length > 38 ? "…" : ""), value: `Risk Score: ${p.riskScore}/100`, sub: `${p.district}, ${p.state} · ${p.riskLevel}`, color: p.riskLevel === "Critical" ? "red" : "amber" as const })), actions: [{ label: B.viewRisk, type: "view", payload: "risk" }, { label: B.openRisk, type: "filter", payload: "risk" }] };
+// ── Role-Scoped Intelligent Response Generator ────────────────────────────────
+
+export function generateRoleWiseResponse(
+  query: string,
+  user: User | null | undefined,
+  lang: Lang,
+  isFallback: boolean = false
+): Omit<Message, "id" | "role" | "timestamp"> | null {
+  const q = query.toLowerCase().trim();
+  const B = BTN[lang] || BTN.EN;
+
+  const role: UserRole = user?.role || "Citizen";
+  const userName = user?.name || (role === "MP" ? "Hon'ble MP" : role === "Citizen" ? "Citizen" : "Officer");
+  const userDistrict = user?.district || "Lucknow";
+  const userState = user?.state || "Uttar Pradesh";
+  const userConstituency = user?.constituency || userDistrict;
+
+  // Determine user-scoped area and projects
+  let scopedProjects = PROJECTS;
+  let areaName = "";
+  let areaFilterPayload = "projects";
+
+  if (role === "Citizen") {
+    areaName = `${userDistrict}, ${userState}`;
+    areaFilterPayload = `projects?district=${encodeURIComponent(userDistrict)}`;
+    const filtered = PROJECTS.filter(
+      (p) =>
+        p.district?.toLowerCase() === userDistrict.toLowerCase() ||
+        p.state?.toLowerCase() === userState.toLowerCase()
+    );
+    if (filtered.length > 0) scopedProjects = filtered;
+  } else if (role === "MP") {
+    areaName = `${userConstituency} Constituency`;
+    areaFilterPayload = `projects?constituency=${encodeURIComponent(userConstituency)}`;
+    const filtered = PROJECTS.filter(
+      (p) =>
+        p.constituency?.toLowerCase() === userConstituency.toLowerCase() ||
+        p.district?.toLowerCase() === userConstituency.toLowerCase() ||
+        p.state?.toLowerCase() === userState.toLowerCase()
+    );
+    if (filtered.length > 0) scopedProjects = filtered;
+  } else if (role === "District") {
+    areaName = `${userDistrict} District`;
+    areaFilterPayload = `projects?district=${encodeURIComponent(userDistrict)}`;
+    const filtered = PROJECTS.filter(
+      (p) =>
+        p.district?.toLowerCase() === userDistrict.toLowerCase() ||
+        p.state?.toLowerCase() === userState.toLowerCase()
+    );
+    if (filtered.length > 0) scopedProjects = filtered;
+  } else if (role === "State") {
+    areaName = `${userState}`;
+    areaFilterPayload = `projects?state=${encodeURIComponent(userState)}`;
+    const filtered = PROJECTS.filter((p) => p.state?.toLowerCase() === userState.toLowerCase());
+    if (filtered.length > 0) scopedProjects = filtered;
+  } else {
+    areaName = "National (All-India)";
+    areaFilterPayload = "projects";
+    scopedProjects = PROJECTS;
   }
 
-  if (hasAny("delay","overdue","late","विलंब","தாமத","বিলম্ব","ವಿಳಂಬ","జాప్య","विलम")) {
-    const delayed = PROJECTS.filter(p => p.status === "Delayed");
-    const st = STATES_DATA.find(s => q.includes(s.state.toLowerCase()) || q.includes(s.state.toLowerCase().split(" ")[0]));
-    const filtered = st ? delayed.filter(p => p.state === st.state) : delayed;
-    const funds = filtered.reduce((s, p) => s + p.releasedAmount, 0).toFixed(1);
-    return { text: R.delay(filtered.length, st?.state, funds), cards: filtered.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + (p.name.split(",")[0].length > 38 ? "…" : ""), value: `${p.progress}% complete`, sub: `Expected: ${p.expectedCompletion} · ₹${p.sanctionedAmount}L`, color: "red" as const })), actions: [{ label: B.viewDelayed, type: "view", payload: "projects" }, { label: B.applyDelay, type: "filter", payload: "projects?status=Delayed" }] };
+  // Pre-calculate live metrics
+  const total = scopedProjects.length;
+  const completed = scopedProjects.filter((p) => p.status === "Completed");
+  const inProgress = scopedProjects.filter((p) => p.status === "In Progress");
+  const delayed = scopedProjects.filter((p) => p.status === "Delayed");
+  const critOrHigh = scopedProjects
+    .filter((p) => p.riskLevel === "Critical" || p.riskLevel === "High")
+    .sort((a, b) => b.riskScore - a.riskScore);
+  const totalSanctioned = scopedProjects.reduce((s, p) => s + p.sanctionedAmount, 0).toFixed(1);
+  const totalSpent = scopedProjects.reduce((s, p) => s + p.expenditure, 0).toFixed(1);
+  const pendingUC = completed.filter((p) => !p.ucSubmitted);
+  const inspectionPending = scopedProjects.filter((p) => (p.inspections || 0) < 2 || p.status === "Delayed");
+
+  // Helper for term matching
+  const hasAny = (...terms: string[]) => terms.some((t) => q.includes(t.toLowerCase()));
+
+  // 1. Area Work Status Intent
+  const isStatusQuery = hasAny(
+    "status", "work status", "works status", "my area", "area work", "constituency", "district work",
+    "statewide", "national work", "स्थिति", "प्रगति", "कार्य", "काम", "நிலை", "কাজ", "ಕಾಮಗಾರಿ", "పనుల"
+  );
+
+  if (isStatusQuery || (isFallback && hasAny("project", "work", "list"))) {
+    let text = "";
+    let cards: ResponseCard[] = [];
+    let actions: ActionButton[] = [];
+
+    if (role === "Citizen") {
+      text =
+        lang === "HI"
+          ? `📍 **${areaName} — विकास कार्य स्थिति**\n\n` +
+            `नमस्ते **${userName}** जी! आपके क्षेत्र के विकास कार्यों की वर्तमान प्रगति इस प्रकार है:\n\n` +
+            `• **कुल ट्रैक किए गए कार्य**: ${total} परियोजनाएं\n` +
+            `• **पूर्ण व जनहित में समर्पित**: ${completed.length} कार्य\n` +
+            `• **प्रगतिरत कार्य**: ${inProgress.length} कार्य\n` +
+            `• **विलंबित कार्य**: ${delayed.length} कार्य\n` +
+            `• **स्वीकृत वित्तीय बजट**: ₹${totalSanctioned} लाख (व्यय: ₹${totalSpent} लाख)\n\n` +
+            `क्षेत्र में मुख्य रूप से संपर्क मार्ग, पेयजल, विद्यालय विकास व सामुदायिक सुविधाएं संचालित हैं।`
+          : `📍 **${areaName} — Community Work Status**\n\n` +
+            `Namaste **${userName}**! Here is the progress report for public developmental works in your area:\n\n` +
+            `• **Total Works Tracked**: ${total} initiatives\n` +
+            `• **Completed & In Public Use**: ${completed.length} works\n` +
+            `• **Ongoing Construction**: ${inProgress.length} works\n` +
+            `• **Delayed Beyond Scheduled Deadline**: ${delayed.length} works\n` +
+            `• **Sanctioned Outlay**: ₹${totalSanctioned} Lakhs (₹${totalSpent}L utilized)\n\n` +
+            `Key local sectors include road connectivity, community water points, healthcare, and solar lighting.`;
+
+      // Up to 3 real local cards
+      const sample = [
+        ...completed.slice(0, 1),
+        ...inProgress.slice(0, 1),
+        ...delayed.slice(0, 1),
+      ].slice(0, 3);
+
+      cards = sample.map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + (p.name.split(",")[0].length > 36 ? "…" : ""),
+        value: `${p.status} · ${p.progress}%`,
+        sub: `₹${p.sanctionedAmount}L · ${p.district || userDistrict} · ${p.category}`,
+        color: p.status === "Completed" ? "green" : p.status === "Delayed" ? "red" : "blue",
+      }));
+
+      actions = [
+        { label: `View ${userDistrict} Projects`, type: "filter", payload: areaFilterPayload },
+        { label: "Report Local Issue", type: "view", payload: "grievance" },
+        { label: "Open GIS Map", type: "view", payload: "gis" },
+      ];
+    } else if (role === "MP") {
+      text =
+        lang === "HI"
+          ? `🏛️ **${areaName} — कार्य स्थिति व फंड समीक्षा**\n\n` +
+            `माननीय सांसद **${userName}** जी, आपके संसदीय क्षेत्र की कार्य समीक्षा:\n\n` +
+            `• **स्वीकृत परियोजनाएं**: ${total} कार्य (कुल ₹${totalSanctioned} लाख)\n` +
+            `• **पूर्ण कार्य**: ${completed.length} | **प्रगतिरत कार्य**: ${inProgress.length}\n` +
+            `• **समयसीमा पार विलंबित कार्य**: ${delayed.length} कार्य\n` +
+            `• **फंड उपयोग**: ₹${totalSpent} लाख व्यय (${Math.min(100, Math.round((Number(totalSpent) / (Number(totalSanctioned) || 1)) * 100))}%)\n` +
+            `• **लंबित उपयोगिता प्रमाणपत्र (UC)**: ${pendingUC.length} कार्य\n\n` +
+            `कार्यदायी संस्थाओं को विलंबित परियोजनाओं की त्वरित समीक्षा हेतु निर्देशित किया गया है।`
+          : `🏛️ **${areaName} — Parliamentary Constituency Status**\n\n` +
+            `Hon'ble MP **${userName}**, here is your parliamentary constituency execution summary:\n\n` +
+            `• **Sanctioned Works**: ${total} projects (Total Outlay: ₹${totalSanctioned} Lakhs)\n` +
+            `• **Completed & Handed Over**: ${completed.length} works\n` +
+            `• **In Progress / Execution**: ${inProgress.length} works\n` +
+            `• **Delayed Beyond Scheduled Target**: ${delayed.length} works\n` +
+            `• **Expenditure Incurred**: ₹${totalSpent}L (${Math.min(100, Math.round((Number(totalSpent) / (Number(totalSanctioned) || 1)) * 100))}% utilized)\n` +
+            `• **Pending UCs**: ${pendingUC.length} works awaiting compliance\n\n` +
+            `District executing agencies have been alerted for priority completion of delayed works.`;
+
+      cards = scopedProjects.slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `${p.progress}% complete · ₹${p.sanctionedAmount}L`,
+        sub: `${p.status} · Expected: ${p.expectedCompletion || "On schedule"}`,
+        color: p.status === "Delayed" ? "red" : p.status === "Completed" ? "green" : "blue",
+      }));
+
+      actions = [
+        { label: "View Constituency Projects", type: "filter", payload: areaFilterPayload },
+        { label: "High-Risk Center", type: "view", payload: "risk" },
+        { label: "Pending UCs Dossier", type: "view", payload: "compliance" },
+      ];
+    } else if (role === "District") {
+      text =
+        lang === "HI"
+          ? `📋 **${areaName} — प्रशासनिक समीक्षा**\n\n` +
+            `जिला मजिस्ट्रेट / कलेक्टर कार्यकारी सारांश:\n\n` +
+            `• **कुल स्वीकृत कार्य**: ${total} (लागत: ₹${totalSanctioned} लाख)\n` +
+            `• **पूर्ण**: ${completed.length} | **प्रगतिरत**: ${inProgress.length}\n` +
+            `• **विलंबित कार्य**: ${delayed.length} (ठेकेदार नोटिस आवश्यक)\n` +
+            `• **60+ दिन से लंबित क्षेत्र निरीक्षण**: ${inspectionPending.length} कार्य\n` +
+            `• **बकाया UC**: ${pendingUC.length} कार्य\n\n` +
+            `कृपया फील्ड इंजीनियरों को स्थल सत्यापन एवं जियो-टैग फोटो अपलोड का निर्देश दें।`
+          : `📋 **${areaName} — District Administration Overview**\n\n` +
+            `District Collector / Authority Executive Briefing:\n\n` +
+            `• **Total Sanctioned Works**: ${total} (Outlay: ₹${totalSanctioned} Lakhs)\n` +
+            `• **Completed Works**: ${completed.length} | **Ongoing Works**: ${inProgress.length}\n` +
+            `• **Delayed Works**: ${delayed.length} (Requires contractor review)\n` +
+            `• **Mandatory 60-Day Field Inspections Overdue**: ${inspectionPending.length} projects\n` +
+            `• **Overdue Utilization Certificates**: ${pendingUC.length} works\n\n` +
+            `Please issue directives for field inspection uploads and geo-tagged photographic verification.`;
+
+      cards = (delayed.length > 0 ? delayed : scopedProjects).slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `${p.status} · ${p.progress}%`,
+        sub: `Contractor: ${p.contractor || "N/A"} · Inspections: ${p.inspections ?? 0}`,
+        color: p.status === "Delayed" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: `Inspect ${userDistrict} Works`, type: "filter", payload: areaFilterPayload },
+        { label: "Field Verification Schedule", type: "view", payload: "compliance" },
+        { label: "Flagged Contractors", type: "view", payload: "risk" },
+      ];
+    } else if (role === "State") {
+      const stData = STATES_DATA.find((s) => s.state.toLowerCase() === userState.toLowerCase()) || STATES_DATA[0];
+      text =
+        lang === "HI"
+          ? `🗺️ **${userState} राज्य — नोडल समीक्षा रिपोर्ट**\n\n` +
+            `राज्य निदेशालय कार्यकारी सारांश:\n\n` +
+            `• **राज्य में कुल MPLADS कार्य**: ${stData.totalProjects.toLocaleString()} कार्य\n` +
+            `• **राज्यव्यापी पूर्ण कार्य**: ${stData.completedProjects.toLocaleString()} (${stData.utilization}% उपयोग)\n` +
+            `• **विलंबित कार्य**: ${stData.delayedProjects} कार्य\n` +
+            `• **कुल वित्तीय आबंटन**: ₹${(stData.totalFunds / 100).toFixed(0)} करोड़ (व्यय: ₹${(stData.utilizedFunds / 100).toFixed(0)} करोड़)\n` +
+            `• **उच्च जोखिम परियोजनाएं**: ${stData.riskProjects} कार्य\n\n` +
+            `जिलों में वित्तीय उपयोगिता एवं लंबित UC की प्रगति की नियमित निगरानी की जा रही है।`
+          : `🗺️ **${userState} State — Comprehensive Work Status**\n\n` +
+            `State Nodal Directorate Executive Briefing:\n\n` +
+            `• **Total State MPLADS Works**: ${stData.totalProjects.toLocaleString()} projects\n` +
+            `• **Statewide Completed**: ${stData.completedProjects.toLocaleString()} (${stData.utilization}% fund utilization)\n` +
+            `• **Delayed Works Across Districts**: ${stData.delayedProjects} projects\n` +
+            `• **State Financial Outlay**: ₹${(stData.totalFunds / 100).toFixed(0)}Cr sanctioned · ₹${(stData.utilizedFunds / 100).toFixed(0)}Cr utilized\n` +
+            `• **High-Risk Projects**: ${stData.riskProjects} works flagged\n\n` +
+            `Review inter-district utilization pace and monitor lagging district authorities.`;
+
+      cards = [
+        { label: "State Fund Utilization", value: `${stData.utilization}%`, sub: `₹${(stData.utilizedFunds / 100).toFixed(0)}Cr of ₹${(stData.totalFunds / 100).toFixed(0)}Cr`, color: "green" },
+        { label: "Delayed Projects", value: `${stData.delayedProjects} Works`, sub: "Overdue completion dates", color: "red" },
+        { label: "Risk Flagged Projects", value: `${stData.riskProjects} Works`, sub: "Requires nodal intervention", color: "amber" },
+      ];
+
+      actions = [
+        { label: `${userState} Projects`, type: "filter", payload: areaFilterPayload },
+        { label: "State Performance Rankings", type: "view", payload: "state-performance" },
+        { label: "Open GIS Map", type: "view", payload: "gis" },
+      ];
+    } else {
+      // Ministry
+      text =
+        `🇮🇳 **MoSPI Central Oversight — National Work Status**\n\n` +
+        `All-India MPLADS Executive Oversight Dashboard:\n\n` +
+        `• **Total Projects Tracked**: ${NATIONAL_KPIs.totalProjects.toLocaleString()} across 28 States & 8 UTs\n` +
+        `• **National Completion Rate**: ${NATIONAL_KPIs.completionRate}% (${NATIONAL_KPIs.completedProjects.toLocaleString()} completed)\n` +
+        `• **National Utilization Rate**: ${NATIONAL_KPIs.utilizationRate}% (₹${(NATIONAL_KPIs.utilized / 100).toFixed(0)}Cr of ₹${(NATIONAL_KPIs.released / 100).toFixed(0)}Cr)\n` +
+        `• **Nationwide Delayed Works**: ${NATIONAL_KPIs.delayed.toLocaleString()} projects\n` +
+        `• **Overdue UCs**: 12,480 certificates (₹1,240 Cr backlog)\n\n` +
+        `Central vigilance algorithms are actively tracking contractor anomalies and cost spikes.`;
+
+      cards = PROJECTS.filter((p) => p.sanctionedAmount >= 40).slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `₹${p.sanctionedAmount}L · ${p.progress}%`,
+        sub: `${p.district}, ${p.state} · ${p.status}`,
+        color: p.status === "Delayed" ? "red" : p.status === "Completed" ? "green" : "blue",
+      }));
+
+      actions = [
+        { label: "National Risk Center", type: "view", payload: "risk" },
+        { label: "State Performance Rankings", type: "view", payload: "state-performance" },
+        { label: "All National Alerts", type: "view", payload: "alerts" },
+      ];
+    }
+
+    return { text, cards, actions };
   }
 
-  if (hasAny("utilization","fund","lowest","निधि","निधी","நிதி","তহবিল","ನಿಧಿ","నిధి","उपयोग","वापर","ব্যবহার","ಬಳಕೆ","వినియోగ")) {
-    const sorted = [...STATES_DATA].sort((a, b) => a.utilization - b.utilization);
-    return { text: R.fund(NATIONAL_KPIs.utilizationRate, (NATIONAL_KPIs.utilized / 100).toFixed(0), (NATIONAL_KPIs.released / 100).toFixed(0)), cards: sorted.slice(0, 3).map(s => ({ label: s.state, value: `${s.utilization}% utilized`, sub: `₹${(s.utilizedFunds / 100).toFixed(0)}Cr of ₹${(s.totalFunds / 100).toFixed(0)}Cr · ${s.riskProjects} risk`, color: s.utilization < 70 ? "red" : "amber" as const })), actions: [{ label: B.viewReports, type: "view", payload: "reports" }, { label: B.gisMap, type: "view", payload: "gis" }] };
+  // 2. Area Risk & Alerts Intent
+  const isRiskQuery = hasAny(
+    "risk", "risks", "critical", "high-risk", "threat", "anomaly", "anomalies", "alert", "alerts",
+    "जोखिम", "अलर्ट", "खतरा", "आफत", "ஆபத்து", "எச்சரிக்கை", "ঝুঁকি", "সতর্কতা", "ಅಪಾಯ", "ಎಚ್ಚರಿಕೆ", "రిస్క్", "హెచ్చరిక"
+  );
+
+  if (isRiskQuery) {
+    let text = "";
+    let cards: ResponseCard[] = [];
+    let actions: ActionButton[] = [];
+
+    if (role === "Citizen") {
+      text =
+        lang === "HI"
+          ? `⚠️ **${areaName} — क्षेत्रीय प्रोजेक्ट जोखिम व सतर्कता रिपोर्ट**\n\n` +
+            `नमस्ते **${userName}** जी! आपके क्षेत्र में **${critOrHigh.length} परियोजनाओं** में सक्रिय जोखिम फ्लैग या देरी पाई गई है:\n\n` +
+            `• **कार्यान्वयन में देरी**: ${delayed.length} कार्य निर्धारित समयसीमा से पीछे चल रहे हैं\n` +
+            `• **भौतिक साक्ष्य सत्यापन**: स्थल फ़ोटो की कमी या विसंगतियां AI द्वारा चिन्हित हैं\n` +
+            `• **सामुदायिक प्रभाव**: सड़क, जल या प्रकाश सुविधाओं में अस्थायी रुकावट\n\n` +
+            `यदि आप जमीनी स्तर पर अधूरा या घटिया कार्य देखते हैं, तो आप सीधे आधिकारिक नागरिक शिकायत दर्ज कर सकते हैं।`
+          : `⚠️ **${areaName} — Area Project Risk & Vigilance Digest**\n\n` +
+            `Namaste **${userName}**! In your area, **${critOrHigh.length} projects** currently have active risk flags or execution delays:\n\n` +
+            `• **Execution Delays**: ${delayed.length} works running behind scheduled completion dates\n` +
+            `• **Physical Evidence Verification**: Missing geo-tagged site photos or unverified citizen reports\n` +
+            `• **Community Impact**: Temporary delay in planned community road or water amenities\n\n` +
+            `If you observe abandoned, substandard, or halted construction on the ground, you can lodge an official citizen grievance directly.`;
+
+      const riskSample = (critOrHigh.length > 0 ? critOrHigh : delayed).slice(0, 3);
+      cards = riskSample.map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `Risk Score: ${p.riskScore}/100 (${p.riskLevel})`,
+        sub: `${p.district || userDistrict} · ${p.riskFlags?.[0] || p.status}`,
+        color: p.riskLevel === "Critical" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: `View ${userDistrict} Risks`, type: "view", payload: "risk" },
+        { label: "Lodge a Grievance", type: "view", payload: "grievance" },
+        { label: "Upload Citizen Evidence", type: "view", payload: "evidence" },
+      ];
+    } else if (role === "MP") {
+      text =
+        lang === "HI"
+          ? `⚠️ **${areaName} — उच्च जोखिम परियोजनाएं व अलर्ट**\n\n` +
+            `माननीय सांसद **${userName}** जी, AI जोखिम इंजन ने आपके निर्वाचन क्षेत्र में **${critOrHigh.length} उच्च/गंभीर जोखिम परियोजनाओं** की पहचान की है:\n\n` +
+            `• **समयसीमा उल्लंघन**: ${delayed.length} कार्य 30+ दिनों से विलंबित हैं\n` +
+            `• **लागत वृद्धि**: स्वीकृत सीमा से अधिक व्यय वाले कार्य\n` +
+            `• **लंबित अनुपालन**: ${pendingUC.length} कार्य उपयोगिता प्रमाणपत्र (UC) के अभाव में\n\n` +
+            `अनुशंसित कार्रवाई: कार्यदायी संस्थाओं की समीक्षा हेतु जिला मजिस्ट्रेट को निर्देशित करें।`
+          : `⚠️ **${areaName} — High-Risk Projects & Alerts**\n\n` +
+            `Hon'ble MP **${userName}**, the AI risk engine identified **${critOrHigh.length} high/critical risk projects** in your constituency:\n\n` +
+            `• **Schedule Breaches**: ${delayed.length} works delayed beyond 30+ days\n` +
+            `• **Cost Overruns**: Budget estimates exceeding sanctioned outlay\n` +
+            `• **Pending Compliance**: ${pendingUC.length} works awaiting statutory Utilization Certificates\n\n` +
+            `Recommended Action: Issue directives to the District Authority for priority review meetings.`;
+
+      cards = (critOrHigh.length > 0 ? critOrHigh : scopedProjects).slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `Risk: ${p.riskScore}/100 · ${p.riskLevel}`,
+        sub: `${p.riskFlags?.[0] || "Schedule slippage"} · ₹${p.sanctionedAmount}L`,
+        color: p.riskLevel === "Critical" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: "Open Risk Center", type: "view", payload: "risk" },
+        { label: "View Active Alerts", type: "view", payload: "alerts" },
+        { label: "Check Compliance Gaps", type: "view", payload: "compliance" },
+      ];
+    } else if (role === "District") {
+      text =
+        lang === "HI"
+          ? `⚠️ **${areaName} — प्रशासनिक जोखिम व अनुपालन अलर्ट**\n\n` +
+            `जिला मजिस्ट्रेट / प्राधिकरण जोखिम सारांश:\n\n` +
+            `• **गंभीर / उच्च जोखिम कार्य**: ${critOrHigh.length} परियोजनाएं (तत्काल स्थल सत्यापन आवश्यक)\n` +
+            `• **ठेकेदार देरी**: ${delayed.length} कार्यों में माइलस्टोन विलंब\n` +
+            `• **फोटो विसंगतियां**: गायब EXIF डेटा या GPS स्थान विसंगति (>500m)\n` +
+            `• **निरीक्षण बकाया**: ${inspectionPending.length} कार्य 60+ दिनों से स्थल निरीक्षण के बिना\n\n` +
+            `अनिवार्य कार्रवाई: डिफ़ॉल्ट ठेकेदारों को कारण बताओ नोटिस जारी करें और फील्ड इंजीनियर तैनात करें।`
+          : `⚠️ **${areaName} — Administrative Risk & Compliance Flags**\n\n` +
+            `District Magistrate / Authority Risk Digest:\n\n` +
+            `• **Critical / High Risk Works**: ${critOrHigh.length} projects requiring immediate site verification\n` +
+            `• **Contractor Delays**: ${delayed.length} projects with milestone slippages\n` +
+            `• **Photo Discrepancies**: Missing EXIF data or GPS location mismatches (>500m)\n` +
+            `• **Statutory Inspection Overdue**: ${inspectionPending.length} projects without site visits in 60+ days\n\n` +
+            `Mandatory Action: Issue show-cause notices to defaulting contractors and depute field engineers.`;
+
+      cards = (critOrHigh.length > 0 ? critOrHigh : delayed).slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `Risk: ${p.riskScore}/100 · ${p.riskLevel}`,
+        sub: `Contractor: ${p.contractor || "N/A"} · ${p.status}`,
+        color: p.riskLevel === "Critical" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: "District Risk Dossiers", type: "view", payload: "risk" },
+        { label: "Field Verification Schedule", type: "view", payload: "compliance" },
+        { label: "Crosscheck Photo Evidence", type: "view", payload: "crosscheck" },
+      ];
+    } else if (role === "State") {
+      text =
+        `⚠️ **${userState} State — Statewide High-Risk Clusters & Alerts**\n\n` +
+        `State Department Vigilance Digest:\n\n` +
+        `• **Statewide Risk Projects**: ${critOrHigh.length} high/critical risk projects\n` +
+        `• **Delayed Works**: ${delayed.length} projects across districts\n` +
+        `• **Persistent Non-Compliance**: Backlog in UC submissions and contractor concentration\n\n` +
+        `Action: Issue compliance directives to lowest-performing district authorities.`;
+
+      cards = (critOrHigh.length > 0 ? critOrHigh : PROJECTS).slice(0, 3).map((p) => ({
+        label: p.name.split(",")[0].substring(0, 36) + "…",
+        value: `Risk: ${p.riskScore}/100 · ${p.district}`,
+        sub: `${p.riskFlags?.[0] || "Milestone delay"}`,
+        color: p.riskLevel === "Critical" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: "State Risk Center", type: "view", payload: "risk" },
+        { label: "State Compliance Hub", type: "view", payload: "compliance" },
+        { label: "View State Alerts", type: "view", payload: "alerts" },
+      ];
+    } else {
+      // Ministry
+      text =
+        `🚨 **National Central Vigilance & Critical Anomaly Digest**\n\n` +
+        `MoSPI Central Vigilance Overview:\n\n` +
+        `• **Critical Risk Projects**: ${PROJECTS.filter((p) => p.riskLevel === "Critical").length} nationwide\n` +
+        `• **High Risk Projects**: ${PROJECTS.filter((p) => p.riskLevel === "High").length} nationwide\n` +
+        `• **Contractor Irregularity Flags**: ${RISK_FLAGS.length} flagged vendors\n` +
+        `• **Active Central Alerts**: ${ALERTS.filter((a) => a.status === "Active").length} alerts (${ALERTS.filter((a) => a.severity === "Critical").length} Critical)\n\n` +
+        `Automated AI models are monitoring fund siphoning, duplicate invoicing, and delayed work clusters.`;
+
+      cards = RISK_FLAGS.slice(0, 3).map((r) => ({
+        label: r.projectName.substring(0, 38) + "…",
+        value: `Risk Score: ${r.riskScore}/100 · ${r.severity}`,
+        sub: r.type,
+        color: r.severity === "Critical" ? "red" : "amber",
+      }));
+
+      actions = [
+        { label: "Central Risk Center", type: "view", payload: "risk" },
+        { label: "Active Alerts", type: "view", payload: "alerts" },
+        { label: "Anomaly Investigation", type: "view", payload: "investigation" },
+      ];
+    }
+
+    return { text, cards, actions };
   }
 
-  if (hasAny("uc","certificate","pending","प्रमाणपत्र","சான்று","শংসাপত্র","ಪ್ರಮಾಣ","ధృవీ","प्रलंबित","बाकी","নিলুவை","بکایا")) {
-    const pendingUC = PROJECTS.filter(p => p.status === "Completed" && !p.ucSubmitted);
-    return { text: R.uc(pendingUC.length), cards: pendingUC.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + (p.name.split(",")[0].length > 38 ? "…" : ""), value: `Completed: ${p.completionDate || p.expectedCompletion}`, sub: `${p.district}, ${p.state} · ₹${p.sanctionedAmount}L`, color: "amber" as const })), actions: [{ label: B.viewCompliance, type: "view", payload: "compliance" }, { label: B.downloadUC, type: "report", payload: "uc" }] };
+  // 3. Fund Utilization Intent
+  const isFundQuery = hasAny(
+    "fund", "funds", "utilization", "unspent", "spent", "budget", "cost", "crore", "lakh", "निधि", "पैसा", "खर्च", "बजट", "நிதி", "তহবিল", "ನಿಧಿ", "వినియోగం"
+  );
+
+  if (isFundQuery) {
+    const utilPercent = totalSanctioned !== "0.0" ? Math.min(100, Math.round((Number(totalSpent) / Number(totalSanctioned)) * 100)) : 75;
+    const text =
+      `💰 **${areaName} — Fund Utilization & Budget Breakdown**\n\n` +
+      `Financial Execution Summary:\n\n` +
+      `• **Total Sanctioned Outlay**: ₹${totalSanctioned} Lakhs\n` +
+      `• **Actual Expenditure Incurred**: ₹${totalSpent} Lakhs\n` +
+      `• **Utilization Rate**: **${utilPercent}%**\n` +
+      `• **Estimated Unspent / Available Balance**: ₹${Math.max(0, Number(totalSanctioned) - Number(totalSpent)).toFixed(1)} Lakhs\n` +
+      `• **Works with UC Submitted**: ${completed.length - pendingUC.length} of ${completed.length} completed works\n\n` +
+      `Fund releases are tied directly to geo-tagged verification and statutory UC submission.`;
+
+    const cards: ResponseCard[] = [
+      { label: "Sanctioned Amount", value: `₹${totalSanctioned}L`, sub: `${total} Projects Sanctioned`, color: "blue" },
+      { label: "Actual Expenditure", value: `₹${totalSpent}L`, sub: `${utilPercent}% Fund Utilized`, color: utilPercent < 70 ? "amber" : "green" },
+      { label: "Pending UCs", value: `${pendingUC.length} Works`, sub: "Awaiting utilization certs", color: pendingUC.length > 0 ? "amber" : "green" },
+    ];
+
+    const actions: ActionButton[] = [
+      { label: "Financial Reports", type: "view", payload: "reports" },
+      { label: "Open GIS Map", type: "view", payload: "gis" },
+    ];
+
+    return { text, cards, actions };
   }
 
-  if (hasAny("overrun","excess","inflation","अतिरिक्त","மிகை","অতিরিক্ত","ಅಧಿಕ","అదనపు","महागाई","महंगा")) {
-    const overrun = PROJECTS.filter(p => p.expenditure > p.sanctionedAmount).sort((a, b) => (b.expenditure - b.sanctionedAmount) / b.sanctionedAmount - (a.expenditure - a.sanctionedAmount) / a.sanctionedAmount);
-    const avg = (overrun.reduce((s, p) => s + (p.expenditure - p.sanctionedAmount) / p.sanctionedAmount, 0) / (overrun.length || 1) * 100).toFixed(1);
-    return { text: R.overrun(overrun.length, avg), cards: overrun.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + (p.name.split(",")[0].length > 38 ? "…" : ""), value: `+${((p.expenditure - p.sanctionedAmount) / p.sanctionedAmount * 100).toFixed(1)}% overrun`, sub: `Sanctioned: ₹${p.sanctionedAmount}L · Spent: ₹${p.expenditure}L`, color: "red" as const })), actions: [{ label: B.viewRiskCenter, type: "view", payload: "risk" }, { label: B.filterOverrun, type: "filter", payload: "projects?risk=overrun" }] };
+  // 4. Completed Works Intent
+  const isCompletedQuery = hasAny("complet", "done", "finish", "closed", "पूर्ण", "समाप्त", "நிறைவு", "সম্পন্ন", "ಪೂರ್ಣ", "పూర్తి");
+
+  if (isCompletedQuery) {
+    const text =
+      `✅ **${areaName} — Completed Community Works**\n\n` +
+      `**${completed.length} developmental projects** have reached 100% completion in this area:\n\n` +
+      `• **Total Sanctioned Value**: ₹${completed.reduce((s, p) => s + p.sanctionedAmount, 0).toFixed(1)} Lakhs\n` +
+      `• **UC Submitted**: ${completed.filter((p) => p.ucSubmitted).length} works\n` +
+      `• **Awaiting UC Submission**: ${pendingUC.length} works\n\n` +
+      `Citizens can inspect completed works and provide ground quality ratings.`;
+
+    const cards: ResponseCard[] = completed.slice(0, 3).map((p) => ({
+      label: p.name.split(",")[0].substring(0, 38) + "…",
+      value: `Completed · ₹${p.sanctionedAmount}L`,
+      sub: `${p.district || userDistrict} · UC: ${p.ucSubmitted ? "Verified ✓" : "Pending ⚠"}`,
+      color: p.ucSubmitted ? "green" : "amber",
+    }));
+
+    const actions: ActionButton[] = [
+      { label: "View Completed Projects", type: "filter", payload: "projects?status=Completed" },
+      { label: role === "Citizen" ? "Give Feedback" : "UC Compliance Hub", type: "view", payload: role === "Citizen" ? "citizen-feedback" : "compliance" },
+    ];
+
+    return { text, cards, actions };
   }
 
-  if (hasAny("alert","warning","today","अलर्ट","सूचना","எச்சரிக்கை","সতর্কতা","ಎಚ್ಚರಿಕೆ","హెచ్చరిక","आज","இன்று","আজ","ಇಂದು","ఈరోజు")) {
-    const active = ALERTS.filter(a => a.status === "Active");
-    const crit = active.filter(a => a.severity === "Critical");
-    return { text: R.alerts(active.length, crit.length, active.filter(a => a.severity === "High").length), cards: active.slice(0, 3).map(a => ({ label: a.title.replace(/^(Critical|High|Medium|Low): /, "").substring(0, 42), value: a.severity, sub: a.actionRequired.substring(0, 60) + (a.actionRequired.length > 60 ? "…" : ""), color: a.severity === "Critical" ? "red" : a.severity === "High" ? "amber" : "blue" as const })), actions: [{ label: B.viewAlerts, type: "view", payload: "alerts" }, { label: B.critAlerts, type: "filter", payload: "alerts?severity=Critical" }] };
+  // 5. Grievance Intent
+  const isGrievanceQuery = hasAny("grievance", "complaint", "feedback", "issue", "शिकायत", "तक्रार", "புகார்", "অভিযোগ", "ದೂರು", "ఫిర్యాదు");
+
+  if (isGrievanceQuery) {
+    const text =
+      `📝 **NIDHI-SATHI Citizen Grievance Redressal Mechanism**\n\n` +
+      `Any citizen can raise a formal grievance regarding stalled, delayed, or substandard MPLADS works in **${areaName}**:\n\n` +
+      `1. **Select Work ID**: Choose the project from the list or map.\n` +
+      `2. **Attach Evidence**: Upload on-ground photos with GPS geo-location.\n` +
+      `3. **Automated Escalation**: The District Collector and Hon'ble MP are notified automatically.\n` +
+      `4. **Statutory Timeline**: Mandated resolution and response within 15 working days.`;
+
+    const cards: ResponseCard[] = [
+      { label: "Citizen Grievance Portal", value: "Active", sub: "100% Transparent Tracking", color: "green" },
+      { label: "Target Resolution Time", value: "15 Days", sub: "Escalated to District Collector", color: "blue" },
+    ];
+
+    const actions: ActionButton[] = [
+      { label: "Lodge New Grievance", type: "view", payload: "grievance" },
+      { label: "Track Existing Grievance", type: "view", payload: "track-grievance" },
+      { label: "Upload Photo Evidence", type: "view", payload: "evidence" },
+    ];
+
+    return { text, cards, actions };
   }
 
-  const matchedState = STATES_DATA.find(s => q.includes(s.state.toLowerCase()) || q.includes(s.state.toLowerCase().split(" ")[0]));
-  if (matchedState) {
-    return { text: R.state(matchedState.state, matchedState.totalProjects, matchedState.completedProjects, matchedState.delayedProjects, matchedState.utilization), cards: [{ label: SL[0], value: `${matchedState.utilization}%`, sub: `₹${(matchedState.utilizedFunds / 100).toFixed(0)}Cr utilized`, color: matchedState.utilization < 70 ? "red" : "green" as const }, { label: SL[1], value: String(matchedState.riskProjects), sub: `${((matchedState.riskProjects / matchedState.totalProjects) * 100).toFixed(1)}% of total`, color: "amber" as const }, { label: SL[2], value: String(matchedState.delayedProjects), sub: "Beyond expected date", color: "red" as const }], actions: [{ label: STATE_VIEW_BTN[lang](matchedState.state), type: "filter", payload: `projects?state=${matchedState.state}` }, { label: B.gisMap, type: "view", payload: "gis" }] };
+  // 6. Inspections / UC Compliance Intent
+  const isInspectionQuery = hasAny("inspection", "inspections", "uc", "certificate", "compliance", "निरीक्षण", "प्रमाणपत्र", "जांच", "தணிக்கை");
+
+  if (isInspectionQuery) {
+    const text =
+      `🔍 **${areaName} — Inspection & UC Compliance Dossier**\n\n` +
+      `Statutory compliance requirements:\n\n` +
+      `• **Projects Pending Physical Inspection**: ${inspectionPending.length} works\n` +
+      `• **Mandatory 60-Day Inspection Rule**: District authorities must physically verify progress and upload EXIF-tagged photos.\n` +
+      `• **Overdue Utilization Certificates (UC)**: ${pendingUC.length} completed works have pending certificates\n\n` +
+      `Funds for subsequent installments are released only after UC submission and geo-tagged verification.`;
+
+    const cards: ResponseCard[] = [
+      { label: "Pending Site Inspections", value: `${inspectionPending.length} Works`, sub: "Exceeds 60 days interval", color: "red" },
+      { label: "Pending UCs", value: `${pendingUC.length} Works`, sub: "Required for next installment", color: "amber" },
+    ];
+
+    const actions: ActionButton[] = [
+      { label: "Field Verification Hub", type: "view", payload: "compliance" },
+      { label: "Audit Reports", type: "view", payload: "reports" },
+    ];
+
+    return { text, cards, actions };
   }
 
-  if (hasAny("contractor","duplicate","anomal","irregular","ठेकेदार","कंत्राटदार","ஒப்பந்த","ঠিকাদার","ಗುತ್ತಿಗೆ","కాంట్రాక్టర్","महागाई")) {
-    return { text: R.contractor(RISK_FLAGS.length), cards: RISK_FLAGS.slice(0, 3).map(r => ({ label: r.projectName.substring(0, 40) + (r.projectName.length > 40 ? "…" : ""), value: `Score: ${r.riskScore}/100 · ${r.severity}`, sub: r.type, color: r.severity === "Critical" ? "red" : r.severity === "High" ? "amber" : "violet" as const })), actions: [{ label: B.openInvestigation, type: "view", payload: "investigation" }, { label: B.riskCenter, type: "view", payload: "risk" }] };
+  // Fallback help
+  if (isFallback) {
+    const R = RESP[lang] || RESP.EN;
+    return {
+      text: R.help(),
+      cards: [],
+      actions: [
+        { label: B.viewDashboard, type: "view", payload: "dashboard" },
+        { label: B.aiRisk, type: "view", payload: "risk" },
+      ],
+    };
   }
 
-  if (hasAny("high-value","large","crore","biggest","सर्वाधिक","கோடி","সর্বোচ্চ","ಅತ್ಯಧಿಕ","అత్యధిక")) {
-    const big = [...PROJECTS].sort((a, b) => b.sanctionedAmount - a.sanctionedAmount);
-    return { text: R.bigvalue(), cards: big.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + "…", value: `₹${p.sanctionedAmount}L sanctioned`, sub: `${p.status} · ${p.progress}% complete · ${p.district}`, color: p.status === "Delayed" ? "red" : p.status === "Completed" ? "green" : "blue" as const })), actions: [{ label: B.sortAmount, type: "filter", payload: "projects?sort=amount" }, { label: B.financialReports, type: "view", payload: "reports" }] };
-  }
-
-  if (hasAny("complet","done","finish","पूर्ण","நிறைவு","সম্পন্ন","ಪೂರ್ಣ","పూర్తి","complete")) {
-    const comp = PROJECTS.filter(p => p.status === "Completed");
-    return { text: R.completed(comp.length, NATIONAL_KPIs.completionRate, NATIONAL_KPIs.totalProjects.toLocaleString(), NATIONAL_KPIs.completedProjects.toLocaleString()), cards: comp.slice(0, 3).map(p => ({ label: p.name.split(",")[0].substring(0, 38) + (p.name.length > 38 ? "…" : ""), value: `₹${p.sanctionedAmount}L`, sub: `${p.district}, ${p.state} · UC: ${p.ucSubmitted ? "✓" : "⚠ Pending"}`, color: p.ucSubmitted ? "green" : "amber" as const })), actions: [{ label: B.viewCompleted, type: "filter", payload: "projects?status=Completed" }, { label: B.ucCompliance, type: "view", payload: "compliance" }] };
-  }
-
-  return { text: R.help(), cards: [], actions: [{ label: B.viewDashboard, type: "view", payload: "dashboard" }, { label: B.aiRisk, type: "view", payload: "risk" }] };
+  return null;
 }
 
 // ── Card colors ───────────────────────────────────────────────────────────────
@@ -450,6 +1120,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
   const ui = UI[lang];
   const suggested = getSuggested(accountUser?.role, lang);
+  const quickActions = getQuickActions(accountUser?.role, lang);
 
   // Cache storage key for conversation persistence per user
   const chatCacheKey = `nidhi_sathi_chat_v2_${accountUser?.mpId || userName.replace(/\s+/g, "_")}`;
@@ -531,6 +1202,27 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
     setLoading(true);
     setShowSuggested(false);
 
+    // 1. Instant high-fidelity role-wise response (with colored metric cards & actionable buttons)
+    const instant = generateRoleWiseResponse(trimmed, accountUser, lang, false);
+    if (instant) {
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            role: "ai",
+            text: instant.text,
+            cards: instant.cards,
+            actions: instant.actions,
+            timestamp: new Date(),
+          },
+        ]);
+        setLoading(false);
+      }, 200);
+      return;
+    }
+
+    // 2. Fallback to /api/chat for free-form queries
     try {
       const currentPath = typeof window !== "undefined" ? window.location.pathname : "/dashboard";
       const currentUser = user || authUser || accountUser;
@@ -576,31 +1268,36 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
         ]);
       } else {
         console.error("[AICopilot Error]", data);
-        const errorText = "Sorry, NIDHI-SATHI AI is temporarily unavailable. Please try again.";
+        const fallback = generateRoleWiseResponse(trimmed, accountUser, lang, true);
         setMessages((prev) => [
           ...prev,
           {
             id: (Date.now() + 1).toString(),
             role: "ai",
-            text: errorText,
+            text: fallback?.text || "I am your NIDHI-SATHI AI Copilot. Please ask about area works, risks, or funds.",
+            cards: fallback?.cards,
+            actions: fallback?.actions,
             timestamp: new Date(),
           },
         ]);
       }
     } catch (err) {
+      const fallback = generateRoleWiseResponse(trimmed, accountUser, lang, true);
       setMessages(prev => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "ai",
-          text: "Sorry, I couldn't connect to the chatbot right now. Please try again.",
+          text: fallback?.text || "Sorry, I couldn't connect to the network right now. Please try again.",
+          cards: fallback?.cards,
+          actions: fallback?.actions,
           timestamp: new Date(),
         },
       ]);
     } finally {
       setLoading(false);
     }
-  }, [loading, user, authUser, userName, userRole, accountUser, messages]);
+  }, [loading, user, authUser, userName, userRole, accountUser, messages, lang]);
 
 
   const handleVoice = () => { setListening(true); setTimeout(() => { setListening(false); sendMessage(ui.voiceQuery); }, 2200); };
@@ -719,9 +1416,9 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-3 space-y-3 sm:space-y-4 bg-slate-50/60">
             {messages.length <= 1 && (
-              <div className="text-center py-3 sm:py-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl mx-auto mb-2 sm:mb-3 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
-                  <svg viewBox="0 0 24 24" fill="#F59E0B" className="w-6 h-6 sm:w-7 sm:h-7"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
+              <div className="text-center py-2 sm:py-3">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl mx-auto mb-2 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
+                  <svg viewBox="0 0 24 24" fill="#F59E0B" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
                 </div>
                 <p className="text-slate-700 text-xs font-semibold font-display">
                   {getLocalizedGreeting(lang, userName)}
@@ -729,6 +1426,33 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
                 <p className="text-slate-500 text-[11px] mt-0.5 leading-relaxed max-w-[280px] mx-auto">
                   {userRole} Account ({userLocation}) · Ask me anything about projects, funds, risks, or compliance.
                 </p>
+
+                {/* Role-Specific Quick Actions Grid */}
+                <div className="mt-3 text-left bg-white/80 border border-slate-200/90 rounded-2xl p-2.5 shadow-2xs">
+                  <div className="flex items-center justify-between mb-2 px-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <span>⚡ Quick Actions</span>
+                      <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[9px]">{userRole}</span>
+                    </span>
+                    <span className="text-[9.5px] text-blue-600 font-medium">1-click insight</span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {quickActions.map(action => (
+                      <button
+                        key={action.id}
+                        onClick={() => sendMessage(action.query)}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-slate-50/80 border border-slate-200/70 hover:border-blue-400 hover:bg-blue-50/70 hover:shadow-xs transition-all text-left group"
+                      >
+                        <span className="text-base shrink-0 group-hover:scale-110 transition-transform">{action.icon}</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs font-semibold text-slate-700 group-hover:text-blue-700 truncate">{action.label}</div>
+                          <div className="text-[10px] text-slate-400 truncate group-hover:text-blue-500/80">{action.query}</div>
+                        </div>
+                        <span className="text-slate-400 group-hover:text-blue-600 text-xs font-semibold shrink-0">→</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
             {messages.map(msg => (
@@ -781,19 +1505,6 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
             )}
           </div>
 
-          {/* Suggested */}
-          {showSuggested && messages.length === 0 && (
-            <div className="px-3 pb-2 shrink-0 max-w-full overflow-x-auto">
-              <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide mb-1.5 px-1">{ui.suggestedLabel}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {suggested.slice(0, 6).map(q => (
-                  <button key={q} onClick={() => sendMessage(q)} className="px-2.5 py-1 bg-white border border-slate-200 rounded-full text-xs text-slate-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all text-left break-words max-w-full inline-block">
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Listening */}
           {listening && (
@@ -807,6 +1518,22 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
               </button>
             </div>
           )}
+
+          {/* Persistent Quick Actions Bar */}
+          <div className="px-2.5 py-1.5 bg-slate-100/90 border-t border-slate-200/70 flex items-center gap-1.5 overflow-x-auto shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider shrink-0 pl-1">⚡ Quick:</span>
+            {quickActions.map(action => (
+              <button
+                key={action.id}
+                onClick={() => sendMessage(action.query)}
+                disabled={loading}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/90 text-slate-700 hover:text-blue-700 hover:border-blue-400 hover:bg-blue-50 text-[11px] font-medium shrink-0 whitespace-nowrap shadow-2xs transition-all active:scale-95 disabled:opacity-50"
+              >
+                <span className="text-xs">{action.icon}</span>
+                <span>{action.label}</span>
+              </button>
+            ))}
+          </div>
 
           {/* Input */}
           <div className="px-3 pt-2 pb-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] border-t border-slate-100 bg-white shrink-0">
