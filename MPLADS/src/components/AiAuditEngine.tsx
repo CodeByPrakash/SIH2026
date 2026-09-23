@@ -96,8 +96,15 @@ import {
   IconListCheck,
   IconFilter,
   IconZoomIn,
+  IconZoomOut,
+  IconZoomReset,
+  IconMaximize,
+  IconMinimize,
+  IconExternalLink,
+  IconChevronLeft,
   IconFolderOpen,
 } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 import type { Project, User } from "../types";
 import { PROJECTS, STATES_DATA } from "../data/mpladsData";
 import { useProjects } from "@/hooks/useProjects";
@@ -435,8 +442,61 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const [selectedPlot, setSelectedPlot] = useState<string | null>(null);
+  const [plotZoom, setPlotZoom] = useState<number>(1);
+  const [isPlotFullscreen, setIsPlotFullscreen] = useState<boolean>(false);
   const [showIntelModal, setShowIntelModal] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const activePlotIndex = useMemo(() => {
+    if (!selectedPlot) return -1;
+    const fileName = selectedPlot.replace(/^\/model-plots\//, "");
+    return MODEL_PLOTS.findIndex((p) => p.file === fileName);
+  }, [selectedPlot]);
+
+  const activePlot = activePlotIndex >= 0 ? MODEL_PLOTS[activePlotIndex] : null;
+
+  const handlePrevPlot = useCallback(() => {
+    if (activePlotIndex >= 0) {
+      const prev = MODEL_PLOTS[(activePlotIndex - 1 + MODEL_PLOTS.length) % MODEL_PLOTS.length];
+      setSelectedPlot(`/model-plots/${prev.file}`);
+      setPlotZoom(1);
+    }
+  }, [activePlotIndex]);
+
+  const handleNextPlot = useCallback(() => {
+    if (activePlotIndex >= 0) {
+      const next = MODEL_PLOTS[(activePlotIndex + 1) % MODEL_PLOTS.length];
+      setSelectedPlot(`/model-plots/${next.file}`);
+      setPlotZoom(1);
+    }
+  }, [activePlotIndex]);
+
+  // Keyboard navigation & zoom shortcuts when inspecting figures
+  useEffect(() => {
+    if (!selectedPlot) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrevPlot();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNextPlot();
+      } else if (e.key === "+" || e.key === "=") {
+        e.preventDefault();
+        setPlotZoom((z) => Math.min(2.5, +(z + 0.25).toFixed(2)));
+      } else if (e.key === "-") {
+        e.preventDefault();
+        setPlotZoom((z) => Math.max(0.75, +(z - 0.25).toFixed(2)));
+      } else if (e.key === "0") {
+        e.preventDefault();
+        setPlotZoom(1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedPlot, handlePrevPlot, handleNextPlot]);
 
   // Check health on mount
   useEffect(() => {
@@ -2119,7 +2179,11 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
                 {MODEL_PLOTS.map((p) => (
                   <div
                     key={p.file}
-                    onClick={() => setSelectedPlot(`/model-plots/${p.file}`)}
+                    onClick={() => {
+                      setSelectedPlot(`/model-plots/${p.file}`);
+                      setPlotZoom(1);
+                      setIsPlotFullscreen(false);
+                    }}
                     className="group relative cursor-pointer overflow-hidden rounded-xl border bg-muted/20 hover:border-primary/50 transition-all p-2 flex flex-col justify-between hover:shadow-md"
                   >
                     <div className="aspect-video w-full overflow-hidden rounded-lg bg-black/5 relative">
@@ -2146,22 +2210,268 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
       </Sheet>
 
       {/* ── High-Res Plot Modal ────────────────────────────────────────────── */}
-      <Dialog open={!!selectedPlot} onOpenChange={(open) => !open && setSelectedPlot(null)}>
-        <DialogContent className="max-w-4xl p-2 bg-card">
+      <Dialog
+        open={!!selectedPlot}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedPlot(null);
+            setPlotZoom(1);
+            setIsPlotFullscreen(false);
+          }
+        }}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className={cn(
+            "flex flex-col p-0 gap-0 overflow-hidden shadow-2xl border bg-card transition-all duration-200",
+            isPlotFullscreen
+              ? "fixed inset-0 top-0 left-0 translate-x-0 translate-y-0 w-screen h-screen sm:max-w-none max-w-none rounded-none m-0 border-0 z-50"
+              : "w-[96vw] sm:w-[94vw] max-w-6xl sm:max-w-6xl h-[90vh] max-h-[92vh] rounded-2xl"
+          )}
+        >
+          <DialogTitle className="sr-only">
+            {activePlot?.title || "Model Evaluation Plot Inspector"}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Interactive high-resolution inspection of {activePlot?.title || "model evaluation plot"}
+          </DialogDescription>
+
           {selectedPlot && (
-            <div className="p-2 space-y-2">
-              <img
-                src={selectedPlot}
-                alt="Model Evaluation Figure"
-                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
-              />
-              <div className="flex justify-between items-center px-2">
-                <span className="text-xs font-mono text-muted-foreground">{selectedPlot}</span>
-                <Button size="sm" variant="outline" onClick={() => setSelectedPlot(null)}>
-                  Close
-                </Button>
+            <>
+              {/* Header Bar */}
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b bg-card shrink-0 gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center justify-center size-9 rounded-lg bg-primary/10 text-primary shrink-0">
+                    <IconPhoto className="size-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-sm sm:text-base text-foreground truncate">
+                        {activePlot?.title || "Model Evaluation Figure"}
+                      </h3>
+                      {activePlotIndex >= 0 && (
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-[10px] bg-primary/5 text-primary border-primary/20 shrink-0"
+                        >
+                          Figure {activePlotIndex + 1} of {MODEL_PLOTS.length}
+                        </Badge>
+                      )}
+                    </div>
+                    {activePlot?.desc && (
+                      <p className="text-xs text-muted-foreground truncate hidden sm:block">
+                        {activePlot.desc}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Header Toolbar */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {/* Previous / Next buttons */}
+                  <div className="flex items-center bg-muted/40 rounded-lg p-0.5 border">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-7"
+                      onClick={handlePrevPlot}
+                      title="Previous Figure (←)"
+                    >
+                      <IconChevronLeft className="size-4" />
+                    </Button>
+                    <span className="text-[11px] font-mono px-2 text-muted-foreground select-none">
+                      {activePlotIndex + 1}/{MODEL_PLOTS.length}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-7"
+                      onClick={handleNextPlot}
+                      title="Next Figure (→)"
+                    >
+                      <IconChevronRight className="size-4" />
+                    </Button>
+                  </div>
+
+                  {/* Zoom Controls */}
+                  <div className="hidden sm:flex items-center bg-muted/40 rounded-lg p-0.5 border">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-7"
+                      onClick={() => setPlotZoom((z) => Math.max(0.75, +(z - 0.25).toFixed(2)))}
+                      title="Zoom Out (-)"
+                      disabled={plotZoom <= 0.75}
+                    >
+                      <IconZoomOut className="size-4" />
+                    </Button>
+                    <button
+                      onClick={() => setPlotZoom((z) => (z === 1 ? 1.5 : z === 1.5 ? 2 : 1))}
+                      className="px-2 py-0.5 text-xs font-mono font-semibold hover:bg-muted rounded transition-colors text-foreground select-none"
+                      title="Click to cycle zoom (100% / 150% / 200%)"
+                    >
+                      {Math.round(plotZoom * 100)}%
+                    </button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-7"
+                      onClick={() => setPlotZoom((z) => Math.min(2.5, +(z + 0.25).toFixed(2)))}
+                      title="Zoom In (+)"
+                      disabled={plotZoom >= 2.5}
+                    >
+                      <IconZoomIn className="size-4" />
+                    </Button>
+                    {plotZoom !== 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 text-primary hover:text-primary"
+                        onClick={() => setPlotZoom(1)}
+                        title="Reset Zoom (0)"
+                      >
+                        <IconZoomReset className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Fullscreen Toggle */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="size-8"
+                    onClick={() => setIsPlotFullscreen((f) => !f)}
+                    title={isPlotFullscreen ? "Exit Fullscreen" : "Fullscreen View"}
+                  >
+                    {isPlotFullscreen ? <IconMinimize className="size-4" /> : <IconMaximize className="size-4" />}
+                  </Button>
+
+                  {/* Open Raw in New Tab */}
+                  <a
+                    href={selectedPlot}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                    title="Open Full Image in New Tab"
+                  >
+                    <IconExternalLink className="size-4" />
+                  </a>
+
+                  {/* Download Image */}
+                  <a
+                    href={selectedPlot}
+                    download={activePlot?.file || "model-plot.png"}
+                    className="inline-flex size-8 items-center justify-center rounded-lg border border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                    title="Download Figure PNG"
+                  >
+                    <IconDownload className="size-4" />
+                  </a>
+
+                  {/* Close Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-8 ml-1 text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      setSelectedPlot(null);
+                      setPlotZoom(1);
+                      setIsPlotFullscreen(false);
+                    }}
+                    title="Close (Esc)"
+                  >
+                    <IconX className="size-4" />
+                  </Button>
+                </div>
               </div>
-            </div>
+
+              {/* Main Image Display Area */}
+              <div className="relative flex-1 min-h-0 bg-slate-950/95 dark:bg-black overflow-auto flex items-center justify-center p-4 sm:p-6 select-none">
+                {/* Floating Left Arrow */}
+                <button
+                  onClick={handlePrevPlot}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 size-11 rounded-full bg-black/60 hover:bg-black/90 text-white/90 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all shadow-2xl hover:scale-105 active:scale-95 group"
+                  title="Previous Figure (←)"
+                >
+                  <IconChevronLeft className="size-6 transition-transform group-hover:-translate-x-0.5" />
+                </button>
+
+                {/* Floating Right Arrow */}
+                <button
+                  onClick={handleNextPlot}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 size-11 rounded-full bg-black/60 hover:bg-black/90 text-white/90 hover:text-white border border-white/20 backdrop-blur-md flex items-center justify-center transition-all shadow-2xl hover:scale-105 active:scale-95 group"
+                  title="Next Figure (→)"
+                >
+                  <IconChevronRight className="size-6 transition-transform group-hover:translate-x-0.5" />
+                </button>
+
+                {/* Image Canvas */}
+                <div
+                  className="transition-transform duration-150 ease-out flex items-center justify-center w-full h-full"
+                  style={{
+                    transform: `scale(${plotZoom})`,
+                    transformOrigin: "center center",
+                  }}
+                >
+                  <img
+                    src={selectedPlot}
+                    alt={activePlot?.title || "Model Evaluation Figure"}
+                    className={cn(
+                      "w-auto max-w-full object-contain rounded-lg shadow-2xl bg-white transition-all",
+                      isPlotFullscreen ? "max-h-[84vh]" : "max-h-[70vh] sm:max-h-[74vh]"
+                    )}
+                    style={{
+                      imageRendering: "-webkit-optimize-contrast",
+                    }}
+                    draggable={false}
+                  />
+                </div>
+              </div>
+
+              {/* Footer Info & Actions */}
+              <div className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-6 py-2.5 border-t bg-muted/20 shrink-0 gap-2">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono truncate w-full sm:w-auto">
+                  <span className="truncate">{selectedPlot}</span>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[11px] text-muted-foreground hidden lg:inline">
+                    Use <kbd className="px-1.5 py-0.5 bg-muted border rounded text-[10px] font-mono">←</kbd> / <kbd className="px-1.5 py-0.5 bg-muted border rounded text-[10px] font-mono">→</kbd> to cycle • <kbd className="px-1.5 py-0.5 bg-muted border rounded text-[10px] font-mono">+</kbd> / <kbd className="px-1.5 py-0.5 bg-muted border rounded text-[10px] font-mono">-</kbd> to zoom • <kbd className="px-1.5 py-0.5 bg-muted border rounded text-[10px] font-mono">Esc</kbd> to close
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs gap-1"
+                      onClick={handlePrevPlot}
+                    >
+                      <IconChevronLeft className="size-3.5" />
+                      Prev
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs gap-1"
+                      onClick={handleNextPlot}
+                    >
+                      Next
+                      <IconChevronRight className="size-3.5" />
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="h-8 text-xs ml-1"
+                      onClick={() => {
+                        setSelectedPlot(null);
+                        setPlotZoom(1);
+                        setIsPlotFullscreen(false);
+                      }}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </DialogContent>
       </Dialog>
