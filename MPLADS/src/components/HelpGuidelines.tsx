@@ -116,11 +116,10 @@ export default function HelpGuidelines({ onNavigate }: HelpGuidelinesProps) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                isActive
+              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${isActive
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "bg-card border border-border/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
+                }`}
             >
               <Icon className="size-4" />
               {tab.label}

@@ -416,11 +416,10 @@ export function InfographicsHighlights({ language }: InfographicsHighlightsProps
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition ${
-                    activeCategory === cat.id
+                  className={`px-3 py-1 text-xs font-semibold rounded-md transition ${activeCategory === cat.id
                       ? "bg-[#0B2545] text-white shadow-2xs"
                       : "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50"
-                  }`}
+                    }`}
                 >
                   {cat.label}
                 </button>
@@ -478,9 +477,8 @@ export function InfographicsHighlights({ language }: InfographicsHighlightsProps
                   return (
                     <tr
                       key={row.id}
-                      className={`hover:bg-slate-50/80 transition ${
-                        idx % 2 === 0 ? "bg-white" : "bg-slate-50/40"
-                      }`}
+                      className={`hover:bg-slate-50/80 transition ${idx % 2 === 0 ? "bg-white" : "bg-slate-50/40"
+                        }`}
                     >
                       {/* Aspect Name Column */}
                       <td className="p-4 align-top border-r border-slate-200">
