@@ -59,6 +59,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   IconBrain,
   IconSend,
   IconUpload,
@@ -428,6 +435,7 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const [selectedPlot, setSelectedPlot] = useState<string | null>(null);
+  const [showIntelModal, setShowIntelModal] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Check health on mount
@@ -731,12 +739,28 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
           </div>
         </div>
 
-        {/* Backend Connectivity Status */}
+        {/* Backend Connectivity Status & Highlighted Intel Action */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          {/* Highlighted Model Intel & CAG Specs Button */}
+          <Button
+            onClick={() => setShowIntelModal(true)}
+            className="relative group bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs px-3.5 py-1.5 h-auto rounded-full shadow-md hover:shadow-indigo-500/25 border border-indigo-400/40 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+            </span>
+            <IconSparkles className="size-3.5 text-amber-300 animate-pulse" />
+            <span>Model Intel & CAG Specs</span>
+            <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 text-[10px] px-1.5 py-0 font-mono">
+              16 Figures
+            </Badge>
+          </Button>
+
           <button
             onClick={refreshHealth}
             title="Click to re-check backend connection"
-            className="flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border border-border bg-card hover:bg-muted transition-colors shadow-xs"
+            className="flex items-center gap-2 text-xs px-3.5 py-1.5 rounded-full border border-border bg-card hover:bg-muted transition-colors shadow-xs cursor-pointer"
           >
             <span
               className={`size-2.5 rounded-full ${
@@ -763,6 +787,32 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
         </div>
       </div>
 
+      {/* ── Highlighted Model Intel & CAG Specs Top Banner ─────────────────── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 sm:px-4 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-blue-500/10 border border-indigo-500/30 shadow-xs backdrop-blur-xs">
+        <div className="flex flex-wrap items-center gap-2.5 text-xs">
+          <Badge className="bg-indigo-600 hover:bg-indigo-700 text-white border-0 text-[11px] font-bold px-2.5 py-0.5 flex items-center gap-1.5 shadow-xs">
+            <IconSparkles className="size-3.5 text-amber-300" />
+            MoSPI & CAG Spec Compliant
+          </Badge>
+          <span className="text-muted-foreground/60 hidden sm:inline">•</span>
+          <span className="font-semibold text-foreground">
+            Tri-Model Ensemble Architecture:
+          </span>
+          <span className="text-muted-foreground">
+            XGBoost Binary Classifier (99.98% ROC-AUC) • Softprob Corruption Archetypes • Isolation Forest Zero-Day Outlier
+          </span>
+        </div>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => setShowIntelModal(true)}
+          className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 hover:bg-indigo-500/10 flex items-center gap-1.5 shrink-0 self-end sm:self-auto cursor-pointer p-1 h-auto"
+        >
+          <span>View Architecture & 16 Training Plots</span>
+          <IconChevronRight className="size-3.5" />
+        </Button>
+      </div>
+
       {/* Error alert */}
       {error && (
         <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-sm shadow-sm">
@@ -774,37 +824,30 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
         </div>
       )}
 
-      {/* ── Main Feature Tabs (Fully Responsive Menu) ────────────────────── */}
+      {/* ── Main Feature Tabs (3 Clean Operational Tabs) ──────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="w-full overflow-x-auto no-scrollbar pb-1">
-          <TabsList className="inline-flex min-w-full w-max md:w-full md:grid md:grid-cols-4 h-auto min-h-[48px] p-1.5 bg-muted/60 dark:bg-muted/30 border border-border/80 rounded-2xl gap-1.5">
+          <TabsList className="inline-flex min-w-full w-max md:w-full md:grid md:grid-cols-3 h-auto min-h-[48px] p-1.5 bg-muted/60 dark:bg-muted/30 border border-border/80 rounded-2xl gap-1.5">
             <TabsTrigger
               value="studio"
-              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+              className="flex-1 min-w-[200px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
             >
               <IconActivity className="size-4 shrink-0 text-primary" />
               <span>Project Audit Studio</span>
             </TabsTrigger>
             <TabsTrigger
               value="batch"
-              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+              className="flex-1 min-w-[200px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
             >
               <IconFileSpreadsheet className="size-4 shrink-0 text-primary" />
               <span>Database Batch Audit</span>
             </TabsTrigger>
             <TabsTrigger
               value="proposal"
-              className="flex-1 min-w-[190px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
+              className="flex-1 min-w-[200px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
             >
               <IconSend className="size-4 shrink-0 text-primary" />
               <span>New Proposal Audit</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="intel"
-              className="flex-1 min-w-[205px] md:min-w-0 flex items-center justify-center gap-2 px-3.5 py-2.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-border/50 transition-all cursor-pointer"
-            >
-              <IconSparkles className="size-4 shrink-0 text-primary" />
-              <span>Model Intel & CAG Specs</span>
             </TabsTrigger>
           </TabsList>
         </div>
@@ -1995,76 +2038,89 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
           </Card>
         </TabsContent>
 
-        {/* ═════════════════════════════════════════════════════════════════════
-            TAB 4: MODEL INTELLIGENCE & CAG RESEARCH
-        ═════════════════════════════════════════════════════════════════════ */}
-        <TabsContent value="intel" className="space-y-6 mt-6">
-          {/* Architecture Overview Card */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold flex items-center gap-2">
-                <IconSparkles className="size-5 text-primary" />
-                NIDHI-RAKSHAK AI Governance Model Architecture
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Specifications formulated in accordance with MoSPI guidelines and CAG Public Works audit compliance standards.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-xs">
+      </Tabs>
+
+      {/* ── Model Intel & CAG Specs Right-Side Drawer (Slides in from Right) ── */}
+      <Sheet open={showIntelModal} onOpenChange={setShowIntelModal}>
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl p-0 flex flex-col overflow-hidden bg-card border-l border-border shadow-2xl"
+        >
+          <SheetHeader className="p-6 pb-4 border-b shrink-0 bg-card/95 backdrop-blur-md pr-12">
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 shrink-0 mt-0.5">
+                <IconSparkles className="size-5" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <SheetTitle className="text-lg font-bold tracking-tight">
+                    Model Intelligence & CAG Specifications
+                  </SheetTitle>
+                  <Badge className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-semibold border-0">
+                    MoSPI & CAG Spec
+                  </Badge>
+                </div>
+                <SheetDescription className="text-xs text-muted-foreground leading-relaxed">
+                  Specifications formulated in accordance with MoSPI guidelines and CAG Public Works audit compliance standards.
+                </SheetDescription>
+              </div>
+            </div>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Architecture Overview */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <IconActivity className="size-3.5 text-primary" />
+                <span>Tri-Model Ensemble Architecture</span>
+              </h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl border bg-card space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs">Model 1: Binary Classifier</span>
-                    <Badge variant="outline" className="text-[10px]">XGBoost</Badge>
+                <div className="p-3.5 rounded-xl border bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                    <span className="font-bold text-xs text-foreground">Model 1: Binary Classifier</span>
+                    <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-600 border-blue-500/30 font-mono">XGBoost</Badge>
                   </div>
-                  <p className="text-muted-foreground text-[11px]">
+                  <p className="text-muted-foreground text-[11px] leading-relaxed">
                     Detects general risk anomaly. Trained on 17 features with scale_pos_weight. ROC-AUC: 0.9998.
                   </p>
                 </div>
-                <div className="p-3 rounded-xl border bg-card space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs">Model 2: Multiclass Archetype</span>
-                    <Badge variant="outline" className="text-[10px]">Softprob</Badge>
+                <div className="p-3.5 rounded-xl border bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                    <span className="font-bold text-xs text-foreground">Model 2: Multiclass Archetype</span>
+                    <Badge variant="outline" className="text-[10px] bg-purple-500/10 text-purple-600 border-purple-500/30 font-mono">Softprob</Badge>
                   </div>
-                  <p className="text-muted-foreground text-[11px]">
+                  <p className="text-muted-foreground text-[11px] leading-relaxed">
                     Stratifies anomalies into 6 institutional corruption archetypes (Vendor cartel, ghost assets, delays).
                   </p>
                 </div>
-                <div className="p-3 rounded-xl border bg-card space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs">Model 3: Outlier Isolation</span>
-                    <Badge variant="outline" className="text-[10px]">Isolation Forest</Badge>
+                <div className="p-3.5 rounded-xl border bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between gap-1.5 flex-wrap">
+                    <span className="font-bold text-xs text-foreground">Model 3: Outlier Isolation</span>
+                    <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/30 font-mono">Isolation Forest</Badge>
                   </div>
-                  <p className="text-muted-foreground text-[11px]">
+                  <p className="text-muted-foreground text-[11px] leading-relaxed">
                     Unsupervised anomaly detection partitioning feature space to catch zero-day and unseen fraud patterns.
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Model Visualization Gallery (16 Plots) */}
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base font-bold flex items-center gap-2">
-                    <IconPhoto className="size-5 text-primary" />
-                    Model Training & Evaluation Plots Gallery (16 Figures)
-                  </CardTitle>
-                  <CardDescription className="text-xs mt-0.5">
-                    Click on any figure to inspect high-resolution analytical metrics.
-                  </CardDescription>
-                </div>
+            {/* Model Visualization Gallery (16 Plots) */}
+            <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <IconPhoto className="size-4 text-primary" />
+                  <span>Model Training & Evaluation Plots Gallery (16 Figures)</span>
+                </h4>
+                <span className="text-[11px] text-muted-foreground">Click figure to inspect in full zoom</span>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {MODEL_PLOTS.map((p) => (
                   <div
                     key={p.file}
                     onClick={() => setSelectedPlot(`/model-plots/${p.file}`)}
-                    className="group relative cursor-pointer overflow-hidden rounded-xl border bg-muted/20 hover:border-primary/50 transition-all p-2 flex flex-col justify-between"
+                    className="group relative cursor-pointer overflow-hidden rounded-xl border bg-muted/20 hover:border-primary/50 transition-all p-2 flex flex-col justify-between hover:shadow-md"
                   >
                     <div className="aspect-video w-full overflow-hidden rounded-lg bg-black/5 relative">
                       <img
@@ -2084,10 +2140,10 @@ export default function AiAuditEngine({ initialProjectId, user: propUser }: AiAu
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* ── High-Res Plot Modal ────────────────────────────────────────────── */}
       <Dialog open={!!selectedPlot} onOpenChange={(open) => !open && setSelectedPlot(null)}>
