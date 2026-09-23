@@ -1415,47 +1415,7 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
 
           {/* Messages */}
           <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-3 sm:px-4 py-3 space-y-3 sm:space-y-4 bg-slate-50/60">
-            {messages.length <= 1 && (
-              <div className="text-center py-2 sm:py-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl mx-auto mb-2 flex items-center justify-center shadow-md" style={{ background: "linear-gradient(135deg, #0D1B3E, #1a3a6b)" }}>
-                  <svg viewBox="0 0 24 24" fill="#F59E0B" className="w-5 h-5 sm:w-6 sm:h-6"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 0 2h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1 0-2h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18 2.5 2.5 0 0 0 10 15.5 2.5 2.5 0 0 0 7.5 13m9 0A2.5 2.5 0 0 0 14 15.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 16.5 13z"/></svg>
-                </div>
-                <p className="text-slate-700 text-xs font-semibold font-display">
-                  {getLocalizedGreeting(lang, userName)}
-                </p>
-                <p className="text-slate-500 text-[11px] mt-0.5 leading-relaxed max-w-[280px] mx-auto">
-                  {userRole} Account ({userLocation}) · Ask me anything about projects, funds, risks, or compliance.
-                </p>
-
-                {/* Role-Specific Quick Actions Grid */}
-                <div className="mt-3 text-left bg-white/80 border border-slate-200/90 rounded-2xl p-2.5 shadow-2xs">
-                  <div className="flex items-center justify-between mb-2 px-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                      <span>⚡ Quick Actions</span>
-                      <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[9px]">{userRole}</span>
-                    </span>
-                    <span className="text-[9.5px] text-blue-600 font-medium">1-click insight</span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-1.5">
-                    {quickActions.map(action => (
-                      <button
-                        key={action.id}
-                        onClick={() => sendMessage(action.query)}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-slate-50/80 border border-slate-200/70 hover:border-blue-400 hover:bg-blue-50/70 hover:shadow-xs transition-all text-left group"
-                      >
-                        <span className="text-base shrink-0 group-hover:scale-110 transition-transform">{action.icon}</span>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-xs font-semibold text-slate-700 group-hover:text-blue-700 truncate">{action.label}</div>
-                          <div className="text-[10px] text-slate-400 truncate group-hover:text-blue-500/80">{action.query}</div>
-                        </div>
-                        <span className="text-slate-400 group-hover:text-blue-600 text-xs font-semibold shrink-0">→</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-            {messages.map(msg => (
+            {messages.map((msg, index) => (
               <div key={msg.id} className={`flex flex-col ${msg.role === "user" ? "items-end" : "items-start"}`}>
                 {msg.role === "user" ? (
                   <div className="max-w-[85%] sm:max-w-[80%] px-3.5 py-2.5 rounded-2xl rounded-tr-sm text-sm text-white shadow-sm break-words [overflow-wrap:anywhere]" style={{ background: "linear-gradient(135deg, #1a3a6b, #2563EB)" }}>{msg.text}</div>
@@ -1464,6 +1424,35 @@ export default function AICopilot({ onNavigate, user }: AICopilotProps) {
                     <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm break-words [overflow-wrap:anywhere]">
                       <p className="text-sm text-slate-700 leading-relaxed break-words [overflow-wrap:anywhere]"><RenderText text={msg.text}/></p>
                     </div>
+
+                    {/* Quick Actions Card popup rendered strictly AFTER the first greeting message */}
+                    {index === 0 && (msg.id === "welcome-init" || messages.length === 1) && (
+                      <div className="mt-2 text-left bg-white border border-slate-200/90 rounded-2xl p-3 shadow-2xs">
+                        <div className="flex items-center justify-between mb-2 px-1">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>⚡ Quick Actions</span>
+                            <span className="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold text-[9px]">{userRole}</span>
+                          </span>
+                          <span className="text-[9.5px] text-blue-600 font-medium">1-click insight</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-1.5">
+                          {quickActions.map(action => (
+                            <button
+                              key={action.id}
+                              onClick={() => sendMessage(action.query)}
+                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-slate-50/90 border border-slate-200/70 hover:border-blue-400 hover:bg-blue-50/70 hover:shadow-xs transition-all text-left group cursor-pointer active:scale-[0.99]"
+                            >
+                              <span className="text-base shrink-0 group-hover:scale-110 transition-transform">{action.icon}</span>
+                              <div className="min-w-0 flex-1">
+                                <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-700 truncate">{action.label}</div>
+                                <div className="text-[10px] text-slate-400 truncate group-hover:text-blue-500/80">{action.query}</div>
+                              </div>
+                              <span className="text-slate-400 group-hover:text-blue-600 text-xs font-semibold shrink-0 group-hover:translate-x-0.5 transition-transform">→</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {msg.cards && msg.cards.length > 0 && (
                       <div className="space-y-1.5 w-full">
                         {msg.cards.map((card, i) => {

@@ -208,12 +208,19 @@ export default function Login({ onLogin }: LoginProps = {}) {
 
   const handleOfficialLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const cred = OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">];
-    setValidationMessage(`Authenticating ${cred.designation} via NIC Parichay Gateway...`);
-    setPhase("validating");
-    setTimeout(() => {
-      authenticateUser();
-    }, 1100);
+    if (!officialId.trim() || !officialPassword.trim()) return;
+    setOtp(["", "", "", "", "", ""]);
+    setPhase("otp");
+    setOtpTimer(30);
+    const interval = setInterval(() => {
+      setOtpTimer((t) => {
+        if (t <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
   };
 
   const handleSendOtp = () => {
@@ -244,10 +251,11 @@ export default function Login({ onLogin }: LoginProps = {}) {
 
   const handleVerify = (otpArr = otp) => {
     if (selectedRole === "Citizen" && mobile.replace(/\D/g, "").length < 10) return;
+    const cred = selectedRole !== "Citizen" ? OFFICIAL_CREDENTIALS[selectedRole] : null;
     setValidationMessage(
       selectedRole === "Citizen"
         ? "Verifying OTP & linking registered mobile with UIDAI Gateway..."
-        : "Verifying OTP against NIC Gateway..."
+        : `Authenticating ${cred?.designation || "Officer"} via NIC Parichay Gateway...`
     );
     setPhase("validating");
     setTimeout(() => {
@@ -343,7 +351,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] ${phase === "otp" || phase === "validating" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                   3
                 </span>
-                {isCitizen ? "OTP & Mobile" : "SSO Gateway"}
+                {isCitizen ? "OTP & Mobile" : "SSO Gateway (2FA)"}
               </div>
             </div>
 
@@ -616,18 +624,48 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     </button>
 
                     <div className="mb-3">
-                      <h2 className="text-base font-bold text-foreground">Verify One-Time Password</h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold text-foreground">
+                          {isCitizen ? "Verify One-Time Password" : "NIC Parichay SSO Gateway (2FA)"}
+                        </h2>
+                        {!isCitizen && (
+                          <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30 font-semibold">
+                            Parichay 2FA
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {isCitizen
                           ? `OTP dispatched for Aadhaar ending with ···· ${aadhaar.replace(/\D/g, "").slice(-4)}`
-                          : "Enter the OTP sent to your registered official credential"}
+                          : `Enter official 2FA security code for ${OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">]?.designation}`}
                       </p>
                     </div>
 
-                    {/* Prominently Highlighted Demo OTP Banner */}
+                    {/* Official Officer Identity & 2FA Information Card */}
+                    {!isCitizen && (
+                      <div className="p-3 rounded-lg bg-muted/50 border border-border space-y-1.5 mb-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-semibold text-foreground">
+                            {OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">]?.designation}
+                          </span>
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium text-[10px]">● Cert-In Tier-1</span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                          <span>{OFFICIAL_CREDENTIALS[selectedRole as Exclude<UserRole, "Citizen">]?.department}</span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground pt-1 border-t border-border/60 flex items-center justify-between">
+                          <span>Official ID: <strong className="font-mono text-foreground">{officialId}</strong></span>
+                          <span>2FA Mobile: <strong className="font-mono text-foreground">+91 {ROLE_PHONES[selectedRole]}</strong></span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Prominently Highlighted Demo OTP / 2FA Banner */}
                     <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex items-center justify-between gap-2 my-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold">Demo OTP:</span>
+                        <span className="text-xs font-semibold">
+                          {isCitizen ? "Demo OTP:" : "Demo Official 2FA Code:"}
+                        </span>
                         <span className="font-mono font-bold text-sm tracking-widest px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-950 dark:text-amber-100 border border-amber-500/40 shadow-xs">
                           123456
                         </span>
@@ -648,7 +686,7 @@ export default function Login({ onLogin }: LoginProps = {}) {
                     <div className="space-y-4">
                       <div>
                         <Label className="text-xs font-semibold text-foreground mb-1 block">
-                          Enter 6-Digit One-Time Password
+                          {isCitizen ? "Enter 6-Digit One-Time Password" : "Enter 6-Digit Office 2FA Security Token"}
                         </Label>
                         <div className="flex justify-between gap-2 max-w-xs mx-auto my-2">
                           {otp.map((digit, idx) => (
@@ -699,25 +737,35 @@ export default function Login({ onLogin }: LoginProps = {}) {
                         </div>
                       )}
 
+                      {/* Official Security notice */}
+                      {!isCitizen && (
+                        <div className="p-2.5 rounded-md bg-blue-500/5 border border-blue-500/20 text-[11px] text-blue-900 dark:text-blue-200 flex items-start gap-2">
+                          <IconShieldCheck size={16} className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                          <span>
+                            Multi-Factor Authentication (MFA) via NIC Parichay is mandatory under the Cabinet Secretariat Cyber Security Framework 2024.
+                          </span>
+                        </div>
+                      )}
+
                       <Button
                         type="button"
                         onClick={() => handleVerify()}
                         disabled={otp.some((d) => d === "") || (isCitizen && mobile.replace(/\D/g, "").length < 10)}
                         className="w-full text-sm font-semibold cursor-pointer mt-1"
                       >
-                        Verify and Proceed to Dashboard
+                        {isCitizen ? "Verify and Proceed to Dashboard" : "Verify 2FA & Access Official Workspace"}
                       </Button>
 
                       <div className="text-center text-xs text-muted-foreground pt-1">
                         {otpTimer > 0 ? (
-                          <span>Resend OTP in <strong className="text-foreground">{otpTimer}s</strong></span>
+                          <span>Resend {isCitizen ? "OTP" : "2FA Code"} in <strong className="text-foreground">{otpTimer}s</strong></span>
                         ) : (
                           <button
                             type="button"
                             onClick={handleSendOtp}
                             className="text-foreground font-medium hover:underline cursor-pointer"
                           >
-                            Resend OTP
+                            Resend {isCitizen ? "OTP" : "2FA Code"}
                           </button>
                         )}
                       </div>
