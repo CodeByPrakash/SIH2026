@@ -21,35 +21,6 @@ export function HeroBannerCarousel({ language }: HeroBannerCarouselProps) {
   const slides = [
     {
       id: 1,
-      category: language === "hi" ? "नागरिक सशक्तिकरण" : "BENEFITS FOR CITIZENS",
-      tagline: language === "hi" ? "पारदर्शिता एवं जन-भागीदारी" : "Citizen Centric Public Governance",
-      title:
-        language === "hi"
-          ? "नागरिकों के लिए प्रत्यक्ष लाभ: अपने क्षेत्र के विकास कार्यों को लाइव ट्रैक करें"
-          : "Direct Benefits for Citizens: Real-Time Tracking & Asset Verification",
-      subtitle:
-        language === "hi"
-          ? "पेयजल, स्कूल, स्वास्थ्य केंद्र और सड़कों की भौतिक प्रगति देखें। जियो-टैग फोटो प्रमाण की जांच करें एवं फीडबैक/शिकायत दर्ज करें।"
-          : "Track sanctioned community works in your constituency, verify geo-tagged photo proofs on ground, and lodge feedback directly with district authorities.",
-      badgeText: language === "hi" ? "जन-भागीदारी | 100% सार्वजनिक निगरानी" : "Citizen First | 100% Public Transparency",
-      imageSrc: "/home/banner_citizen.jpg",
-      imageAlt: "Citizens benefiting from completed community infrastructure",
-      primaryCta: {
-        label: language === "hi" ? "अपने क्षेत्र के कार्य खोजें" : "Track Works",
-        href: "/dashboard/citizen",
-      },
-      secondaryCta: {
-        label: language === "hi" ? "जियो-फोटो साक्ष्य देखें" : "View Photos",
-        href: "/dashboard/evidence",
-      },
-      highlights: [
-        language === "hi" ? "सार्वजनिक परिसंपत्ति खोज" : "Constituency Asset Search",
-        language === "hi" ? "जियो-टैग्ड साक्ष्य जांच" : "Geo-Tagged Photo Audit",
-        language === "hi" ? "त्वरित नागरिक शिकायत" : "Direct Grievance Redressal",
-      ],
-    },
-    {
-      id: 2,
       category: language === "hi" ? "संसद सदस्य सेवाएं" : "BENEFITS FOR HON'BLE MPs",
       tagline: language === "hi" ? "त्वरित डिजिटल स्वीकृति एवं निगरानी" : "Empowering Parliamentarians",
       title:
@@ -75,6 +46,35 @@ export function HeroBannerCarousel({ language }: HeroBannerCarouselProps) {
         language === "hi" ? "डिजिटल कार्य अनुशंसा" : "One-Click Work Recommendation",
         language === "hi" ? "निधि उपयोगिता ट्रैकर" : "Unspent Balance Dashboard",
         language === "hi" ? "जिला प्रगति हीटमैप" : "Constituency Progress Heatmaps",
+      ],
+    },
+    {
+      id: 2,
+      category: language === "hi" ? "नागरिक सशक्तिकरण" : "BENEFITS FOR CITIZENS",
+      tagline: language === "hi" ? "पारदर्शिता एवं जन-भागीदारी" : "Citizen Centric Public Governance",
+      title:
+        language === "hi"
+          ? "नागरिकों के लिए प्रत्यक्ष लाभ: अपने क्षेत्र के विकास कार्यों को लाइव ट्रैक करें"
+          : "Direct Benefits for Citizens: Real-Time Tracking & Asset Verification",
+      subtitle:
+        language === "hi"
+          ? "पेयजल, स्कूल, स्वास्थ्य केंद्र और सड़कों की भौतिक प्रगति देखें। जियो-टैग फोटो प्रमाण की जांच करें एवं फीडबैक/शिकायत दर्ज करें।"
+          : "Track sanctioned community works in your constituency, verify geo-tagged photo proofs on ground, and lodge feedback directly with district authorities.",
+      badgeText: language === "hi" ? "जन-भागीदारी | 100% सार्वजनिक निगरानी" : "Citizen First | 100% Public Transparency",
+      imageSrc: "/home/banner_citizen.jpg",
+      imageAlt: "Citizens benefiting from completed community infrastructure",
+      primaryCta: {
+        label: language === "hi" ? "अपने क्षेत्र के कार्य खोजें" : "Track Works",
+        href: "/dashboard/citizen",
+      },
+      secondaryCta: {
+        label: language === "hi" ? "जियो-फोटो साक्ष्य देखें" : "View Photos",
+        href: "/dashboard/evidence",
+      },
+      highlights: [
+        language === "hi" ? "सार्वजनिक परिसंपत्ति खोज" : "Constituency Asset Search",
+        language === "hi" ? "जियो-टैग्ड साक्ष्य जांच" : "Geo-Tagged Photo Audit",
+        language === "hi" ? "त्वरित नागरिक शिकायत" : "Direct Grievance Redressal",
       ],
     },
     {
@@ -276,11 +276,10 @@ export function HeroBannerCarousel({ language }: HeroBannerCarouselProps) {
                 key={idx}
                 type="button"
                 onClick={() => setCurrentSlide(idx)}
-                className={`rounded-full transition-all duration-300 cursor-pointer ${
-                  currentSlide === idx
+                className={`rounded-full transition-all duration-300 cursor-pointer ${currentSlide === idx
                     ? "w-5 sm:w-6 h-1.5 sm:h-2 bg-emerald-400 shadow-xs"
                     : "w-1.5 sm:w-2 h-1.5 sm:h-2 bg-slate-400 hover:bg-slate-300"
-                }`}
+                  }`}
                 title={`Go to slide ${idx + 1}`}
                 aria-label={`Slide ${idx + 1}`}
               />
