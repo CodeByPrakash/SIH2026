@@ -22,9 +22,14 @@ export function GovFooter({ language }: GovFooterProps) {
               <div>
                 <h4 className="text-xs font-bold text-white leading-tight">
                   {language === "hi"
-                    ? "सांख्यिकी और कार्यक्रम कार्यान्वयन मंत्रालय"
-                    : "Ministry of Statistics & Programme Implementation"}
+                    ? "निधि-रक्षक , TEAM- CODE_WARRIORS"
+                    : "NIDHI-RAKSHAK , TEAM- CODE_WARRIORS"}
                 </h4>
+                <p className="text-[10px] font-semibold text-amber-400 mt-0.5">
+                  {language === "hi"
+                    ? "SIH 2026 - समस्या विवरण: SIH26102"
+                    : "SIH 2026 - Problem Statement: SIH26102"}
+                </p>
                 <p className="text-[10px] text-slate-400">
                   {language === "hi" ? "भारत सरकार" : "Government of India"}
                 </p>
