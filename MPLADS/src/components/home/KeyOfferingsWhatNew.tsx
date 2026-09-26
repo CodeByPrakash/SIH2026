@@ -26,68 +26,7 @@ interface KeyOfferingsWhatNewProps {
   language: "en" | "hi";
 }
 
-// Floating infrastructure stickers arranged in an alternating staggered rhythm
-const FLOATING_STICKERS = [
-  // LEFT SIDE: (Staggered with generous spacing, utilizing the outer left area)
-  // 1st: Infrastructure Project Site - Outward track (top-left outer space, above the train)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (5).png",
-    alt: "Infrastructure Development Project",
-    className:
-      "top-[-32px] lg:top-[-38px] right-[calc(100%+145px)] sm:right-[calc(100%+170px)] lg:right-[calc(100%+198px)] xl:right-[calc(100%+224px)] w-26 sm:w-30 lg:w-36 xl:w-40 rotate-4 animate-float-alt",
-  },
-  // 2nd: Parliament - Inward track (top, near monitor)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (1).png",
-    alt: "Parliament of India",
-    className:
-      "top-[-30px] lg:top-[-35px] right-[calc(100%+10px)] sm:right-[calc(100%+16px)] lg:right-[calc(100%+22px)] xl:right-[calc(100%+28px)] w-28 sm:w-32 lg:w-38 xl:w-42 -rotate-6 animate-float-slow",
-  },
-  // 2nd: Vande Bharat Express - Shifted further left into the open space and down away from Parliament
-  {
-    src: "/home/overlayVideo/Pi7_cropper (6).png",
-    alt: "Vande Bharat Express",
-    className:
-      "top-[17%] lg:top-[19%] right-[calc(100%+65px)] sm:right-[calc(100%+90px)] lg:right-[calc(100%+118px)] xl:right-[calc(100%+142px)] w-30 sm:w-34 lg:w-40 xl:w-44 rotate-3 animate-float-alt",
-  },
-  // 3rd: Sea Link Cable Bridge - Inward track (filling the mid space between train and presenter)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (4).png",
-    alt: "Sea Link Cable Bridge",
-    className:
-      "top-[44%] lg:top-[46%] right-[calc(100%+12px)] sm:right-[calc(100%+18px)] lg:right-[calc(100%+26px)] xl:right-[calc(100%+34px)] w-28 sm:w-32 lg:w-38 xl:w-42 -rotate-3 animate-float-slow",
-  },
 
-  // RIGHT SIDE: (Staggered with generous spacing, alternating inward and outward)
-  // 1st: Supreme Court - Inward track (top, near monitor)
-  {
-    src: "/home/overlayVideo/Pi7_cropper.png",
-    alt: "Supreme Court of India",
-    className:
-      "top-[-26px] lg:top-[-30px] left-[calc(100%+10px)] sm:left-[calc(100%+16px)] lg:left-[calc(100%+22px)] xl:left-[calc(100%+28px)] w-28 sm:w-32 lg:w-38 xl:w-42 rotate-6 animate-float-slow",
-  },
-  // 2nd: Smart City Metro Skyline - Outward track (shifted outward to the right into open space)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (2).png",
-    alt: "Smart City Metro Skyline",
-    className:
-      "top-[26%] lg:top-[28%] left-[calc(100%+60px)] sm:left-[calc(100%+82px)] lg:left-[calc(100%+106px)] xl:left-[calc(100%+128px)] w-26 sm:w-30 lg:w-36 xl:w-40 -rotate-3 animate-float-alt",
-  },
-  // 3rd: Hydroelectric Dam - Inward track (pulled back inward, separated vertically from skyline)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (8).png",
-    alt: "Hydroelectric Dam",
-    className:
-      "top-[55%] lg:top-[57%] left-[calc(100%+10px)] sm:left-[calc(100%+16px)] lg:left-[calc(100%+22px)] xl:left-[calc(100%+28px)] w-28 sm:w-32 lg:w-38 xl:w-42 rotate-4 animate-float-slow",
-  },
-  // 4th: Expressway Flyover - Outward track (shifted outward to the right, below dam)
-  {
-    src: "/home/overlayVideo/Pi7_cropper (3).png",
-    alt: "Expressway Flyover",
-    className:
-      "top-[80%] lg:top-[82%] left-[calc(100%+55px)] sm:left-[calc(100%+76px)] lg:left-[calc(100%+98px)] xl:left-[calc(100%+118px)] w-28 sm:w-32 lg:w-38 xl:w-42 -rotate-4 animate-float-alt",
-  },
-];
 
 export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -136,21 +75,7 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
     }, 150);
   };
 
-  // 4px thick solid white die-cut border filter on the transparent PNG contour + soft drop shadow
-  const stickerFilterStyle = {
-    filter: `
-      drop-shadow(3.5px 0px 0px #ffffff)
-      drop-shadow(-3.5px 0px 0px #ffffff)
-      drop-shadow(0px 3.5px 0px #ffffff)
-      drop-shadow(0px -3.5px 0px #ffffff)
-      drop-shadow(2.5px 2.5px 0px #ffffff)
-      drop-shadow(-2.5px -2.5px 0px #ffffff)
-      drop-shadow(2.5px -2.5px 0px #ffffff)
-      drop-shadow(-2.5px 2.5px 0px #ffffff)
-      drop-shadow(0px 10px 18px rgba(15, 23, 42, 0.16))
-    `,
-  };
-
+  // Keyframe animation for dashed traveling strokes
   return (
     <section
       id="official-documentary"
@@ -163,29 +88,14 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
         sparkCount={8}
         duration={400}
       >
-        {/* Dynamic Keyframe Animations for Floating Stickers */}
         <style jsx>{`
-        @keyframes floatSlow {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-12px) rotate(2deg);
+        @keyframes dashTravel {
+          to {
+            stroke-dashoffset: -20;
           }
         }
-        @keyframes floatAlt {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(12px) rotate(-2deg);
-          }
-        }
-        .animate-float-slow {
-          animation: floatSlow 5.5s ease-in-out infinite;
-        }
-        .animate-float-alt {
-          animation: floatAlt 6.2s ease-in-out infinite;
+        .animate-dash-travel {
+          animation: dashTravel 1.4s linear infinite;
         }
       `}</style>
 
@@ -207,12 +117,24 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[380px] bg-blue-500/8 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[240px] bg-amber-400/8 rounded-full blur-[110px] pointer-events-none" />
 
-        {/* 3. Main Centered Content Container */}
+        {/* 3. Giant NIDHI-RAKSHAK Logo Blended in the Section Background (Bigger & Better) */}
+        <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] sm:w-[920px] lg:w-[1100px] xl:w-[1260px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
+          <Image
+            src="/logo.png"
+            alt="NIDHI-RAKSHAK Emblem Watermark"
+            width={1260}
+            height={1260}
+            className="w-full h-full object-contain opacity-[0.14] sm:opacity-[0.17] filter drop-shadow-[0_20px_60px_rgba(19,62,135,0.18)]"
+            priority
+          />
+        </div>
+
+        {/* 4. Main Centered Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 md:px-12 pb-12 sm:pb-14 md:pb-16 flex flex-col items-center">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 space-y-3">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10 flex flex-col items-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 border border-slate-300/80 text-[11px] font-semibold text-slate-800 shadow-xs backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 border border-slate-300/80 text-[11px] font-semibold text-slate-800 shadow-xs backdrop-blur-md mb-4">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-[#133E87] font-bold">NIDHIRAKSHAK</span>
               <span className="text-slate-400">•</span>
@@ -221,22 +143,57 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
               <span className="text-slate-600 hidden sm:inline">SIH 2026 (SIH26102)</span>
             </div>
 
-            {/* Heading */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              {language === "hi"
-                ? "सिस्टम आर्किटेक्चर एवं लाइव वॉकथ्रू वृत्तचित्र"
-                : "Platform Demonstration & System Architecture Walkthrough"}
-            </h2>
+            {/* Canvas Heading Card */}
+            <div className="relative inline-block mx-auto mb-4">
+              {/* Corner Crosshairs (+) */}
+              <span className="absolute -top-2.5 -left-2.5 w-4 h-4 flex items-center justify-center text-xs font-mono font-bold text-slate-400 select-none pointer-events-none">+</span>
+              <span className="absolute -top-2.5 -right-2.5 w-4 h-4 flex items-center justify-center text-xs font-mono font-bold text-slate-400 select-none pointer-events-none">+</span>
+              <span className="absolute -bottom-2.5 -left-2.5 w-4 h-4 flex items-center justify-center text-xs font-mono font-bold text-slate-400 select-none pointer-events-none">+</span>
+              <span className="absolute -bottom-2.5 -right-2.5 w-4 h-4 flex items-center justify-center text-xs font-mono font-bold text-slate-400 select-none pointer-events-none">+</span>
+
+              {/* Canvas Card */}
+              <div className="px-8 sm:px-14 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-white/95 border-2 border-dashed border-[#133E87]/40 hover:border-[#133E87]/80 transition-colors shadow-[0_8px_25px_-5px_rgba(19,62,135,0.08)] backdrop-blur-xs text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                  {language === "hi" ? (
+                    "सिस्टम आर्किटेक्चर एवं लाइव वॉकथ्रू वृत्तचित्र"
+                  ) : (
+                    <span className="bg-gradient-to-r from-slate-950 via-[#133E87] to-slate-900 bg-clip-text text-transparent font-black tracking-wider uppercase">
+                      DEMO VIDEO
+                    </span>
+                  )}
+                </h2>
+
+                <div className="mt-1 flex items-center justify-center gap-2 text-[9px] sm:text-[10px] font-mono text-slate-500">
+                  <span className="w-1 h-1 rounded-full bg-slate-400" />
+                  <span>4K SYSTEM ARCHITECTURE</span>
+                  <span className="w-1 h-1 rounded-full bg-slate-400" />
+                  <span className="hidden sm:inline">OFFICIAL DOCUMENTARY</span>
+                  <span className="hidden sm:inline w-1 h-1 rounded-full bg-slate-400" />
+                </div>
+              </div>
+            </div>
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-4">
               {language === "hi"
                 ? "देखें कि कैसे एआई सैटेलाइट सर्विलांस, कैग-अनुपालन विसंगति पहचान और पीएफएमएस रियल-टाइम ऑडिट देश के सभी 543 संसदीय क्षेत्रों में पारदर्शिता सुनिश्चित करता है।"
                 : "Watch how cutting-edge computer vision, ISRO Bhuvan GIS satellite mapping, and PFMS real-time audits ensure complete transparency across all 543 Parliamentary constituencies."}
             </p>
 
-            {/* Device Mockup Toggle Switch - Icons only (First Laptop, then Monitor) */}
-            <div className="pt-2 flex items-center justify-center">
+            {/* Device Mockup Toggle Switch with Dashed Arrows pointing towards video */}
+            <div className="flex items-center justify-center gap-4 sm:gap-6 pt-1">
+              {/* Left Dashed Arrow pointing to video */}
+              <div className="hidden sm:flex items-center gap-2 pointer-events-none select-none">
+                <span className="font-mono text-[10px] text-slate-500 font-semibold bg-white/90 border border-dashed border-slate-300 px-2 py-0.5 rounded shadow-2xs rotate-[-3deg]">
+                  Live Walkthrough
+                </span>
+                <svg width="42" height="30" viewBox="0 0 42 30" fill="none" className="text-[#133E87] animate-dash-travel">
+                  <path d="M4 6 C 18 6, 28 14, 36 24" stroke="currentColor" strokeWidth="2.2" strokeDasharray="4 3" strokeLinecap="round" />
+                  <polygon points="36,24 29,19 37,17" fill="currentColor" />
+                </svg>
+              </div>
+
+              {/* Laptop / Desktop Switcher */}
               <div className="inline-flex items-center p-1 rounded-lg bg-slate-100/90 border border-slate-300/80 shadow-inner gap-1">
                 <button
                   type="button"
@@ -261,45 +218,37 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
                   <Monitor className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* Right Dashed Arrow pointing to video */}
+              <div className="hidden sm:flex items-center gap-2 pointer-events-none select-none">
+                <svg width="42" height="30" viewBox="0 0 42 30" fill="none" className="text-amber-600 animate-dash-travel">
+                  <path d="M38 6 C 24 6, 14 14, 6 24" stroke="currentColor" strokeWidth="2.2" strokeDasharray="4 3" strokeLinecap="round" />
+                  <polygon points="6,24 13,19 5,17" fill="currentColor" />
+                </svg>
+                <span className="font-mono text-[10px] text-slate-500 font-semibold bg-white/90 border border-dashed border-slate-300 px-2 py-0.5 rounded shadow-2xs rotate-[3deg]">
+                  Interactive Demo
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* 4. White Desktop / Laptop Workstation with Scattered Floating Stickers */}
+          {/* 5. Desktop / Laptop Workstation */}
           <div className="w-full max-w-4xl mx-auto relative">
-            {/* FLOATING STICKERS: Scattered near the YouTube video (Hidden on viewports < 960px) */}
-            <div className="hidden min-[960px]:block absolute inset-0 pointer-events-none z-20 overflow-visible">
-              {FLOATING_STICKERS.map((sticker, idx) => (
-                <div
-                  key={`float-sticker-${idx}`}
-                  className={`absolute pointer-events-auto transition-transform hover:scale-115 duration-300 cursor-pointer ${sticker.className}`}
-                >
-                  <Image
-                    src={sticker.src}
-                    alt={sticker.alt}
-                    width={240}
-                    height={180}
-                    style={stickerFilterStyle}
-                    className="w-full h-auto object-contain select-none transition-all duration-300 hover:brightness-105"
-                    priority={idx < 3}
-                  />
-                </div>
-              ))}
-            </div>
 
-            {/* Outer GRAY Monitor Frame Chassis */}
+            {/* Outer DARK Monitor Frame Chassis */}
             <div
               className={`transition-all duration-300 relative ${deviceType === "desktop"
-                ? "bg-slate-200 border-[5px] sm:border-[6px] border-slate-300/90 rounded-t-2xl sm:rounded-t-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.16)] p-2 sm:p-3 pb-0"
-                : "bg-slate-200 border-[5px] sm:border-[6px] border-slate-300/90 rounded-t-2xl sm:rounded-t-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.16)] p-2 sm:p-2.5 pb-0"
+                ? "bg-slate-950 border-[5px] sm:border-[6px] border-slate-800/90 rounded-t-2xl sm:rounded-t-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.28)] p-2 sm:p-3 pb-0"
+                : "bg-slate-950 border-[5px] sm:border-[6px] border-slate-800/90 rounded-t-2xl sm:rounded-t-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.28)] p-2 sm:p-2.5 pb-0"
                 }`}
             >
-              {/* Top Bezel Webcam Notch / Sensor Dot (Gray Desktop) */}
+              {/* Top Bezel Webcam Notch / Sensor Dot (Dark Bezel) */}
               <div className="flex items-center justify-center pb-2">
-                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-300/80 border border-slate-400/60 shadow-inner">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 ring-1 ring-slate-500/50 flex items-center justify-center">
-                    <div className="w-0.5 h-0.5 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-900 border border-slate-800 shadow-inner">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ring-1 ring-slate-700 flex items-center justify-center">
+                    <div className="w-0.5 h-0.5 rounded-full bg-emerald-400 animate-pulse" />
                   </div>
-                  <span className="text-[8px] font-mono text-slate-600 uppercase tracking-widest hidden sm:inline">
+                  <span className="text-[8px] font-mono text-slate-400 uppercase tracking-widest hidden sm:inline">
                     FHD Sensor
                   </span>
                 </div>
@@ -461,59 +410,73 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
                 )}
               </div>
 
-              {/* Bottom Monitor Chin Bar (Gray Desktop) */}
-              <div className="h-7 sm:h-8 bg-slate-200 border-t border-slate-300/90 flex items-center justify-between px-3 text-[10px] text-slate-700 font-mono">
+              {/* Bottom Monitor Chin Bar (Dark Bezel) */}
+              <div className="h-7 sm:h-8 bg-slate-950 border-t border-slate-800/90 flex items-center justify-between px-3 text-[10px] text-slate-300 font-mono">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] sm:text-[10px] text-slate-600 hidden sm:inline font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 font-semibold">
                     SIH2026 - SIH26102
                   </span>
                 </div>
-                <span className="text-[9px] sm:text-[10px] font-bold tracking-wider text-[#133E87]">
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-wider text-amber-400">
                   NIDHI-RAKSHAK SYSTEM
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-slate-600 hidden sm:inline font-semibold">
+                <span className="text-[9px] sm:text-[10px] text-slate-400 hidden sm:inline font-semibold">
                   TEAM - CODE_WARRIORS
                 </span>
               </div>
             </div>
 
-            {/* Device Base: Gray Metallic Desktop Stand OR Gray Laptop Deck */}
+            {/* Device Base: Dark Metallic Desktop Stand OR Dark Laptop Deck */}
             {deviceType === "desktop" ? (
-              /* Gray Desktop Metallic Stand */
+              /* Dark Metallic Desktop Stand */
               <div className="w-full flex flex-col items-center">
                 {/* Stand Neck */}
-                <div className="w-20 sm:w-28 h-6 sm:h-8 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 shadow-xs border-x border-slate-400/80" />
+                <div className="w-20 sm:w-28 h-6 sm:h-8 bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900 shadow-xs border-x border-slate-700/80" />
 
                 {/* Stand Base Plate */}
-                <div className="w-44 sm:w-64 h-3 sm:h-4 bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400 rounded-full shadow-md border-t border-slate-200 border-b border-slate-400/80" />
+                <div className="w-44 sm:w-64 h-3 sm:h-4 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 rounded-full shadow-md border-t border-slate-600 border-b border-slate-900" />
 
                 {/* Ambient Desk Contact Shadow */}
-                <div className="w-60 sm:w-80 h-3 bg-slate-500/25 blur-md rounded-full -mt-1 pointer-events-none" />
+                <div className="w-60 sm:w-80 h-3 bg-slate-950/30 blur-md rounded-full -mt-1 pointer-events-none" />
               </div>
             ) : (
-              /* Gray Laptop Bottom Deck & Keyboard Base */
+              /* Dark Laptop Bottom Deck & Keyboard Base */
               <div className="w-full flex flex-col items-center">
-                {/* Laptop Unibody Gray Base Deck */}
-                <div className="w-[104%] -mx-[2%] h-4 sm:h-5 bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 rounded-b-xl border-t border-slate-300 border-b border-slate-400/80 shadow-lg flex items-center justify-center relative">
+                {/* Laptop Unibody Dark Base Deck */}
+                <div className="w-[104%] -mx-[2%] h-4 sm:h-5 bg-gradient-to-b from-slate-800 via-slate-850 to-slate-900 rounded-b-xl border-t border-slate-700 border-b border-slate-950 shadow-lg flex items-center justify-center relative">
                   {/* Thumb Groove / Notch for opening lid */}
-                  <div className="w-16 sm:w-20 h-1.5 bg-slate-400/80 rounded-b-md shadow-inner" />
+                  <div className="w-16 sm:w-20 h-1.5 bg-slate-700/80 rounded-b-md shadow-inner" />
                 </div>
 
                 {/* Ambient Contact Shadow */}
-                <div className="w-[108%] h-4 bg-slate-500/25 blur-md rounded-full -mt-1 pointer-events-none" />
+                <div className="w-[108%] h-4 bg-slate-950/30 blur-md rounded-full -mt-1 pointer-events-none" />
               </div>
             )}
           </div>
 
         </div>
 
-        {/* 6. Presenter Mascot Image (represnting.png) - Hidden on viewports < 1469px */}
+        {/* 6. Grounded Mascot & Saluting Citizens Images - Hidden on viewports < 1469px */}
         <div className="hidden min-[1469px]:block absolute inset-x-0 bottom-0 max-w-4xl mx-auto pointer-events-none z-30">
           <div className="relative w-full h-0">
-            <div className="absolute bottom-0 -left-[385px] 2xl:-left-[420px] w-[440px] 2xl:w-[480px]">
+            {/* Left Presenter Mascot */}
+            <div className="absolute bottom-0 -left-[265px] 2xl:-left-[290px] w-[295px] 2xl:w-[325px]">
               <Image
-                src="/home/represnting.png"
+                src="/home/represnting2.png"
                 alt="NIDHI-RAKSHAK Presenter"
+                width={1199}
+                height={1312}
+                className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(15,23,42,0.22)]"
+                priority
+              />
+            </div>
+
+            {/* Right Saluting Citizens with National Flag */}
+            <div className="absolute bottom-0 -right-[270px] 2xl:-right-[300px] w-[350px] 2xl:w-[390px]">
+              <Image
+                src="/home/overlayVideo/erasebg-transformed (1).png"
+                alt="NIDHI-RAKSHAK Citizens Saluting National Flag"
                 width={1152}
                 height={768}
                 className="w-full h-auto object-contain drop-shadow-[0_20px_40px_rgba(15,23,42,0.22)]"
