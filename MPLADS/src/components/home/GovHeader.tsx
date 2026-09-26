@@ -356,13 +356,13 @@ export function GovHeader({
               </span>
               <span className="text-[10.5px] sm:text-[13.5px] font-bold text-slate-900 tracking-tight leading-tight line-clamp-1 sm:line-clamp-none">
                 {language === "hi"
-                  ? "सांख्यिकी एवं कार्यक्रम कार्यान्वयन मंत्रालय"
-                  : "Ministry of Statistics & Programme Implementation"}
+                  ? "निधि-रक्षक , TEAM- CODE_WARRIORS"
+                  : "NIDHI-RAKSHAK , TEAM- CODE_WARRIORS"}
               </span>
               <span className="text-[9px] sm:text-[11px] font-semibold text-[#133E87] leading-none mt-0.5 truncate">
                 {language === "hi"
-                  ? "सांसद स्थानीय क्षेत्र विकास योजना (MPLADS)"
-                  : "Members of Parliament Local Area Development Scheme"}
+                  ? "SIH 2026 - समस्या विवरण: SIH26102"
+                  : "SIH 2026 - Problem Statement: SIH26102"}
               </span>
             </div>
           </Link>
