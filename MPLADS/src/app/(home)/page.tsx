@@ -1,6 +1,6 @@
 "use client";
 
-import  { useState } from "react";
+import { useState } from "react";
 import { GovHeader } from "@/components/home/GovHeader";
 import { HeroBannerCarousel } from "@/components/home/HeroBannerCarousel";
 import { AnnouncementsTicker } from "@/components/home/AnnouncementsTicker";
@@ -38,8 +38,8 @@ export default function HomePage() {
     fontSizeLevel === 1
       ? "text-[110%]"
       : fontSizeLevel === -1
-      ? "text-[92%]"
-      : "text-[100%]";
+        ? "text-[92%]"
+        : "text-[100%]";
 
   const contrastClass = highContrast
     ? "contrast-125 saturate-150 bg-black text-white"
@@ -63,16 +63,17 @@ export default function HomePage() {
       {/* Main Content Area */}
       <main id="main-content" className="flex-1 w-full flex flex-col">
         {/* 2. Top Banner Carousel (Hero Section with Banner Placeholders) */}
-        <HeroBannerCarousel language={language} />
+        <KeyOfferingsWhatNew language={language} />
+
 
         {/* 3. Announcements Ticker */}
         <AnnouncementsTicker language={language} />
-    
+
         {/* 5. Ministry & Leadership Section */}
         <MinistryLeadershipSection language={language} />
 
         {/* 6. Official Video Section */}
-        <KeyOfferingsWhatNew language={language} />
+        <HeroBannerCarousel language={language} />
 
         {/* 6.5 NIDHI-RAKSHAK Features & USPs Bento Grid */}
         <NidhiBentoFeatures language={language} />
