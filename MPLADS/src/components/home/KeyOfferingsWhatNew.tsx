@@ -475,7 +475,7 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
             {/* Right Saluting Citizens with National Flag */}
             <div className="absolute bottom-0 -right-[270px] 2xl:-right-[300px] w-[350px] 2xl:w-[390px]">
               <Image
-                src="/home/right_side_demo.png"
+                src="/home/right_side_demo2.png"
                 alt="NIDHI-RAKSHAK Citizens Saluting National Flag"
                 width={1152}
                 height={768}
