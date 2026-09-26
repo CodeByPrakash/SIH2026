@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { EmblemOfIndia } from "./EmblemOfIndia";
 import IndianLanguageTranslator from "@/components/IndianLanguageTranslator";
+import { FloatingLoginPointer } from "./FloatingLoginPointer";
 import { Button } from "@/components/ui/button";
 import {
   Search,
@@ -612,14 +613,20 @@ export function GovHeader({
               <BarChart3 className="w-3.5 h-3.5 text-[#133E87]" />
               <span>{language === "hi" ? "परियोजनाएं" : "Projects Explorer"}</span>
             </Button>
-            <Button
-              size="sm"
-              className="bg-[#0B2545] hover:bg-[#133E87] text-white font-bold text-xs h-8 px-3.5 shadow-2xs transition-all flex items-center gap-1.5 rounded-md cursor-pointer"
-              onClick={() => router.push("/login")}
-            >
-              <LogIn className="w-3.5 h-3.5 text-amber-300" />
-              <span>{language === "hi" ? "लॉगिन पोर्टल" : "Portal Login"}</span>
-            </Button>
+
+            <div className="relative">
+              <Button
+                size="sm"
+                className="bg-[#0B2545] hover:bg-[#133E87] text-white font-bold text-xs h-8 px-3.5 shadow-2xs transition-all flex items-center gap-1.5 rounded-md cursor-pointer"
+                onClick={() => router.push("/login")}
+              >
+                <LogIn className="w-3.5 h-3.5 text-amber-300" />
+                <span>{language === "hi" ? "लॉगिन पोर्टल" : "Portal Login"}</span>
+              </Button>
+
+              {/* Floating Canva / Callout pointing and saying to click here */}
+              <FloatingLoginPointer language={language} />
+            </div>
           </div>
         </div>
 

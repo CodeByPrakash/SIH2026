@@ -177,7 +177,7 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
             <p className="text-xs sm:text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed mb-4">
               {language === "hi"
                 ? "देखें कि कैसे एआई सैटेलाइट सर्विलांस, कैग-अनुपालन विसंगति पहचान और पीएफएमएस रियल-टाइम ऑडिट देश के सभी 543 संसदीय क्षेत्रों में पारदर्शिता सुनिश्चित करता है।"
-                : "Watch how cutting-edge computer vision, ISRO Bhuvan GIS satellite mapping, and PFMS real-time audits ensure complete transparency across all 543 Parliamentary constituencies."}
+                : "Explore how NIDHI-RAKSHAK combines financial, project, GIS and field evidence to detect risks and support transparent decision-making"}
             </p>
 
             {/* Device Mockup Toggle Switch with Dashed Arrows pointing towards video */}
@@ -463,7 +463,7 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
             {/* Left Presenter Mascot */}
             <div className="absolute bottom-0 -left-[265px] 2xl:-left-[290px] w-[295px] 2xl:w-[325px]">
               <Image
-                src="/home/represnting2.png"
+                src="/home/left_side_demo.png"
                 alt="NIDHI-RAKSHAK Presenter"
                 width={1199}
                 height={1312}
@@ -475,7 +475,7 @@ export function KeyOfferingsWhatNew({ language }: KeyOfferingsWhatNewProps) {
             {/* Right Saluting Citizens with National Flag */}
             <div className="absolute bottom-0 -right-[270px] 2xl:-right-[300px] w-[350px] 2xl:w-[390px]">
               <Image
-                src="/home/overlayVideo/erasebg-transformed (1).png"
+                src="/home/right_side_demo.png"
                 alt="NIDHI-RAKSHAK Citizens Saluting National Flag"
                 width={1152}
                 height={768}
